@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>259226150264-vd06qcb528cjjgoab67eithtu566op8k.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.259226150264-vd06qcb528cjjgoab67eithtu566op8k</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>259226150264-8et2i9up897fkvp9bb5pn29fqenjmron.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBDXq693jSwnT5LCM1O0quHkK3LnpvHNTk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>259226150264</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.cnn-brasil</string>
+	<key>PROJECT_ID</key>
+	<string>cnn-ios</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cnn-ios.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:259226150264:ios:6ac101db59b676596f948d</string>
+	<key>DATABASE_URL</key>
+	<string>https://cnn-ios.firebaseio.com</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-3657403755849463~3358495896</string>
+</dict>
+</plist>

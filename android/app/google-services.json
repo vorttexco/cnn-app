@@ -1,0 +1,183 @@
+{
+  "project_info": {
+    "project_number": "259226150264",
+    "firebase_url": "https://cnn-ios.firebaseio.com",
+    "project_id": "cnn-ios",
+    "storage_bucket": "cnn-ios.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259226150264:android:5165917a625340b56f948d",
+        "android_client_info": {
+          "package_name": "com.cnn.brasil"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259226150264-8et2i9up897fkvp9bb5pn29fqenjmron.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cnn.brasil",
+            "certificate_hash": "fad61146e75ac35471e19ad92dec3db33089e928"
+          }
+        },
+        {
+          "client_id": "259226150264-c0lmfqlum215ba86r86afn2h2gjnu79s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cnn.brasil",
+            "certificate_hash": "771e3afa17ab7fe1ec5a31bda77748609b226587"
+          }
+        },
+        {
+          "client_id": "259226150264-gdiskb9f6psm4el97hteue0elaut131j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cnn.brasil",
+            "certificate_hash": "04adcbfe495c64a442f49b6aebd94544ac2856a8"
+          }
+        },
+        {
+          "client_id": "259226150264-v07a3c5h2fb622iqqf2n5mrvvr17e40n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cnn.brasil",
+            "certificate_hash": "bd8f521fcccf3a190fb46f85660d6f0272788461"
+          }
+        },
+        {
+          "client_id": "259226150264-hrl25a0m58kqhmfqal1c6vhl03l60e7r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5EMWWA-ufd9NDW_Lbto6Tqers_btbmKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116408475692743804711",
+              "client_type": 3
+            },
+            {
+              "client_id": "259226150264-6io68qvfkq3o1i1olcp6euoanvkqjult.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.agilecontent.cnn-brasil-dev"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259226150264:android:50f9f3f1dbe715866f948d",
+        "android_client_info": {
+          "package_name": "com.cnn.brasil.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259226150264-05h2krjig2oa4qkm7ivjb8plrivd04qq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cnn.brasil.dev",
+            "certificate_hash": "bd8f521fcccf3a190fb46f85660d6f0272788461"
+          }
+        },
+        {
+          "client_id": "259226150264-qn497pjkjsmkoj89khmr82bbca6o94mc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cnn.brasil.dev",
+            "certificate_hash": "04adcbfe495c64a442f49b6aebd94544ac2856a8"
+          }
+        },
+        {
+          "client_id": "259226150264-vlpkb4bsgqrpobba7ik9nl19pocrav7k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cnn.brasil.dev",
+            "certificate_hash": "fad61146e75ac35471e19ad92dec3db33089e928"
+          }
+        },
+        {
+          "client_id": "259226150264-hrl25a0m58kqhmfqal1c6vhl03l60e7r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5EMWWA-ufd9NDW_Lbto6Tqers_btbmKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116408475692743804711",
+              "client_type": 3
+            },
+            {
+              "client_id": "259226150264-6io68qvfkq3o1i1olcp6euoanvkqjult.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.agilecontent.cnn-brasil-dev"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259226150264:android:26f3c4fcb55e1da16f948d",
+        "android_client_info": {
+          "package_name": "com.cnn.brasil.homol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259226150264-un0rea6ri9ta9m01ai101avckodpocje.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cnn.brasil.homol",
+            "certificate_hash": "bd8f521fcccf3a190fb46f85660d6f0272788461"
+          }
+        },
+        {
+          "client_id": "259226150264-hrl25a0m58kqhmfqal1c6vhl03l60e7r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5EMWWA-ufd9NDW_Lbto6Tqers_btbmKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116408475692743804711",
+              "client_type": 3
+            },
+            {
+              "client_id": "259226150264-6io68qvfkq3o1i1olcp6euoanvkqjult.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.agilecontent.cnn-brasil-dev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
