@@ -29,8 +29,7 @@ class AppConstants {
 
   static const _ONESIGNAL_PRO_KEY = '25d68d0c-ab94-4b2a-93bd-1e9dc3318e58';
   static const _ONESIGNAL_DEV_KEY = 'e59bb0fc-f8ee-4eb9-90d6-c74de78232f0';
-  static const ONESIGNAL_KEY =
-      kReleaseMode ? _ONESIGNAL_PRO_KEY : _ONESIGNAL_DEV_KEY;
+  static const ONESIGNAL_KEY =  _ONESIGNAL_PRO_KEY ;
 
   static const GOOGLE_CLIENT_IOS =
       '259226150264-6io68qvfkq3o1i1olcp6euoanvkqjult.apps.googleusercontent.com';
