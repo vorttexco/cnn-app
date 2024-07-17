@@ -33,11 +33,12 @@ Future<void> main() async {
     );
   };
 
-  //if (kReleaseMode) {
+  if (kReleaseMode) {
     AppManager.setBaseUrl(ProdConfig.FlavorConfig.apiUrl);
-  //} else {
-  //  AppManager.setBaseUrl(DevConfig.FlavorConfig.apiUrl);
-  //}
+  } else {
+    AppManager.setBaseUrl(DevConfig.FlavorConfig.apiUrl);
+  }
+  AppManager.setBaseUrl(ProdConfig.FlavorConfig.apiUrl);
 
   runApp(
     MultiProvider(
