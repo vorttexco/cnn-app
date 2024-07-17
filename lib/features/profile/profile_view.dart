@@ -62,39 +62,6 @@ class ProfileView extends ProfileViewModel {
                 ),
               ),
             ),
-            Column(
-              children: [
-                ListTile(
-                  title: const CustomText(
-                    'Notificações',
-                    fontSize: AppConstants.KFONTSIZE_18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  subtitle: const CustomText(
-                    'Configure o recebimento de notificações',
-                    fontWeight: FontWeight.w400,
-                  ),
-                  trailing: Switch(
-                    activeTrackColor: AppColor.primaryColor,
-                    value: hasPermission,
-                    onChanged: onTapPermissionRequest,
-                  ),
-                ),
-                const Divider(
-                  indent: AppConstants.KPADDING_DEFAULT,
-                  endIndent: AppConstants.KPADDING_DEFAULT,
-                  color: Color(0xFFD6D6D6),
-                  thickness: 1,
-                )
-              ],
-            ),
-            const SizedBox(height: 100),
-            const Divider(
-              indent: AppConstants.KPADDING_DEFAULT,
-              endIndent: AppConstants.KPADDING_DEFAULT,
-              color: Colors.black,
-              thickness: 2,
-            ),
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(
