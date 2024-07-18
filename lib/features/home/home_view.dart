@@ -32,6 +32,7 @@ class HomeView extends HomeViewModel {
         children: [
           AppBarInternal(
             icon: SvgPicture.asset('assets/icons/menu.svg'),
+            iconColor: Colors.black,
             onIconPressed: openMenu,
             titleWidget: SizedBox(
               height: 30,

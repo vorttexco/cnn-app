@@ -15,6 +15,7 @@ class AppBarInternal extends StatelessWidget {
   final TextAlign textAlign;
   final Color backgroundColor;
   final VoidCallback? onFinished;
+  final Color iconColor;
 
   const AppBarInternal({
     super.key,
@@ -26,6 +27,7 @@ class AppBarInternal extends StatelessWidget {
     this.titleWidget,
     this.backgroundColor = Colors.white,
     this.onFinished,
+    this.iconColor = Colors.white,
   });
 
   @override
@@ -87,13 +89,17 @@ class AppBarInternal extends StatelessWidget {
         );
       },
       child: Container(
-        width: 32,
-        height: 32,
+        width: 25,
+        height: 25,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
         ),
-        child: avatar ?? Image.asset('assets/images/logo_google.png'),
+        child: avatar ??
+            SvgPicture.asset(
+              'assets/icons/settings_icon.svg',
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+            ),
       ),
     );
   }

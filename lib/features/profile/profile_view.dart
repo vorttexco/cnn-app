@@ -23,45 +23,6 @@ class ProfileView extends ProfileViewModel {
               color: Color(0xFFD6D6D6),
               thickness: 1,
             ),
-            InkWell(
-              onTap: AppManager.user == null ? login : null,
-              child: SizedBox(
-                height: 220,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Spacer(),
-                    Container(
-                      width: 84,
-                      height: 84,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: AppManager.user != null
-                          ? Image.network(AppManager.user?.picture ?? '')
-                          : Image.asset('assets/images/logo_google.png'),
-                    ),
-                    const SizedBox(height: AppConstants.KPADDING_8),
-                    CustomText(
-                      AppManager.user?.name ?? 'acesse sua conta',
-                      fontSize: AppConstants.KFONTSIZE_18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    const SizedBox(height: AppConstants.KPADDING_8),
-                    CustomText(AppManager.user?.email ?? 'ou cadastre-se'),
-                    const Spacer(),
-                    const Divider(
-                      indent: AppConstants.KPADDING_DEFAULT,
-                      endIndent: AppConstants.KPADDING_DEFAULT,
-                      color: Color(0xFFD6D6D6),
-                      thickness: 1,
-                    )
-                  ],
-                ),
-              ),
-            ),
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(

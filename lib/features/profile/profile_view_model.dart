@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../core/index.dart';
@@ -13,15 +10,6 @@ abstract class ProfileViewModel extends State<Profile>
   bool hasPermission = false;
   List<CnnMenuModel> listOfMenu = [];
 
-  GoogleSignIn googleSignIn = GoogleSignIn(
-    clientId: Platform.isIOS
-        ? AppConstants.GOOGLE_CLIENT_IOS
-        : AppConstants.GOOGLE_CLIENT_ANDROID,
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
   @override
   void initState() {
     super.initState();
@@ -51,11 +39,6 @@ abstract class ProfileViewModel extends State<Profile>
       context.loaderOverlay.show();
       hasPermission = OneSignal.Notifications.permission;
       listOfMenu = await HomeRepository(ApiConnector()).menuCopyright();
-      if (AppManager.user != null) {
-        listOfMenu.add(
-          CnnMenuModel(title: 'Logout', id: AppConstants.MENU_LOGOUT_ID),
-        );
-      }
     } finally {
       context.loaderOverlay.hide();
       setState(() {});
@@ -84,41 +67,5 @@ abstract class ProfileViewModel extends State<Profile>
           url: '${menu.url}?hidemenu=true',
           title: menu.title ?? AppLabel.appName),
     );
-  }
-
-  Future<void> login() async {
-    try {
-      final googleResponse = await googleSignIn.signIn();
-      final authentication = await googleResponse?.authentication;
-
-      context.loaderOverlay.show();
-
-      final user = UserModel(
-        token: authentication?.idToken,
-        device: Platform.isIOS ? 'ios' : 'android',
-      );
-
-      final request = await userRepository.create(user);
-      if (request.success) {
-        final userModel = UserModel.fromJson(request.data);
-        OneSignal.login(userModel.ppid ?? '');
-        AppManager.setUser(userModel);
-        await userRepository.save(userModel);
-        loadView();
-        return;
-      }
-
-      CustomAlertView(context).show(
-        request.message ?? 'Não foi possível realizar seu login',
-      );
-    } catch (error) {
-      CustomAlertView(context).show(
-        'Não foi possível realizar seu login',
-      );
-      Logger.log(error.toString());
-    } finally {
-      context.loaderOverlay.hide();
-      setState(() {});
-    }
   }
 }

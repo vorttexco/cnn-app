@@ -47,9 +47,7 @@
 	<string>webview</string>
 	<key>GIDClientID</key>
 	<string>259226150264-vd06qcb528cjjgoab67eithtu566op8k.apps.googleusercontent.com</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>Gostaria de permissão para rastrear você em aplicativos e sites de outras empresas.</string>
-	
+
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

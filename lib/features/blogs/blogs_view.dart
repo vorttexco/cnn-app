@@ -13,6 +13,7 @@ class BlogsView extends BlogsViewModel {
           AppBarInternal(
             icon: SvgPicture.asset('assets/icons/menu.svg'),
             onIconPressed: openMenu,
+            iconColor: Colors.black,
             titleWidget: const CustomText(
               'Blog',
               fontSize: AppConstants.KFONTSIZE_18,

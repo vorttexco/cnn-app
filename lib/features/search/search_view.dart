@@ -10,6 +10,7 @@ class SearchView extends SearchViewModel {
       body: Column(
         children: [
           AppBarInternal(
+            iconColor: Colors.black,
             onFinished: () {
               setState(() {});
             },

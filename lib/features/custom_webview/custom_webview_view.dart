@@ -15,7 +15,7 @@ class CustomWebviewView extends CustomWebviewViewModel {
               onFinished: () {
                 setState(() {});
               },
-              title: widget.navigatorModel.title,
+              title: 'Voltar',
               onIconPressed: onBack,
               avatar: AppManager.user != null
                   ? Image.network(AppManager.user?.picture ?? '')

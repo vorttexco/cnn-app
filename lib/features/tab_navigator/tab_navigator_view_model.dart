@@ -1,4 +1,3 @@
-import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,7 +29,7 @@ abstract class TabNavigatorViewModel extends State<TabNavigator> {
       statusBarIconBrightness: Brightness.dark,
     ));
     super.initState();
-    initAppTrackingTransparency();
+
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         loadUser();
@@ -80,26 +79,6 @@ abstract class TabNavigatorViewModel extends State<TabNavigator> {
       );
     } on Exception catch (e) {
       Logger.log(e.toString());
-    }
-  }
-
-  Future<void> initAppTrackingTransparency() async {
-    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
-    if (status == TrackingStatus.notDetermined) {
-      await AppTrackingTransparency.requestTrackingAuthorization();
-    }
-
-    switch (status) {
-      case TrackingStatus.authorized:
-        break;
-      case TrackingStatus.denied:
-        break;
-      case TrackingStatus.notDetermined:
-        break;
-      case TrackingStatus.restricted:
-        break;
-      case TrackingStatus.notSupported:
-        break;
     }
   }
 }
