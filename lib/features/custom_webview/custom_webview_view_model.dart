@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/index.dart';
@@ -19,6 +20,13 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
     controller.enableZoom(false);
     controller.setNavigationDelegate(
       NavigationDelegate(
+        onNavigationRequest: (request) {
+          if (request.url.contains('whatsapp://')) {
+            openWhatsApps(request.url);
+            return NavigationDecision.prevent;
+          }
+          return NavigationDecision.navigate;
+        },
         onPageStarted: (String url) {
           setState(() {
             isLoading = true;
@@ -38,6 +46,13 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
     );
     Logger.log(widget.navigatorModel.url);
     controller.loadRequest(Uri.parse(widget.navigatorModel.url));
+  }
+
+  openWhatsApps(String url) {
+    launchUrl(Uri.parse(url));
+    try {} catch (e) {
+      Logger.log(e.toString());
+    }
   }
 
   onBack() async {

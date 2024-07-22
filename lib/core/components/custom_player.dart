@@ -5,12 +5,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class CustomPlayer extends StatefulWidget {
   final LiveOnModel? model;
-  final WebViewController? webViewController;
+  final String url;
 
   const CustomPlayer({
     super.key,
     required this.model,
-    this.webViewController,
+    required this.url,
   });
 
   @override
@@ -18,16 +18,51 @@ class CustomPlayer extends StatefulWidget {
 }
 
 class _CustomPlayerState extends State<CustomPlayer> {
+  final collapsedControle = WebViewController();
+  final expandedController = WebViewController();
+
   bool isExpanded = false;
 
+  @override
+  void initState() {
+    super.initState();
+    collapsedControle.setJavaScriptMode(JavaScriptMode.unrestricted);
+    collapsedControle.enableZoom(false);
+
+    collapsedControle.setNavigationDelegate(
+      NavigationDelegate(
+        onPageStarted: (String url) {},
+        onPageFinished: (x) async {},
+      ),
+    );
+
+    expandedController.setJavaScriptMode(JavaScriptMode.unrestricted);
+    expandedController.enableZoom(false);
+
+    expandedController.setNavigationDelegate(
+      NavigationDelegate(
+        onPageStarted: (String url) {},
+        onPageFinished: (x) async {},
+      ),
+    );
+  }
+
   void expandeOrCollapseView() {
-    setState(() {
-      isExpanded = !isExpanded;
-    });
+    isExpanded = !isExpanded;
+
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.url.isNotEmpty) {
+      if (isExpanded) {
+        expandedController.loadRequest(Uri.parse(widget.url));
+      } else {
+        collapsedControle.loadRequest(Uri.parse(widget.url));
+      }
+    }
+
     return AnimatedContainer(
       height: isExpanded ? 425 : 105,
       decoration: const BoxDecoration(
@@ -52,7 +87,8 @@ class _CustomPlayerState extends State<CustomPlayer> {
               child: ClipRRect(
                 clipBehavior: Clip.hardEdge,
                 child: WebViewWidget(
-                  controller: widget.webViewController ?? WebViewController(),
+                  key: const Key('webView'),
+                  controller: collapsedControle,
                 ),
               ),
             ),
@@ -134,7 +170,8 @@ class _CustomPlayerState extends State<CustomPlayer> {
             borderRadius: BorderRadius.circular(15),
             clipBehavior: Clip.hardEdge,
             child: WebViewWidget(
-              controller: widget.webViewController ?? WebViewController(),
+              key: const Key('webView1'),
+              controller: expandedController,
             ),
           ),
         ),

@@ -17,7 +17,8 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   final webViewController = WebViewController();
 
   final liveRepository = LiveRepository(ApiConnector());
-  final liveOnController = WebViewController();
+
+  String liveUrl = '';
 
   String currentUrl = '';
 
@@ -64,16 +65,6 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
       ),
     );
 
-    liveOnController.setJavaScriptMode(JavaScriptMode.unrestricted);
-    liveOnController.enableZoom(false);
-
-    liveOnController.setNavigationDelegate(
-      NavigationDelegate(
-        onPageStarted: (String url) {},
-        onPageFinished: (x) async {},
-      ),
-    );
-
     loadView();
   }
 
@@ -108,11 +99,10 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   loadOnlive() async {
     try {
       liveOnModel = await liveRepository.onLive();
-      final url =
+      liveUrl =
           '${ApiHome.home}/youtube/video/?youtube_id=${liveOnModel?.live?.video?.id}&youtube_adformat=aovivo?hidemenu=true';
-      Logger.log(url);
 
-      liveOnController.loadRequest(Uri.parse(url));
+      Logger.log(liveUrl);
     } on Exception catch (e) {
       Logger.log(e.toString());
     } finally {
