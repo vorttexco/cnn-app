@@ -89,7 +89,6 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
       webViewController
           .loadRequest(Uri.parse('${ApiHome.home}/?hidemenu=true'));
       listOfHomeMenu = await HomeRepository(ApiConnector()).menuHome();
-      selectedMenu = listOfHomeMenu.first;
     } finally {
       setState(() {});
     }
@@ -136,7 +135,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
 
     setState(() {
       if (listOfHomeMenu.isNotEmpty) {
-        selectedMenu = listOfHomeMenu.first;
+        selectedMenu = null;
       }
     });
 
