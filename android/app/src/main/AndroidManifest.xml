@@ -1,10 +1,6 @@
 <manifest xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
         
-<<<<<<< HEAD
-        <uses-permission android:name="android.permission.INTERNET"/>
-        
-=======
         <uses-permission android:name="android.permission.INTERNET"/> 
 
         <meta-data
@@ -14,7 +10,6 @@
             android:name="com.onesignal.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
 
->>>>>>> aade4e4478b2b8c496f1c3bf9c4227ba086f2c5f
     <application
         android:label="CNN Brasil"
         android:name="${applicationName}"
