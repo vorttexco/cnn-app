@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -11,20 +12,19 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
   final controller = WebViewController();
 
   bool isLoading = true;
+  String currentUrl = '';
 
   @override
   void initState() {
     super.initState();
+    currentUrl = widget.navigatorModel.url;
     controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     controller.setBackgroundColor(const Color(0x00000000));
     controller.enableZoom(false);
     controller.setNavigationDelegate(
       NavigationDelegate(
         onNavigationRequest: (request) {
-          if (request.url.contains('whatsapp://')) {
-            openWhatsApps(request.url);
-            return NavigationDecision.prevent;
-          }
+          currentUrl = request.url;
           return NavigationDecision.navigate;
         },
         onPageStarted: (String url) {
@@ -62,5 +62,9 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
       return;
     }
     NavigatorManager(context).back();
+  }
+
+  onShare() {
+    Share.share(currentUrl, subject: 'CNN Brasil');
   }
 }

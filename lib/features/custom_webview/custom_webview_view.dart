@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/components/app_bar_webview.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/index.dart';
@@ -11,15 +12,13 @@ class CustomWebviewView extends CustomWebviewViewModel {
       child: Scaffold(
         body: Column(
           children: [
-            AppBarInternal(
+            AppBarwebView(
               onFinished: () {
                 setState(() {});
               },
               title: 'Voltar',
               onIconPressed: onBack,
-              avatar: AppManager.user != null
-                  ? Image.network(AppManager.user?.picture ?? '')
-                  : null,
+              onShare: onShare,
             ),
             Expanded(
               child: CustomWebViewComponent(

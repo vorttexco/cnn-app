@@ -47,11 +47,11 @@ class HomeView extends HomeViewModel {
               setState(() {});
             },
           ),
-          if (liveUrl != null && liveUrl.isNotEmpty)
-              CustomPlayer(
-                model: liveOnModel,
-                url: liveUrl,
-              ),
+          if (liveUrl.isNotEmpty)
+            CustomPlayer(
+              model: liveOnModel,
+              url: liveUrl,
+            ),
           MenuHorizontal(
             items: listOfHomeMenu,
             onSelectedMenu: onMenuSelected,
