@@ -65,6 +65,7 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
   }
 
   onShare() {
-    Share.share(currentUrl, subject: 'CNN Brasil');
+    final url = currentUrl.replaceAll('?hidemenu=true', '');
+    Share.share(url, subject: 'CNN Brasil');
   }
 }
