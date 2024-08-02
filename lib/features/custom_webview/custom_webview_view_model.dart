@@ -24,7 +24,10 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
     controller.setNavigationDelegate(
       NavigationDelegate(
         onNavigationRequest: (request) {
-          currentUrl = request.url;
+          if (request.url.startsWith('https://www.cnnbrasil.com.br') &&
+              !request.url.contains('wp-')) {
+            currentUrl = request.url;
+          }
           return NavigationDecision.navigate;
         },
         onPageStarted: (String url) {
