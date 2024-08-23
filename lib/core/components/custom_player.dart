@@ -123,9 +123,9 @@ class _CustomPlayerState extends State<CustomPlayer> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Image.asset(
-                        'assets/images/logo_cnn_360.png',
-                        height: 23,
+                      Image.network(
+                        widget.model?.live?.logo ?? '',
+                        height: 30,
                       ),
                     ],
                   ),
