@@ -50,6 +50,7 @@ dependencies:
   firebase_core: ^3.1.1
   url_launcher: ^6.3.0
   share_plus: ^9.0.0
+  win32: ^5.0.0
 
 dev_dependencies:
   flutter_test:
