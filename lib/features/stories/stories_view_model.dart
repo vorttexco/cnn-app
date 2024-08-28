@@ -2,6 +2,7 @@ import 'package:cnn_brasil_app/core/models/wrapper_stories.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/firebase_analytics_manager.dart';
 import '../../core/index.dart';
 import '../index.dart';
 
@@ -27,6 +28,7 @@ abstract class StoriesViewModel extends State<Stories> {
       final response = await StorieRepository(ApiConnector()).listAll();
       listOfStories = WrapperStories.toView(response);
       storieViewSelected = listOfStories.firstOrNull;
+      FirebaseAnalyticsManager.logScreen(screenName: 'stories');
     } on Exception catch (e) {
       Logger.log(e.toString());
     } finally {
@@ -36,6 +38,11 @@ abstract class StoriesViewModel extends State<Stories> {
   }
 
   onSelectedMenu(StorieViewModel storie) {
+    FirebaseAnalyticsManager.logScreenWithTag(
+      screenName: 'storie',
+      tagName: storie.category,
+    );
+
     setState(() {
       storieViewSelected = storie;
       scrollControler.jumpTo(0);
@@ -45,7 +52,7 @@ abstract class StoriesViewModel extends State<Stories> {
   openLink(StorieModel? storie) {
     if (storie == null) return;
     NavigatorManager(context).modal(
-      StorieDetail(url: '${storie.permalink}?hidemenu=true'),
+      StorieDetail(url: '${storie.permalink}/?hidemenu=true'),
       fullscreenDialog: true,
     );
   }

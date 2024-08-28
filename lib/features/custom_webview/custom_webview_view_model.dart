@@ -21,9 +21,17 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
     controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     controller.setBackgroundColor(const Color(0x00000000));
     controller.enableZoom(false);
+
     controller.setNavigationDelegate(
       NavigationDelegate(
         onNavigationRequest: (request) {
+          if (request.url.contains('t.teads.tv') ||
+              request.url.contains('googleadservices.com/pagead/aclk') ||
+              request.url.contains('googleads.g.doubleclick.net') ||
+              request.url.contains('adclick.g.doubleclick.net')) {
+            openExternalUrl(request.url);
+            return NavigationDecision.prevent;
+          }
           if (request.url.startsWith('https://www.cnnbrasil.com.br') &&
               !request.url.contains('wp-')) {
             currentUrl = request.url;
@@ -51,9 +59,10 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
     controller.loadRequest(Uri.parse(widget.navigatorModel.url));
   }
 
-  openWhatsApps(String url) {
-    launchUrl(Uri.parse(url));
-    try {} catch (e) {
+  openExternalUrl(String url) {
+    try {
+      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
       Logger.log(e.toString());
     }
   }

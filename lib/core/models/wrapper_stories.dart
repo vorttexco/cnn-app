@@ -1,10 +1,14 @@
+import 'package:flutter/material.dart';
+
 import '../index.dart';
 
 class StorieViewModel {
   final String category;
+  final Color color;
   final List<StorieModel> stories;
 
-  StorieViewModel({required this.category, required this.stories});
+  StorieViewModel(
+      {required this.category, required this.stories, required this.color});
 }
 
 class WrapperStories {
@@ -33,7 +37,10 @@ class WrapperStories {
         }
       }
       storieViewModelList.add(
-        StorieViewModel(category: category.name ?? '', stories: tempStories),
+        StorieViewModel(
+            category: category.name ?? '',
+            stories: tempStories,
+            color: HexColor.fromHex(category.color ?? 'CC0000')),
       );
     }
     return storieViewModelList;

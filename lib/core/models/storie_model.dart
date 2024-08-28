@@ -40,6 +40,7 @@ class Category {
   int? id;
   String? name;
   String? slug;
+  String? color;
   List<dynamic>? hierarchy;
 
   Category({this.id, this.name, this.slug, this.hierarchy});
@@ -48,6 +49,7 @@ class Category {
     id = json['id'];
     name = json['name'];
     slug = json['slug'];
+    color = json['color'];
     hierarchy = List<dynamic>.from(json['hierarchy']);
   }
 
@@ -56,6 +58,7 @@ class Category {
     data['id'] = id;
     data['name'] = name;
     data['slug'] = slug;
+    data['color'] = color;
     data['hierarchy'] = hierarchy;
     return data;
   }

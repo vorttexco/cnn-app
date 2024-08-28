@@ -22,7 +22,6 @@ abstract class BlogsViewModel extends State<Blogs> {
     webViewController.setNavigationDelegate(
       NavigationDelegate(
         onPageStarted: (String url) {
-          Logger.log('denis: $url');
           setState(() {
             isLoading = true;
           });
@@ -47,7 +46,7 @@ abstract class BlogsViewModel extends State<Blogs> {
     webViewController.loadRequest(Uri.parse(ApiBlogs.blogs));
   }
 
-  void navigateToInternalPage(String url) {
+  Future<void> navigateToInternalPage(String url) async {
     NavigatorManager(context).to(CustomWebView.route,
         data: WebviewNavigatorModel(url: url, title: 'Voltar'), onFinished: () {
       webViewController.loadRequest(Uri.parse(ApiBlogs.blogs));

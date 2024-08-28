@@ -1,9 +1,9 @@
-import '../managers/navigator_manager.dart';
-import '../../features/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../features/profile/profile.dart';
 import '../app/app_constants.dart';
+import '../managers/navigator_manager.dart';
 import 'custom_text.dart';
 
 class AppBarInternal extends StatelessWidget {
@@ -47,18 +47,24 @@ class AppBarInternal extends StatelessWidget {
           _createBackbutton(),
           Expanded(
             child: SizedBox(
-              child: titleWidget ??
-                  CustomText(
-                    title ?? '',
-                    textAlign: textAlign,
-                    fontWeight: FontWeight.w700,
-                    textColor: Colors.black,
-                    fontSize: AppConstants.KFONTSIZE_18,
-                  ),
+              child: titleWidget ?? _createBackTitle(),
             ),
           ),
           _createProfileIcon(context)
         ],
+      ),
+    );
+  }
+
+  Widget _createBackTitle() {
+    return InkWell(
+      onTap: onIconPressed,
+      child: CustomText(
+        title ?? '',
+        textAlign: textAlign,
+        fontWeight: FontWeight.w700,
+        textColor: Colors.black,
+        fontSize: AppConstants.KFONTSIZE_18,
       ),
     );
   }

@@ -44,15 +44,18 @@ class AppBarwebView extends StatelessWidget {
         children: [
           _createBackbutton(),
           Expanded(
-            child: SizedBox(
-              child: titleWidget ??
-                  CustomText(
-                    title ?? '',
-                    textAlign: textAlign,
-                    fontWeight: FontWeight.w700,
-                    textColor: Colors.black,
-                    fontSize: AppConstants.KFONTSIZE_18,
-                  ),
+            child: InkWell(
+              onTap: onIconPressed,
+              child: SizedBox(
+                child: titleWidget ??
+                    CustomText(
+                      title ?? '',
+                      textAlign: textAlign,
+                      fontWeight: FontWeight.w700,
+                      textColor: Colors.black,
+                      fontSize: AppConstants.KFONTSIZE_18,
+                    ),
+              ),
             ),
           ),
           IconButton(

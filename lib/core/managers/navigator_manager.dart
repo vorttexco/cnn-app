@@ -88,25 +88,9 @@ class NavigatorManager {
       isScrollControlled: true,
       builder: (context) => Material(
         color: Colors.transparent,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            InkWell(
-              onTap: () => Navigator.pop(context),
-              child: child,
-            ),
-            Positioned(
-              top: 100,
-              right: 16,
-              child: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
+        child: InkWell(
+          onTap: () => Navigator.pop(context),
+          child: child,
         ),
       ),
     );

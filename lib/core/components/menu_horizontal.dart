@@ -1,8 +1,5 @@
+import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
-
-import '../../core/models/home_menu_model.dart';
-import '../app/app_constants.dart';
-import 'custom_text.dart';
 
 class MenuHorizontal extends StatelessWidget {
   final List<CnnMenuModel> items;
@@ -56,7 +53,7 @@ class MenuHorizontal extends StatelessWidget {
                           bottom: BorderSide(
                     width: 3,
                     color: selectedMenu?.id == menu.id
-                        ? const Color(0xFFCC0000)
+                        ? HexColor.fromHex(menu.color?.hex ?? 'CC0000')
                         : Colors.transparent,
                   ))),
                   child: Padding(

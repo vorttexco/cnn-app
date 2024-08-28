@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../core/index.dart';
 import './profile_view_model.dart';
@@ -22,28 +23,28 @@ class ProfileView extends ProfileViewModel {
             color: Color(0xFFD6D6D6),
             thickness: 1,
           ),
-          // ListTile(
-          //   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          //   onTap: () {
-          //     OneSignal.InAppMessages.addTrigger('open-config', 'true');
-          //   },
-          //   title: const CustomText(
-          //     'Notificações',
-          //     fontSize: 18,
-          //     fontWeight: FontWeight.w800,
-          //   ),
-          //   subtitle:
-          //       const CustomText('Configure o recebimento de notificações'),
-          //   trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
-          // ),
-          // const Divider(
-          //   indent: AppConstants.KPADDING_DEFAULT,
-          //   endIndent: AppConstants.KPADDING_DEFAULT,
-          //   color: Color(0xFFD6D6D6),
-          //   height: 1,
-          //   thickness: 1,
-          // ),
-          // const Spacer(),
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            onTap: () {
+              OneSignal.InAppMessages.addTrigger('open-config', 'true');
+            },
+            title: const CustomText(
+              'Notificações',
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+            subtitle:
+                const CustomText('Configure o recebimento de notificações'),
+            trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
+          ),
+          const Divider(
+            indent: AppConstants.KPADDING_DEFAULT,
+            endIndent: AppConstants.KPADDING_DEFAULT,
+            color: Color(0xFFD6D6D6),
+            height: 1,
+            thickness: 1,
+          ),
+          const Spacer(),
           ListView.separated(
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),

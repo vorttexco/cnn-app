@@ -15,7 +15,7 @@ class BlogsView extends BlogsViewModel {
             onIconPressed: openMenu,
             iconColor: Colors.black,
             titleWidget: const CustomText(
-              'Blog',
+              'Blogs',
               fontSize: AppConstants.KFONTSIZE_18,
               fontWeight: FontWeight.w700,
               textColor: Colors.black,

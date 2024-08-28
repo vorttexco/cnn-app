@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../core/firebase_analytics_manager.dart';
 import '../../core/index.dart';
 import '../index.dart';
 
@@ -44,6 +45,12 @@ abstract class SearchViewModel extends State<Search> {
           });
         },
       ),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        FirebaseAnalyticsManager.logScreen(screenName: 'busca');
+      },
     );
   }
 

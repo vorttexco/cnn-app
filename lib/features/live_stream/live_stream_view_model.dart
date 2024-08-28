@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/firebase_analytics_manager.dart';
 import 'package:cnn_brasil_app/core/models/wrapper_live_strem_model.dart';
 import 'package:cnn_brasil_app/core/repositories/live_repository.dart';
 import 'package:cnn_brasil_app/features/live_stream/models/menu_model.dart';
@@ -61,6 +62,7 @@ abstract class LiveStreamViewModel extends State<LiveStream> {
   }
 
   Future<void> loadView() async {
+    FirebaseAnalyticsManager.logScreen(screenName: 'ao-vivo');
     loadOnlive();
     loadMenu0();
     loadMenu1();
@@ -283,6 +285,8 @@ abstract class LiveStreamViewModel extends State<LiveStream> {
   }
 
   onSelectedMenu(MenuModel model, int index) {
+    FirebaseAnalyticsManager.logScreenWithTag(
+        screenName: 'ao-vivo', tagName: model.title);
     pageController.jumpToPage(index);
     setState(() {
       menuSelected = model;

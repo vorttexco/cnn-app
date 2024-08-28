@@ -65,7 +65,7 @@ class _StorieMenuHorizontalState extends State<StorieMenuHorizontal> {
                           bottom: BorderSide(
                     width: 3,
                     color: selectedIIndex == index
-                        ? const Color(0xFFCC0000)
+                        ? menu.color
                         : Colors.transparent,
                   ))),
                   child: Padding(
