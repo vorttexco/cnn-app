@@ -99,7 +99,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
     try {
       liveOnModel = await liveRepository.onLive();
       liveUrl =
-          '${ApiHome.home}/youtube/video/?youtube_id=${liveOnModel?.live?.video?.id}&youtube_adformat=aovivo?hidemenu=true';
+          '${ApiHome.home}/youtube/video/?youtube_id=${liveOnModel?.live?.video?.id}&youtube_adformat=aovivo&hidemenu=true&youtube_mode=teatro';
 
       Logger.log(liveUrl);
     } on Exception catch (e) {
