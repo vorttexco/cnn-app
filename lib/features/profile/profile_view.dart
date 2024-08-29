@@ -30,12 +30,12 @@ class ProfileView extends ProfileViewModel {
             },
             title: const CustomText(
               'Notificações',
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w400,
             ),
             subtitle:
                 const CustomText('Configure o recebimento de notificações'),
-            trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
+                trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
+                fontSize: 12
           ),
           const Divider(
             indent: AppConstants.KPADDING_DEFAULT,
@@ -44,7 +44,7 @@ class ProfileView extends ProfileViewModel {
             height: 1,
             thickness: 1,
           ),
-          const Spacer(),
+          // const Spacer(),
           ListView.separated(
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
