@@ -32,10 +32,11 @@ class ProfileView extends ProfileViewModel {
               'Notificações',
               fontWeight: FontWeight.w400,
             ),
-            subtitle:
-                const CustomText('Configure o recebimento de notificações'),
-                trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
-                fontSize: 12
+            subtitle: const CustomText(
+              'Configure o recebimento de notificações',
+              fontSize: 12
+              ),
+              trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
           ),
           const Divider(
             indent: AppConstants.KPADDING_DEFAULT,
