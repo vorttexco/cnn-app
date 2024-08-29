@@ -49,6 +49,7 @@ class StoriesView extends StoriesViewModel {
                 itemCount: storieViewSelected?.stories.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
                   final storie = storieViewSelected?.stories[index];
+                  final itemColor = storieViewSelected?.color ?? const Color(0xFF3F4952);
                   return InkWell(
                     onTap: () => openLink(storie),
                     enableFeedback: false,
@@ -81,7 +82,7 @@ class StoriesView extends StoriesViewModel {
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                        color: storie?.color ?? const Color(0xFF3F4952),
+                                        color: itemColor,
                                         borderRadius: BorderRadius.circular(6)),
                                     child: CustomText(
                                       storie?.category?.name ?? '',
