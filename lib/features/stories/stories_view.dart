@@ -81,7 +81,7 @@ class StoriesView extends StoriesViewModel {
                                   Container(
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                        color: storie?.category?.color ?? const Color(0xFF3F4952),
+                                        color: storie?.color ?? const Color(0xFF3F4952),
                                         borderRadius: BorderRadius.circular(6)),
                                     child: CustomText(
                                       storie?.category?.name ?? '',
