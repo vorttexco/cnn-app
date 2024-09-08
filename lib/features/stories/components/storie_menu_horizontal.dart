@@ -13,8 +13,8 @@ class StorieMenuHorizontal extends StatefulWidget {
     super.key,
     required this.items,
     this.onSelectedMenu,
-    this.backgroundColor = Colors.white,
-    this.textColor = Colors.black,
+    this.backgroundColor,
+    this.textColor,
     this.showBottomLine = true,
   });
 
@@ -36,7 +36,8 @@ class _StorieMenuHorizontalState extends State<StorieMenuHorizontal> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: widget.backgroundColor,
+        color: widget.backgroundColor ??
+            Theme.of(context).colorScheme.primaryContainer,
         border: Border(
           bottom: BorderSide(
             width: 1,
@@ -61,13 +62,15 @@ class _StorieMenuHorizontalState extends State<StorieMenuHorizontal> {
                 onTap: () => onSelectedItem(menu, index),
                 child: Container(
                   decoration: BoxDecoration(
-                      border: Border(
-                          bottom: BorderSide(
-                    width: 3,
-                    color: selectedIIndex == index
-                        ? menu.color
-                        : Colors.transparent,
-                  ))),
+                    border: Border(
+                      bottom: BorderSide(
+                        width: 3,
+                        color: selectedIIndex == index
+                            ? menu.color
+                            : Colors.transparent,
+                      ),
+                    ),
+                  ),
                   child: Padding(
                     padding:
                         const EdgeInsets.only(bottom: 12, left: 1, right: 1),

@@ -16,20 +16,20 @@ class CustomVideoPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF282828),
-      ),
-      child: _createViewExpanded(),
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryContainer),
+      child: _createViewExpanded(context),
     );
   }
 
-  Widget _createViewExpanded() {
+  Widget _createViewExpanded(BuildContext context) {
     return Column(
       children: [
         Container(
           height: 220,
           padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.KPADDING_DEFAULT),
+            horizontal: AppConstants.KPADDING_DEFAULT,
+          ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             clipBehavior: Clip.hardEdge,
@@ -40,7 +40,7 @@ class CustomVideoPlayer extends StatelessWidget {
         ),
         const SizedBox(height: AppConstants.KPADDING_DEFAULT),
         Container(
-          color: const Color(0xFF282828),
+          color: Theme.of(context).colorScheme.secondaryContainer,
           height: 80,
           child: Row(
             children: [
@@ -55,7 +55,6 @@ class CustomVideoPlayer extends StatelessWidget {
                       CustomText(
                         model?.live?.title ?? '',
                         fontWeight: FontWeight.w500,
-                        textColor: Colors.white,
                         fontSize: AppConstants.KFONTSIZE_12,
                         // fontHeight: 1.4,
                       ),
@@ -65,17 +64,19 @@ class CustomVideoPlayer extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const CustomText(
+                              CustomText(
                                 'seg - sex',
                                 fontWeight: FontWeight.w400,
-                                textColor: Color(0xFFB9B9B9),
+                                textColor:
+                                    Theme.of(context).colorScheme.secondary,
                                 fontSize: AppConstants.KFONTSIZE_12,
                                 fontHeight: 1.4,
                               ),
                               CustomText(
                                 model?.live?.startTime?.hour ?? '',
                                 fontWeight: FontWeight.w400,
-                                textColor: const Color(0xFFB9B9B9),
+                                textColor:
+                                    Theme.of(context).colorScheme.secondary,
                                 fontSize: AppConstants.KFONTSIZE_12,
                                 fontHeight: 1.4,
                               ),
@@ -88,17 +89,17 @@ class CustomVideoPlayer extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const CustomText(
+                                CustomText(
                                   'Apresentação',
                                   fontWeight: FontWeight.w400,
-                                  textColor: Color(0xFFB9B9B9),
+                                  textColor:
+                                      Theme.of(context).colorScheme.secondary,
                                   fontSize: AppConstants.KFONTSIZE_12,
                                   fontHeight: 1.4,
                                 ),
                                 CustomText(
                                   model?.live?.presenter ?? '',
                                   fontWeight: FontWeight.w400,
-                                  textColor: Colors.white,
                                   fontSize: AppConstants.KFONTSIZE_12,
                                   // fontHeight: 1.4,
                                 ),
@@ -113,7 +114,7 @@ class CustomVideoPlayer extends StatelessWidget {
               ),
               Container(
                 width: 1,
-                color: const Color(0xFF565656),
+                color: Theme.of(context).colorScheme.secondary,
               ),
               Flexible(
                   child: Container(
@@ -123,10 +124,10 @@ class CustomVideoPlayer extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const CustomText(
+                        CustomText(
                           'A seguir',
                           fontWeight: FontWeight.w500,
-                          textColor: Color(0xFF909090),
+                          textColor: Theme.of(context).colorScheme.secondary,
                           fontSize: AppConstants.KFONTSIZE_12,
                           // fontHeight: 1.4,
                         ),
@@ -134,7 +135,6 @@ class CustomVideoPlayer extends StatelessWidget {
                         CustomText(
                           model?.next?.first.startTime?.hour ?? '',
                           fontWeight: FontWeight.w500,
-                          textColor: Colors.white,
                           fontSize: AppConstants.KFONTSIZE_12,
                           // fontHeight: 1.4,
                         ),
@@ -145,6 +145,8 @@ class CustomVideoPlayer extends StatelessWidget {
                       child: Image.network(
                         model?.next?.first.logo ??
                             '${ApiHome.home}/wp-content/uploads/sites/12/2023/09/logo_CNN_Prime_Time_2023_white.png',
+                        // model?.next?.first.logo ??
+                        //     '${ApiHome.home}/wp-content/uploads/sites/12/2023/09/logo_CNN_Prime_Time_2023_white.png',
                         width: 60,
                       ),
                     )

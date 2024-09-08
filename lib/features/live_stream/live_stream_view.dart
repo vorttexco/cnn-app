@@ -14,25 +14,24 @@ class LiveStreamView extends LiveStreamViewModel {
 
   Scaffold _createBody() {
     return Scaffold(
-      backgroundColor: Colors.black,
       body: Column(
         children: [
           AppBarInternal(
             onFinished: () {
               setState(() {});
             },
-            backgroundColor: Colors.black,
             icon: SvgPicture.asset(
               'assets/icons/menu.svg',
-              colorFilter:
-                  const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
             ),
             onIconPressed: openMenu,
             titleWidget: const CustomText(
               'CNN Vídeos',
               fontSize: AppConstants.KFONTSIZE_18,
               fontWeight: FontWeight.w700,
-              textColor: Colors.white,
               textAlign: TextAlign.center,
             ),
             avatar: AppManager.user != null
@@ -41,7 +40,7 @@ class LiveStreamView extends LiveStreamViewModel {
           ),
           // Menu
           Container(
-            color: const Color(0xFF282828),
+            color: Theme.of(context).colorScheme.secondaryContainer,
             child: Column(
               children: [
                 const SizedBox(height: 18),

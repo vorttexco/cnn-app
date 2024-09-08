@@ -1,9 +1,9 @@
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:cnn_brasil_app/core/firebase_analytics_manager.dart';
 import 'package:cnn_brasil_app/core/models/wrapper_live_strem_model.dart';
 import 'package:cnn_brasil_app/core/repositories/live_repository.dart';
 import 'package:cnn_brasil_app/features/live_stream/models/menu_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/index.dart';
@@ -38,11 +38,6 @@ abstract class LiveStreamViewModel extends State<LiveStream> {
   @override
   void initState() {
     super.initState();
-
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.black,
-      statusBarIconBrightness: Brightness.light,
-    ));
 
     liveOnController.setJavaScriptMode(JavaScriptMode.unrestricted);
     liveOnController.enableZoom(false);
@@ -86,7 +81,8 @@ abstract class LiveStreamViewModel extends State<LiveStream> {
           '${ApiHome.home}/youtube/video/?youtube_id=${liveOnModel?.live?.video?.id}&youtube_adformat=${listOfMenu[indexMenuSelected].adformat}?hidemenu=true';
       Logger.log(url);
 
-      liveOnController.loadRequest(Uri.parse(url));
+      liveOnController
+          .loadRequest(await Uri.parse(url).withThemeQuery(context));
     } on Exception catch (e) {
       Logger.log(e.toString());
     } finally {
@@ -272,7 +268,13 @@ abstract class LiveStreamViewModel extends State<LiveStream> {
       const NestedNavigator(child: HomeMenu()),
       header: AppBarInternal(
         textAlign: TextAlign.center,
-        icon: SvgPicture.asset('assets/icons/close_menu.svg'),
+        icon: SvgPicture.asset(
+          'assets/icons/close_menu.svg',
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.primary,
+            BlendMode.srcIn,
+          ),
+        ),
         title: 'Seções',
         onIconPressed: () {
           Navigator.of(context).pop(true);
@@ -319,7 +321,9 @@ abstract class LiveStreamViewModel extends State<LiveStream> {
         '${ApiHome.home}/youtube/video/?youtube_id=${model.id}&youtube_adformat=${listOfMenu[indexMenuSelected].adformat}?hidemenu=true';
     Logger.log(url);
 
-    controller.loadRequest(Uri.parse(url));
+    Uri.parse(url).withThemeQuery(context).then((uri) {
+      controller.loadRequest(uri);
+    });
 
     NavigatorManager(context).modalVideo(
       Center(

@@ -1,4 +1,5 @@
 import 'package:cnn_brasil_app/core/extensions/string_extension.dart';
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -57,9 +58,13 @@ class _CustomPlayerState extends State<CustomPlayer> {
   Widget build(BuildContext context) {
     if (widget.url.isNotEmpty) {
       if (isExpanded) {
-        expandedController.loadRequest(Uri.parse(widget.url));
+        Uri.parse(widget.url).withThemeQuery(context).then((uri) {
+          expandedController.loadRequest(uri);
+        });
       } else {
-        collapsedControle.loadRequest(Uri.parse(widget.url));
+        Uri.parse(widget.url).withThemeQuery(context).then((uri) {
+          collapsedControle.loadRequest(uri);
+        });
       }
     }
 

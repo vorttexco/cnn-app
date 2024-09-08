@@ -60,90 +60,90 @@ class CustomPageView extends StatelessWidget {
             ),
           ),
           ListVideoCell(
-            backgroundColor: Colors.black,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             model: menu0,
             onSelectedVideo: onSelectedVideo,
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: const Color(0xFF282828),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu1,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu2,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: const Color(0xFF282828),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu3,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu4,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: const Color(0xFF282828),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu5,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu6,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: const Color(0xFF282828),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu7,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu8,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: const Color(0xFF282828),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu9,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu10,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: const Color(0xFF282828),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu11,
               onSelectedVideo: onSelectedVideo,
             ),
           ),
           SingleChildScrollView(
             child: ListVideoCell(
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               model: menu12,
               onSelectedVideo: onSelectedVideo,
             ),

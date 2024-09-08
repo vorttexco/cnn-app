@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/features/index.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
@@ -17,10 +18,10 @@ class ProfileView extends ProfileViewModel {
       ),
       body: Column(
         children: [
-          const Divider(
+          Divider(
             indent: AppConstants.KPADDING_DEFAULT,
             endIndent: AppConstants.KPADDING_DEFAULT,
-            color: Color(0xFFD6D6D6),
+            color: Theme.of(context).colorScheme.primaryContainer,
             thickness: 1,
           ),
           ListTile(
@@ -33,18 +34,52 @@ class ProfileView extends ProfileViewModel {
               fontWeight: FontWeight.w400,
             ),
             subtitle: const CustomText(
-              'Configure o recebimento de notificações',
-              fontSize: 12
+                'Configure o recebimento de notificações',
+                fontSize: 12),
+            trailing: SvgPicture.asset(
+              'assets/icons/arrow_forward.svg',
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
               ),
-              trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
+            ),
           ),
-          const Divider(
+          Divider(
             indent: AppConstants.KPADDING_DEFAULT,
             endIndent: AppConstants.KPADDING_DEFAULT,
-            color: Color(0xFFD6D6D6),
+            color: Theme.of(context).colorScheme.primaryContainer,
             height: 1,
             thickness: 1,
           ),
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            onTap: () {
+              openPage(Themes.route);
+            },
+            title: const CustomText(
+              'Aparência',
+              fontWeight: FontWeight.w400,
+            ),
+            subtitle: const CustomText(
+                'Configure o modo claro ou escuro do app',
+                fontSize: 12),
+            trailing: SvgPicture.asset(
+              'assets/icons/arrow_forward.svg',
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Divider(
+            indent: AppConstants.KPADDING_DEFAULT,
+            endIndent: AppConstants.KPADDING_DEFAULT,
+            color: Theme.of(context).colorScheme.primaryContainer,
+            height: 1,
+            thickness: 2,
+          ),
+          const SizedBox(height: 10),
           // const Spacer(),
           ListView.separated(
             shrinkWrap: true,
@@ -55,19 +90,24 @@ class ProfileView extends ProfileViewModel {
               return SizedBox(
                 height: 50,
                 child: ListTile(
-                    onTap: () => openLink(menu),
-                    dense: true,
-                    title: CustomText(menu.title ?? '',
-                        fontWeight: FontWeight.w400),
-                    trailing:
-                        SvgPicture.asset('assets/icons/arrow_forward.svg')),
+                  onTap: () => openLink(menu),
+                  dense: true,
+                  title:
+                      CustomText(menu.title ?? '', fontWeight: FontWeight.w400),
+                  trailing: SvgPicture.asset(
+                    'assets/icons/arrow_forward.svg',
+                    colorFilter: ColorFilter.mode(
+                      Theme.of(context).colorScheme.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
               );
             },
-            separatorBuilder: (BuildContext context, int index) =>
-                const Divider(
+            separatorBuilder: (BuildContext context, int index) => Divider(
               indent: AppConstants.KPADDING_DEFAULT,
               endIndent: AppConstants.KPADDING_DEFAULT,
-              color: Color(0xFFD6D6D6),
+              color: Theme.of(context).colorScheme.primaryContainer,
               thickness: 1,
             ),
           ),

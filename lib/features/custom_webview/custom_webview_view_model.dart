@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -56,7 +57,10 @@ abstract class CustomWebviewViewModel extends State<CustomWebView> {
       ),
     );
     Logger.log(widget.navigatorModel.url);
-    controller.loadRequest(Uri.parse(widget.navigatorModel.url));
+
+    Uri.parse(widget.navigatorModel.url).withThemeQuery(context).then((uri) {
+      controller.loadRequest(uri);
+    });
   }
 
   openExternalUrl(String url) {

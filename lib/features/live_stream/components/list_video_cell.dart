@@ -32,7 +32,6 @@ class ListVideoCell extends StatelessWidget {
                     model.title,
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
-                    textColor: Colors.white,
                   ),
                 ),
                 ListView.separated(
@@ -62,7 +61,8 @@ class ListVideoCell extends StatelessWidget {
                                   'https://img.youtube.com/vi/1ZRS-JiOiVo/maxresdefault.jpg'),
                               imageErrorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: Colors.black,
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
                                   child: Center(
                                     child: Image.asset(
                                       'assets/images/logo_splash_wihite.png',
@@ -82,7 +82,6 @@ class ListVideoCell extends StatelessWidget {
                           child: CustomText(
                             video.title ?? '',
                             fontWeight: FontWeight.w700,
-                            textColor: Colors.white,
                           ),
                         )
                       ],

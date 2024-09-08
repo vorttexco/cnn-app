@@ -1,6 +1,5 @@
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -24,10 +23,6 @@ abstract class TabNavigatorViewModel extends State<TabNavigator> {
 
   @override
   void initState() {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-    ));
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback(

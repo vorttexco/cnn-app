@@ -7,6 +7,7 @@ class AppLabel {
   static get no => 'Não';
   static get yes => 'Sim';
   static get profile => 'Perfil';
+  static get themes => 'Aparência';
 
   static get ops => 'Ops :( tivemos um problema com nosso sistema.';
 }

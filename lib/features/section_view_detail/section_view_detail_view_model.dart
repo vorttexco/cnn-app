@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:cnn_brasil_app/core/repositories/sections_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -40,12 +41,18 @@ abstract class SectionViewDetailViewModel extends State<SectionViewDetail> {
     );
     Logger.log(widget.model.url ?? '');
 
-    _loadView();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        _loadView();
+      },
+    );
   }
 
   Future<void> _loadView() async {
     try {
-      controller.loadRequest(Uri.parse('${widget.model.url}?hidemenu=true'));
+      controller.loadRequest(
+          await Uri.parse('${widget.model.url}?hidemenu=true')
+              .withThemeQuery(context));
     } catch (e) {
       Logger.log(e.toString());
     } finally {
@@ -70,7 +77,9 @@ abstract class SectionViewDetailViewModel extends State<SectionViewDetail> {
     setState(() {
       menuSelected = model;
     });
-    controller.loadRequest(Uri.parse('${model.url}?hidemenu=true'));
+    Uri.parse('${model.url}?hidemenu=true').withThemeQuery(context).then((uri) {
+      controller.loadRequest(uri);
+    });
   }
 
   onBack() async {

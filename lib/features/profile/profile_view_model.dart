@@ -14,12 +14,17 @@ abstract class ProfileViewModel extends State<Profile>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    loadView();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        loadView();
+      },
+    );
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    if (widget.onClose != null) widget.onClose!();
 
     super.dispose();
   }
@@ -51,6 +56,10 @@ abstract class ProfileViewModel extends State<Profile>
       hasPermission = OneSignal.Notifications.permission;
       setState(() {});
     }
+  }
+
+  openPage(String route) {
+    NavigatorManager(context).to(route);
   }
 
   openLink(CnnMenuModel menu) async {

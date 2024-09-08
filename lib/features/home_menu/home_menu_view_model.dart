@@ -12,7 +12,11 @@ abstract class HomeMenuViewModel extends State<HomeMenu> {
   void initState() {
     super.initState();
 
-    loadView();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        loadView();
+      },
+    );
   }
 
   Future<void> loadView() async {

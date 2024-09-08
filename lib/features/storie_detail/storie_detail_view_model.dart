@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import './storie_detail.dart';
@@ -29,7 +30,9 @@ abstract class StorieDetailViewModel extends State<StorieDetail> {
       ),
     );
 
-    controller.loadRequest(Uri.parse(widget.url));
+    Uri.parse(widget.url).withThemeQuery(context).then((uri) {
+      controller.loadRequest(uri);
+    });
   }
 
   void onBack() {

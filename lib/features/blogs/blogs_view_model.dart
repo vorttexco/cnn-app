@@ -1,5 +1,5 @@
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/index.dart';
@@ -11,10 +11,6 @@ abstract class BlogsViewModel extends State<Blogs> {
 
   @override
   void initState() {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-    ));
     super.initState();
     webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
     webViewController.setBackgroundColor(const Color(0x00000000));
@@ -26,7 +22,7 @@ abstract class BlogsViewModel extends State<Blogs> {
             isLoading = true;
           });
 
-          if (url != ApiBlogs.blogs) {
+          if (url.split('?').first != ApiBlogs.blogs.split('?').first) {
             navigateToInternalPage(url);
             return;
           }
@@ -43,13 +39,33 @@ abstract class BlogsViewModel extends State<Blogs> {
         },
       ),
     );
-    webViewController.loadRequest(Uri.parse(ApiBlogs.blogs));
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        _loadView();
+      },
+    );
+  }
+
+  Future<void> _loadView() async {
+    try {
+      webViewController
+          .loadRequest(await Uri.parse(ApiBlogs.blogs).withThemeQuery(context));
+    } catch (e) {
+      Logger.log(e.toString());
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   Future<void> navigateToInternalPage(String url) async {
     NavigatorManager(context).to(CustomWebView.route,
         data: WebviewNavigatorModel(url: url, title: 'Voltar'), onFinished: () {
-      webViewController.loadRequest(Uri.parse(ApiBlogs.blogs));
+      Uri.parse(ApiBlogs.blogs).withThemeQuery(context).then((uri) {
+        webViewController.loadRequest(uri);
+      });
     });
   }
 
@@ -58,7 +74,13 @@ abstract class BlogsViewModel extends State<Blogs> {
       const NestedNavigator(child: HomeMenu()),
       header: AppBarInternal(
         textAlign: TextAlign.center,
-        icon: SvgPicture.asset('assets/icons/close_menu.svg'),
+        icon: SvgPicture.asset(
+          'assets/icons/close_menu.svg',
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.primary,
+            BlendMode.srcIn,
+          ),
+        ),
         title: 'Seções',
         onIconPressed: () {
           Navigator.of(context).pop(true);

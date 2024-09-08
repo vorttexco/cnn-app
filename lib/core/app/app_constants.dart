@@ -27,6 +27,9 @@ class AppConstants {
   static const String SHARED_PREFERENCES_SAVE_USER =
       'SHARED_PREFERENCES_SAVE_USER';
 
+  static const String SHARED_PREFERENCES_THEME_MODE =
+      'SHARED_PREFERENCES_THEME_MODE';
+
   static const _ONESIGNAL_PRO_KEY = '25d68d0c-ab94-4b2a-93bd-1e9dc3318e58';
   static const _ONESIGNAL_DEV_KEY = 'e59bb0fc-f8ee-4eb9-90d6-c74de78232f0';
   static const ONESIGNAL_KEY =

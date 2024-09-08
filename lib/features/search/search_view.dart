@@ -1,4 +1,7 @@
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
+import 'package:cnn_brasil_app/core/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../core/index.dart';
 import './search_view_model.dart';
@@ -10,22 +13,54 @@ class SearchView extends SearchViewModel {
       body: Column(
         children: [
           AppBarInternal(
-            iconColor: Colors.black,
             onFinished: () {
               setState(() {});
             },
-            icon: SvgPicture.asset('assets/icons/menu.svg'),
+            onThemeUpdated: () async {
+              var url = await webViewController.currentUrl();
+
+              if (url == null) return;
+
+              webViewController
+                  .loadRequest(await Uri.parse(url).withThemeQuery(context));
+            },
+            icon: SvgPicture.asset(
+              'assets/icons/menu.svg',
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
+            ),
             onIconPressed: openMenu,
             titleWidget: SizedBox(
               height: 30,
               child: InkWell(
-                  onTap: onTapLogo,
-                  child: SvgPicture.asset('assets/icons/logo_cnn_header.svg')),
+                onTap: onTapLogo,
+                child: SvgPicture.asset('assets/icons/logo_cnn_header.svg',
+                    colorFilter: Provider.of<ThemeProvider>(context)
+                                    .themeMode ==
+                                ThemeMode.dark ||
+                            (Provider.of<ThemeProvider>(context).themeMode ==
+                                    ThemeMode.system &&
+                                MediaQuery.of(context).platformBrightness ==
+                                    Brightness.dark)
+                        ? const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcIn,
+                          )
+                        : null),
+              ),
             ),
             avatar: AppManager.user != null
                 ? Image.network(AppManager.user?.picture ?? '')
                 : null,
           ),
+          Divider(
+            height: 1,
+            color: Theme.of(context).colorScheme.primaryContainer,
+            thickness: 1,
+          ),
+          const SizedBox(height: AppConstants.KPADDING_DEFAULT),
           Padding(
             padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.KPADDING_DEFAULT),
@@ -66,9 +101,9 @@ class SearchView extends SearchViewModel {
             ),
           ),
           const SizedBox(height: AppConstants.KPADDING_DEFAULT),
-          const Divider(
+          Divider(
             height: 1,
-            color: Color(0xFFDCDCDC),
+            color: Theme.of(context).colorScheme.primaryContainer,
             thickness: 1,
           ),
           const SizedBox(height: AppConstants.KPADDING_DEFAULT),

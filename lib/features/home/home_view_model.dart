@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/index.dart';
@@ -27,10 +27,6 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-    ));
 
     WidgetsBinding.instance.addObserver(this);
 
@@ -46,7 +42,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
           setState(() {
             isLoading = true;
           });
-          if (!isFromMenu && url != '${ApiHome.home}/?hidemenu=true') {
+          if (!isFromMenu && url.split('?').first != '${ApiHome.home}/') {
             navigateToInternalPage(url);
             return;
           }
@@ -65,7 +61,11 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
       ),
     );
 
-    loadView();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        loadView();
+      },
+    );
   }
 
   @override
@@ -86,8 +86,9 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   Future<void> loadView() async {
     isFromMenu = true;
     try {
-      webViewController
-          .loadRequest(Uri.parse('${ApiHome.home}/?hidemenu=true'));
+      webViewController.loadRequest(
+          await Uri.parse('${ApiHome.home}/?hidemenu=true')
+              .withThemeQuery(context));
       listOfHomeMenu = await HomeRepository(ApiConnector()).menuHome();
     } finally {
       setState(() {});
@@ -122,7 +123,11 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
       selectedMenu = menu;
     });
     try {
-      webViewController.loadRequest(Uri.parse('${menu.url}?hidemenu=true'));
+      Uri.parse('${menu.url}?hidemenu=true')
+          .withThemeQuery(context)
+          .then((uri) {
+        webViewController.loadRequest(uri);
+      });
     } on Exception catch (e) {
       Logger.log(e.toString());
     } finally {}
@@ -140,8 +145,11 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
     });
 
     try {
-      webViewController
-          .loadRequest(Uri.parse('${ApiHome.home}/?hidemenu=true'));
+      Uri.parse('${ApiHome.home}/?hidemenu=true')
+          .withThemeQuery(context)
+          .then((uri) {
+        webViewController.loadRequest(uri);
+      });
     } on Exception catch (e) {
       Logger.log(e.toString());
     } finally {}
@@ -151,12 +159,18 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
     NavigatorManager(context).modal(const Profile(), fullscreenDialog: true);
   }
 
-  void openMenu() {
+  void openMenu() async {
     NavigatorManager(context).fullModal(
       const NestedNavigator(child: HomeMenu()),
       header: AppBarInternal(
         textAlign: TextAlign.center,
-        icon: SvgPicture.asset('assets/icons/close_menu.svg'),
+        icon: SvgPicture.asset(
+          'assets/icons/close_menu.svg',
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.primary,
+            BlendMode.srcIn,
+          ),
+        ),
         title: 'Seções',
         onIconPressed: () {
           Navigator.of(context).pop(true);

@@ -15,8 +15,8 @@ class LiveMenuHorizontal extends StatefulWidget {
     required this.items,
     required this.selectedIndex,
     this.onSelectedMenu,
-    this.backgroundColor = Colors.white,
-    this.textColor = Colors.black,
+    this.backgroundColor,
+    this.textColor,
     this.showBottomLine = true,
   });
 
@@ -34,8 +34,8 @@ class _LiveMenuHorizontalState extends State<LiveMenuHorizontal> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF282828),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
       ),
       height: 35,
       child: ListView.separated(
@@ -50,17 +50,23 @@ class _LiveMenuHorizontalState extends State<LiveMenuHorizontal> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 0),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  color: widget.selectedIndex == index
-                      ? Colors.white
-                      : Colors.transparent,
-                  border: Border.all(width: 1, color: const Color(0xFF515151))),
+                borderRadius: BorderRadius.circular(6),
+                color: widget.selectedIndex == index
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).scaffoldBackgroundColor,
+                border: widget.selectedIndex == index
+                    ? null
+                    : Border.all(
+                        width: 1,
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                      ),
+              ),
               child: Center(
                 child: CustomText(
                   menu.title,
                   textColor: widget.selectedIndex == index
-                      ? Colors.black
-                      : Colors.white,
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w700,
                   fontSize: AppConstants.KFONTSIZE_12,
                 ),

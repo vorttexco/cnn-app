@@ -1,7 +1,9 @@
 // ignore_for_file: library_prefixes
 
+import 'package:cnn_brasil_app/core/app/app_themes.dart';
 import 'package:cnn_brasil_app/core/components/custom_error.dart';
 import 'package:cnn_brasil_app/core/index.dart';
+import 'package:cnn_brasil_app/core/providers/theme_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,11 +42,28 @@ Future<void> main() async {
   }
   AppManager.setBaseUrl(ProdConfig.FlavorConfig.apiUrl);
 
+  final themePreference = await StorageManager()
+      .getString(AppConstants.SHARED_PREFERENCES_THEME_MODE);
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FullscreenProvider()),
         ChangeNotifierProvider(create: (_) => TabbarProvider()),
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(
+            ThemeMode.values.firstWhere(
+              (mode) => mode.toString() == themePreference,
+              orElse: () {
+                StorageManager().setString(
+                    AppConstants.SHARED_PREFERENCES_THEME_MODE,
+                    ThemeMode.light.toString());
+
+                return ThemeMode.light;
+              },
+            ),
+          ),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -74,13 +93,10 @@ class MyApp extends StatelessWidget {
       },
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Cnn BRasil',
-        theme: ThemeData(
-            useMaterial3: true,
-            scaffoldBackgroundColor: AppColor.scaffoldBackgroundColor,
-            appBarTheme: const AppBarTheme(
-              backgroundColor: AppColor.scaffoldBackgroundColor,
-            )),
+        title: 'Cnn Brasil',
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: Provider.of<ThemeProvider>(context).themeMode,
         onGenerateRoute: AppRouters.generateRoute,
       ),
     );

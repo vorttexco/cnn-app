@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/managers/storage_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -13,9 +14,10 @@ class AppBarInternal extends StatelessWidget {
   final Widget? icon;
   final VoidCallback onIconPressed;
   final TextAlign textAlign;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final VoidCallback? onFinished;
-  final Color iconColor;
+  final VoidCallback? onThemeUpdated;
+  final Color? iconColor;
 
   const AppBarInternal({
     super.key,
@@ -25,16 +27,17 @@ class AppBarInternal extends StatelessWidget {
     this.icon,
     this.textAlign = TextAlign.start,
     this.titleWidget,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor,
     this.onFinished,
-    this.iconColor = Colors.white,
+    this.iconColor,
+    this.onThemeUpdated,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 110,
-      color: backgroundColor,
+      color: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       padding: const EdgeInsets.only(
         left: AppConstants.KPADDING_16,
         right: AppConstants.KPADDING_16,
@@ -44,7 +47,7 @@ class AppBarInternal extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          _createBackbutton(),
+          _createBackbutton(context),
           Expanded(
             child: SizedBox(
               child: titleWidget ?? _createBackTitle(),
@@ -63,33 +66,54 @@ class AppBarInternal extends StatelessWidget {
         title ?? '',
         textAlign: textAlign,
         fontWeight: FontWeight.w700,
-        textColor: Colors.black,
         fontSize: AppConstants.KFONTSIZE_18,
       ),
     );
   }
 
-  Widget _createBackbutton() {
+  Widget _createBackbutton(BuildContext context) {
     return InkWell(
       onTap: onIconPressed,
       child: Container(
         padding: const EdgeInsets.only(
-            top: 5, right: AppConstants.KPADDING_16, bottom: 5),
+          top: 5,
+          right: AppConstants.KPADDING_16,
+          bottom: 5,
+        ),
         child: icon ??
             SvgPicture.asset(
               'assets/icons/arrow_back.svg',
               height: 20,
+              colorFilter: ColorFilter.mode(
+                iconColor ?? Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
             ),
       ),
     );
   }
 
+  _compareThemes(String? oldTheme) async {
+    if (onThemeUpdated == null) return;
+
+    String? newTheme = await StorageManager()
+        .getString(AppConstants.SHARED_PREFERENCES_THEME_MODE);
+
+    if (oldTheme != newTheme && onThemeUpdated != null) {
+      onThemeUpdated!();
+    }
+  }
+
   InkWell _createProfileIcon(BuildContext context) {
     return InkWell(
       enableFeedback: false,
-      onTap: () {
+      onTap: () async {
+        String? theme = await StorageManager()
+            .getString(AppConstants.SHARED_PREFERENCES_THEME_MODE);
         NavigatorManager(context).modal(
-          const Profile(),
+          Profile(
+            onClose: () => _compareThemes(theme),
+          ),
           fullscreenDialog: true,
           onFinished: onFinished,
         );
@@ -104,7 +128,10 @@ class AppBarInternal extends StatelessWidget {
         child: avatar ??
             SvgPicture.asset(
               'assets/icons/settings_icon.svg',
-              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(
+                iconColor ?? Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
             ),
       ),
     );

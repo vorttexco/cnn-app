@@ -3,7 +3,8 @@ import './profile_view.dart';
 
 class Profile extends StatefulWidget {
   static const route = '/Profile/';
-  const Profile({super.key});
+  final Function()? onClose;
+  const Profile({super.key, this.onClose});
 
   @override
   ProfileView createState() => ProfileView();

@@ -28,10 +28,10 @@ class CellMenuView extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                const Divider(
+                Divider(
                   indent: AppConstants.KPADDING_8,
                   height: 0,
-                  color: Color(0xFFE2E2E2),
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   thickness: 1,
                 ),
                 Expanded(

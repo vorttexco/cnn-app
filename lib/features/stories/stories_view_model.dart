@@ -1,6 +1,5 @@
 import 'package:cnn_brasil_app/core/models/wrapper_stories.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../core/firebase_analytics_manager.dart';
 import '../../core/index.dart';
@@ -14,12 +13,12 @@ abstract class StoriesViewModel extends State<Stories> {
 
   @override
   void initState() {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.black,
-      statusBarIconBrightness: Brightness.light,
-    ));
     super.initState();
-    loadView();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        loadView();
+      },
+    );
   }
 
   Future<void> loadView() async {
@@ -62,7 +61,13 @@ abstract class StoriesViewModel extends State<Stories> {
       const NestedNavigator(child: HomeMenu()),
       header: AppBarInternal(
         textAlign: TextAlign.center,
-        icon: SvgPicture.asset('assets/icons/close_menu.svg'),
+        icon: SvgPicture.asset(
+          'assets/icons/close_menu.svg',
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.primary,
+            BlendMode.srcIn,
+          ),
+        ),
         title: 'Seções',
         onIconPressed: () {
           Navigator.of(context).pop(true);

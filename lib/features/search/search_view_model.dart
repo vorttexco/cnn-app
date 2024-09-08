@@ -1,5 +1,5 @@
+import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -16,10 +16,7 @@ abstract class SearchViewModel extends State<Search> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-    ));
+
     webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
     webViewController.setBackgroundColor(const Color(0x00000000));
     webViewController.enableZoom(false);
@@ -69,10 +66,12 @@ abstract class SearchViewModel extends State<Search> {
   void onSearch(String value) {
     _debounce(
       () {
-        webViewController.loadRequest(
-          Uri.parse(
-              '${ApiHome.home}/?s=$value&orderby=date&order=desc&hidemenu=true'),
-        );
+        Uri.parse(
+                '${ApiHome.home}/?s=$value&orderby=date&order=desc&hidemenu=true')
+            .withThemeQuery(context)
+            .then((uri) {
+          webViewController.loadRequest(uri);
+        });
       },
     );
   }
@@ -82,7 +81,13 @@ abstract class SearchViewModel extends State<Search> {
       const NestedNavigator(child: HomeMenu()),
       header: AppBarInternal(
         textAlign: TextAlign.center,
-        icon: SvgPicture.asset('assets/icons/close_menu.svg'),
+        icon: SvgPicture.asset(
+          'assets/icons/close_menu.svg',
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.primary,
+            BlendMode.srcIn,
+          ),
+        ),
         title: 'Seções',
         onIconPressed: () {
           Navigator.of(context).pop(true);

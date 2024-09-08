@@ -1,16 +1,6 @@
 import 'package:cnn_brasil_app/core/index.dart';
-import 'package:cnn_brasil_app/features/section_view_detail/section_view_detail.dart';
-import 'package:cnn_brasil_app/features/submenu/submenu.dart';
+import 'package:cnn_brasil_app/features/index.dart';
 import 'package:flutter/material.dart';
-
-import '../../../features/blogs/blogs.dart';
-import '../../../features/custom_webview/custom_webview.dart';
-import '../../../features/home/home.dart';
-import '../../../features/live_stream/live_stream.dart';
-import '../../../features/search/search.dart';
-import '../../../features/splash/splash.dart';
-import '../../../features/stories/stories.dart';
-import '../../../features/tab_navigator/tab_navigator.dart';
 
 class AppRouters {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -29,6 +19,8 @@ class AppRouters {
         return MaterialPageRoute(builder: (_) => const Stories());
       case Search.route:
         return MaterialPageRoute(builder: (_) => const Search());
+      case Themes.route:
+        return MaterialPageRoute(builder: (_) => const Themes());
       case SectionViewDetail.route:
         return MaterialPageRoute(
             builder: (_) => SectionViewDetail(
