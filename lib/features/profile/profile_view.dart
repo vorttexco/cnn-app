@@ -71,15 +71,12 @@ class ProfileView extends ProfileViewModel {
               ),
             ),
           ),
-          const SizedBox(height: 20),
           Divider(
             indent: AppConstants.KPADDING_DEFAULT,
             endIndent: AppConstants.KPADDING_DEFAULT,
             color: Theme.of(context).colorScheme.primaryContainer,
-            height: 1,
-            thickness: 2,
+            thickness: 1,
           ),
-          const SizedBox(height: 10),
           // const Spacer(),
           ListView.separated(
             shrinkWrap: true,
