@@ -34,8 +34,9 @@ class ProfileView extends ProfileViewModel {
               fontWeight: FontWeight.w400,
             ),
             subtitle: const CustomText(
-                'Configure o recebimento de notificações',
-                fontSize: 12),
+              'Configure o recebimento de notificações',
+              fontSize: 12,
+            ),
             trailing: SvgPicture.asset(
               'assets/icons/arrow_forward.svg',
               colorFilter: ColorFilter.mode(
@@ -48,7 +49,6 @@ class ProfileView extends ProfileViewModel {
             indent: AppConstants.KPADDING_DEFAULT,
             endIndent: AppConstants.KPADDING_DEFAULT,
             color: Theme.of(context).colorScheme.primaryContainer,
-            height: 1,
             thickness: 1,
           ),
           ListTile(
