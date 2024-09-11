@@ -1,4 +1,5 @@
 import 'package:cnn_brasil_app/features/index.dart';
+import 'package:cnn_brasil_app/features/notifications_settings/notifications_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
@@ -27,7 +28,7 @@ class ProfileView extends ProfileViewModel {
           ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             onTap: () {
-              OneSignal.InAppMessages.addTrigger('open-config', 'true');
+              Navigator.pushNamed(context, NotificationsSettings.route);
             },
             title: const CustomText(
               'Notificações',

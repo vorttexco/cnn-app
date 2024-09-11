@@ -1,5 +1,6 @@
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:cnn_brasil_app/features/index.dart';
+import 'package:cnn_brasil_app/features/notifications_settings/notifications_settings.dart';
 import 'package:flutter/material.dart';
 
 class AppRouters {
@@ -21,6 +22,8 @@ class AppRouters {
         return MaterialPageRoute(builder: (_) => const Search());
       case Themes.route:
         return MaterialPageRoute(builder: (_) => const Themes());
+      case NotificationsSettings.route:
+        return MaterialPageRoute(builder: (_) => const NotificationsSettings());
       case SectionViewDetail.route:
         return MaterialPageRoute(
             builder: (_) => SectionViewDetail(
