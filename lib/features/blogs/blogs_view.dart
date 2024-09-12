@@ -1,5 +1,5 @@
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/index.dart';
 import './blogs_view_model.dart';
@@ -29,8 +29,12 @@ class BlogsView extends BlogsViewModel {
                 : null,
           ),
           Expanded(
-            child: WebViewWidget(
-              controller: webViewController,
+            child: CustomInAppWebViewComponent(
+              onCreated: (controllerOrigin) {
+                controller = controllerOrigin;
+              },
+              initialUrl: ApiBlogs.blogs,
+              openExternalUrl: navigateToInternalPage,
             ),
           ),
         ],

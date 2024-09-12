@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/index.dart';
@@ -73,9 +74,12 @@ class SearchView extends SearchViewModel {
           ),
           const SizedBox(height: AppConstants.KPADDING_DEFAULT),
           Expanded(
-            child: CustomWebViewComponent(
-              isLoading: isLoading,
-              webViewController: webViewController,
+            child: CustomInAppWebViewComponent(
+              initialUrl: '',
+              onCreated: (controllerOrigin) {
+                controller = controllerOrigin;
+              },
+              openExternalUrl: navigateToInternalPage,
             ),
           )
         ],

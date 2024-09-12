@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/index.dart';
@@ -13,9 +14,11 @@ class StorieDetailView extends StorieDetailViewModel {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 80),
-            child: CustomWebViewComponent(
-              webViewController: controller,
-              isLoading: isLoading,
+            child: CustomInAppWebViewComponent(
+              initialUrl: widget.url,
+              onCreated: (controllerOrigin) {
+                controller = controllerOrigin;
+              },
             ),
           ),
           Positioned(

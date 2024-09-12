@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -59,9 +60,12 @@ class HomeView extends HomeViewModel {
             scrollController: scrollControllerMenu,
           ),
           Expanded(
-              child: CustomWebViewComponent(
-            webViewController: webViewController,
-            isLoading: isLoading,
+              child: CustomInAppWebViewComponent(
+            openExternalUrl: navigateToInternalPage,
+            initialUrl: '${ApiHome.home}/?hidemenu=true',
+            onCreated: (controller) async {
+              inAppWebViewController = controller; 
+            },
           ))
         ],
       ),

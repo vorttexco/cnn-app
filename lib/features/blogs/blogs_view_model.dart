@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../../core/index.dart';
 import '../index.dart';
 
 abstract class BlogsViewModel extends State<Blogs> {
-  final webViewController = WebViewController();
+  late InAppWebViewController controller;
   bool isLoading = false;
 
   @override
@@ -16,40 +16,12 @@ abstract class BlogsViewModel extends State<Blogs> {
       statusBarIconBrightness: Brightness.dark,
     ));
     super.initState();
-    webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
-    webViewController.setBackgroundColor(const Color(0x00000000));
-    webViewController.enableZoom(false);
-    webViewController.setNavigationDelegate(
-      NavigationDelegate(
-        onPageStarted: (String url) {
-          setState(() {
-            isLoading = true;
-          });
-
-          if (url != ApiBlogs.blogs) {
-            navigateToInternalPage(url);
-            return;
-          }
-        },
-        onPageFinished: (url) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-        onWebResourceError: (error) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-      ),
-    );
-    webViewController.loadRequest(Uri.parse(ApiBlogs.blogs));
   }
 
   Future<void> navigateToInternalPage(String url) async {
     NavigatorManager(context).to(CustomWebView.route,
         data: WebviewNavigatorModel(url: url, title: 'Voltar'), onFinished: () {
-      webViewController.loadRequest(Uri.parse(ApiBlogs.blogs));
+      controller.goBack();
     });
   }
 

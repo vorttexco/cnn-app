@@ -129,22 +129,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
-  device_frame:
-    dependency: transitive
-    description:
-      name: device_frame
-      sha256: d031a06f5d6f4750009672db98a5aa1536aa4a231713852469ce394779a23d75
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
-  device_preview:
-    dependency: "direct main"
-    description:
-      name: device_preview
-      sha256: a694acdd3894b4c7d600f4ee413afc4ff917f76026b97ab06575fe886429ef19
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   dio:
     dependency: "direct main"
     description:
@@ -247,7 +231,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_inappwebview:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_inappwebview
       sha256: "3e9a443a18ecef966fb930c3a76ca5ab6a7aafc0c7b5e14a4a850cf107b09959"
@@ -318,11 +302,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
-  flutter_localizations:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   flutter_native_splash:
     dependency: "direct dev"
     description:
@@ -349,14 +328,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  freezed_annotation:
-    dependency: transitive
-    description:
-      name: freezed_annotation
-      sha256: c2e2d632dd9b8a2b7751117abcfc2b4888ecfe181bd9fca7170d9ef02e595fe2
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.4"
   google_fonts:
     dependency: "direct main"
     description:
@@ -445,14 +416,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.0"
-  intl:
-    dependency: transitive
-    description:
-      name: intl
-      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.19.0"
   js:
     dependency: transitive
     description:

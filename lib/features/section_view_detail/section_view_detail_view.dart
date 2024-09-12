@@ -1,4 +1,6 @@
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
 import 'package:flutter/material.dart';
+
 import '../../core/index.dart';
 import './section_view_detail_view_model.dart';
 
@@ -68,9 +70,11 @@ class SectionViewDetailView extends SectionViewDetailViewModel {
               thickness: 1,
             ),
             Expanded(
-              child: CustomWebViewComponent(
-                webViewController: controller,
-                isLoading: isLoading,
+              child: CustomInAppWebViewComponent(
+                initialUrl: '${widget.model.url}?hidemenu=true',
+                onCreated: (controllerOrigin) {
+                  controller = controllerOrigin;
+                },
               ),
             ),
           ],
