@@ -23,56 +23,42 @@ class ProfileView extends ProfileViewModel {
             color: Color(0xFFD6D6D6),
             thickness: 1,
           ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 5.0),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: AppConstants.KPADDING_DEFAULT),
-              onTap: () {
-                OneSignal.InAppMessages.addTrigger('open-config', 'true');
-              },
-              title: const CustomText(
-                'Notificações',
-                fontWeight: FontWeight.w400,
-              ),
-              subtitle: const CustomText(
-                'Configure o recebimento de notificações',
-                fontSize: 12,
-              ),
-              trailing: Container(
-                margin: const EdgeInsets.only(right: 5.0),
-                child: SvgPicture.asset(
-                'assets/icons/arrow_forward.svg',
-                height: 24,
-                width: 24,
-                ),
-              ),
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            onTap: () {
+              OneSignal.InAppMessages.addTrigger('open-config', 'true');
+            },
+            title: const CustomText(
+              'Notificações',
+              fontWeight: FontWeight.w400,
             ),
+            subtitle: const CustomText(
+                'Configure o recebimento de notificações',
+                fontSize: 12),
+            trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
           ),
           const Divider(
             indent: AppConstants.KPADDING_DEFAULT,
             endIndent: AppConstants.KPADDING_DEFAULT,
             color: Color(0xFFD6D6D6),
+            height: 1,
             thickness: 1,
           ),
+          const SizedBox(height: 8),
           ListView.separated(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             itemCount: listOfMenu.length,
             itemBuilder: (BuildContext context, int index) {
               final menu = listOfMenu[index];
-              return SizedBox(
-                height: 50,
-                child: ListTile(
-                    onTap: () => openLink(menu),
-                    dense: true,
-                    title: CustomText(menu.title ?? '',
-                        fontWeight: FontWeight.w400),
-                    trailing:
-                        SvgPicture.asset('assets/icons/arrow_forward.svg',
-                        height: 24,
-                        width: 24,
-                    )),
-              );
+              return ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  onTap: () => openLink(menu),
+                  dense: true,
+                  title:
+                      CustomText(menu.title ?? '', fontWeight: FontWeight.w400),
+                  trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'));
             },
             separatorBuilder: (BuildContext context, int index) =>
                 const Divider(
@@ -81,6 +67,14 @@ class ProfileView extends ProfileViewModel {
               color: Color(0xFFD6D6D6),
               thickness: 1,
             ),
+          ),
+          const SizedBox(height: 8),
+          const Divider(
+            indent: AppConstants.KPADDING_DEFAULT,
+            endIndent: AppConstants.KPADDING_DEFAULT,
+            color: Color(0xFFD6D6D6),
+            height: 1,
+            thickness: 1,
           ),
           const SizedBox(height: 49),
         ],
