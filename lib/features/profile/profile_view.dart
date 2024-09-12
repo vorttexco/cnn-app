@@ -36,7 +36,11 @@ class ProfileView extends ProfileViewModel {
               'Configure o recebimento de notificações',
               fontSize: 12
               ),
-              trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
+              trailing: SvgPicture.asset(
+                'assets/icons/arrow_forward.svg',
+                height: 24,
+                width: 24,
+              ),
           ),
           const Divider(
             indent: AppConstants.KPADDING_DEFAULT,
@@ -58,7 +62,10 @@ class ProfileView extends ProfileViewModel {
                     title: CustomText(menu.title ?? '',
                         fontWeight: FontWeight.w400),
                     trailing:
-                        SvgPicture.asset('assets/icons/arrow_forward.svg')),
+                        SvgPicture.asset('assets/icons/arrow_forward.svg',
+                        height: 24,
+                        width: 24,
+                    )),
               );
             },
             separatorBuilder: (BuildContext context, int index) =>
