@@ -24,7 +24,7 @@ class ProfileView extends ProfileViewModel {
             thickness: 1,
           ),
           ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(horizontal: AppConstants.KPADDING_DEFAULT),
             onTap: () {
               OneSignal.InAppMessages.addTrigger('open-config', 'true');
             },
@@ -42,10 +42,8 @@ class ProfileView extends ProfileViewModel {
             indent: AppConstants.KPADDING_DEFAULT,
             endIndent: AppConstants.KPADDING_DEFAULT,
             color: Color(0xFFD6D6D6),
-            height: 1,
             thickness: 1,
           ),
-          // const Spacer(),
           ListView.separated(
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
