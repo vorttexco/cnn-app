@@ -23,24 +23,27 @@ class ProfileView extends ProfileViewModel {
             color: Color(0xFFD6D6D6),
             thickness: 1,
           ),
-          ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: AppConstants.KPADDING_DEFAULT),
-            onTap: () {
-              OneSignal.InAppMessages.addTrigger('open-config', 'true');
-            },
-            title: const CustomText(
-              'Notificações',
-              fontWeight: FontWeight.w400,
-            ),
-            subtitle: const CustomText(
-              'Configure o recebimento de notificações',
-              fontSize: 12
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0), // Adiciona uma margem inferior de 16 pixels
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: AppConstants.KPADDING_DEFAULT),
+              onTap: () {
+                OneSignal.InAppMessages.addTrigger('open-config', 'true');
+              },
+              title: const CustomText(
+                'Notificações',
+                fontWeight: FontWeight.w400,
+              ),
+              subtitle: const CustomText(
+                'Configure o recebimento de notificações',
+                fontSize: 12,
               ),
               trailing: SvgPicture.asset(
                 'assets/icons/arrow_forward.svg',
                 height: 24,
                 width: 24,
               ),
+            ),
           ),
           const Divider(
             indent: AppConstants.KPADDING_DEFAULT,
