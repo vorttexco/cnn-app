@@ -23,8 +23,8 @@ class ProfileView extends ProfileViewModel {
             color: Color(0xFFD6D6D6),
             thickness: 1,
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0), // Adiciona uma margem inferior de 16 pixels
+          Container(
+            margin: const EdgeInsets.only(bottom: 5.0),
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: AppConstants.KPADDING_DEFAULT),
               onTap: () {
@@ -38,10 +38,13 @@ class ProfileView extends ProfileViewModel {
                 'Configure o recebimento de notificações',
                 fontSize: 12,
               ),
-              trailing: SvgPicture.asset(
+              trailing: Container(
+                margin: const EdgeInsets.only(right: 5.0),
+                child: SvgPicture.asset(
                 'assets/icons/arrow_forward.svg',
                 height: 24,
                 width: 24,
+                ),
               ),
             ),
           ),
