@@ -38,7 +38,7 @@ class _CustomInAppWebViewComponentState
     disableDefaultErrorPage: false,
   );
 
-  InAppWebViewController? _controller;
+  // InAppWebViewController? _controller;
 
   @override
   Widget build(BuildContext context) {
