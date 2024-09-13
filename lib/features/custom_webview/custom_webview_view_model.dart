@@ -1,79 +1,23 @@
 // ignore_for_file: use_build_context_synchronously
-
-import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/index.dart';
 import './custom_webview.dart';
 
 abstract class CustomWebviewViewModel extends State<CustomWebView> {
-  final controller = WebViewController();
-
-  bool isLoading = true;
+  late InAppWebViewController controller;
   String currentUrl = '';
 
   @override
   void initState() {
     super.initState();
     currentUrl = widget.navigatorModel.url;
-    controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-    controller.setBackgroundColor(const Color(0x00000000));
-    controller.enableZoom(false);
-
-    controller.setNavigationDelegate(
-      NavigationDelegate(
-        onNavigationRequest: (request) {
-          if (request.url.contains('t.teads.tv') ||
-              request.url.contains('googleadservices.com/pagead/aclk') ||
-              request.url.contains('googleads.g.doubleclick.net') ||
-              request.url.contains('adclick.g.doubleclick.net')) {
-            openExternalUrl(request.url);
-            return NavigationDecision.prevent;
-          }
-          if (request.url.startsWith('https://www.cnnbrasil.com.br') &&
-              !request.url.contains('wp-')) {
-            currentUrl = request.url;
-          }
-          return NavigationDecision.navigate;
-        },
-        onPageStarted: (String url) {
-          setState(() {
-            isLoading = true;
-          });
-        },
-        onPageFinished: (url) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-        onWebResourceError: (WebResourceError error) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-      ),
-    );
-    Logger.log(widget.navigatorModel.url);
-
-    Uri.parse(widget.navigatorModel.url).withThemeQuery(context).then((uri) {
-      controller.loadRequest(uri);
-    });
-  }
-
-  openExternalUrl(String url) {
-    try {
-      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    } catch (e) {
-      Logger.log(e.toString());
-    }
   }
 
   onBack() async {
     if (await controller.canGoBack()) {
-      isLoading = false;
       controller.goBack();
       return;
     }

@@ -10,10 +10,10 @@ class AppBarwebView extends StatelessWidget {
   final Widget? icon;
   final VoidCallback onIconPressed;
   final TextAlign textAlign;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final VoidCallback? onFinished;
   final VoidCallback? onShare;
-  final Color iconColor;
+  final Color? iconColor;
 
   const AppBarwebView({
     super.key,
@@ -22,9 +22,9 @@ class AppBarwebView extends StatelessWidget {
     this.icon,
     this.textAlign = TextAlign.start,
     this.titleWidget,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor,
     this.onFinished,
-    this.iconColor = Colors.white,
+    this.iconColor,
     this.onShare,
   });
 
@@ -32,7 +32,7 @@ class AppBarwebView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 110,
-      color: backgroundColor,
+      color: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       padding: const EdgeInsets.only(
         left: AppConstants.KPADDING_16,
         right: AppConstants.KPADDING_16,
@@ -42,7 +42,7 @@ class AppBarwebView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          _createBackbutton(),
+          _createBackbutton(context),
           Expanded(
             child: InkWell(
               onTap: onIconPressed,
@@ -52,7 +52,6 @@ class AppBarwebView extends StatelessWidget {
                       title ?? '',
                       textAlign: textAlign,
                       fontWeight: FontWeight.w700,
-                      textColor: Colors.black,
                       fontSize: AppConstants.KFONTSIZE_18,
                     ),
               ),
@@ -67,7 +66,7 @@ class AppBarwebView extends StatelessWidget {
     );
   }
 
-  Widget _createBackbutton() {
+  Widget _createBackbutton(BuildContext context) {
     return InkWell(
       onTap: onIconPressed,
       child: Container(
@@ -77,6 +76,8 @@ class AppBarwebView extends StatelessWidget {
             SvgPicture.asset(
               'assets/icons/arrow_back.svg',
               height: 20,
+              colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.primary, BlendMode.srcIn),
             ),
       ),
     );

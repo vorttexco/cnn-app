@@ -1,4 +1,7 @@
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
+import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../../core/index.dart';
 import './storie_detail_view_model.dart';
@@ -13,9 +16,20 @@ class StorieDetailView extends StorieDetailViewModel {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 80),
-            child: CustomWebViewComponent(
-              webViewController: controller,
-              isLoading: isLoading,
+            child: FutureBuilder(
+              future: WebUri(widget.url).withThemeQuery(context),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return CustomInAppWebViewComponent(
+                    initialUrl: snapshot.data!.rawValue,
+                    onCreated: (controllerOrigin) {
+                      controller = controllerOrigin;
+                    },
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
             ),
           ),
           Positioned(

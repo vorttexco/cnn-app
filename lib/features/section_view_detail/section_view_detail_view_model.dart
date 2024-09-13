@@ -1,45 +1,21 @@
-import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
+import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:cnn_brasil_app/core/repositories/sections_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../../core/index.dart';
 import './section_view_detail.dart';
 
 abstract class SectionViewDetailViewModel extends State<SectionViewDetail> {
   final sectionsRepository = SectionsRepository(ApiConnector());
-  final controller = WebViewController();
+  late InAppWebViewController controller;
 
   List<CnnMenuModel> listOfMenu = [];
   CnnMenuModel? menuSelected;
-  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-    controller.setBackgroundColor(const Color(0x00000000));
-    controller.enableZoom(false);
-    controller.setNavigationDelegate(
-      NavigationDelegate(
-        onPageStarted: (String url) {
-          setState(() {
-            isLoading = true;
-          });
-        },
-        onPageFinished: (url) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-        onWebResourceError: (WebResourceError error) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-      ),
-    );
-    Logger.log(widget.model.url ?? '');
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
@@ -49,18 +25,6 @@ abstract class SectionViewDetailViewModel extends State<SectionViewDetail> {
   }
 
   Future<void> _loadView() async {
-    try {
-      controller.loadRequest(
-          await Uri.parse('${widget.model.url}?hidemenu=true')
-              .withThemeQuery(context));
-    } catch (e) {
-      Logger.log(e.toString());
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-
     try {
       listOfMenu = await sectionsRepository.submenu(widget.model.slug ?? '');
       if (listOfMenu.isNotEmpty) {
@@ -73,13 +37,15 @@ abstract class SectionViewDetailViewModel extends State<SectionViewDetail> {
     }
   }
 
-  onSelectedMenu(CnnMenuModel model) {
+  onSelectedMenu(CnnMenuModel model) async {
     setState(() {
       menuSelected = model;
     });
-    Uri.parse('${model.url}?hidemenu=true').withThemeQuery(context).then((uri) {
-      controller.loadRequest(uri);
-    });
+    controller.loadUrl(
+      urlRequest: URLRequest(
+          url: await WebUri('${model.url}?hidemenu=true')
+              .withThemeQuery(context)),
+    );
   }
 
   onBack() async {

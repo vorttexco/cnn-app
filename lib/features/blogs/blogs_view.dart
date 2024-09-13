@@ -1,5 +1,7 @@
-import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
+import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../../core/index.dart';
 import './blogs_view_model.dart';
@@ -29,21 +31,34 @@ class BlogsView extends BlogsViewModel {
               setState(() {});
             },
             onThemeUpdated: () async {
-              var url = await webViewController.currentUrl();
+              var url = await controller.getUrl();
 
               if (url == null) return;
 
-              webViewController
-                  .loadRequest(await Uri.parse(url).withThemeQuery(context));
+              controller.loadUrl(
+                  urlRequest:
+                      URLRequest(url: await url.withThemeQuery(context)));
             },
             avatar: AppManager.user != null
                 ? Image.network(AppManager.user?.picture ?? '')
                 : null,
           ),
           Expanded(
-            child: CustomWebViewComponent(
-              webViewController: webViewController,
-              isLoading: isLoading,
+            child: FutureBuilder(
+              future: WebUri(ApiBlogs.blogs).withThemeQuery(context),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return CustomInAppWebViewComponent(
+                    onCreated: (controllerOrigin) {
+                      controller = controllerOrigin;
+                    },
+                    initialUrl: snapshot.data!.rawValue,
+                    openExternalUrl: navigateToInternalPage,
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
             ),
           ),
         ],

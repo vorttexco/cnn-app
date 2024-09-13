@@ -1,7 +1,6 @@
 import 'package:cnn_brasil_app/features/index.dart';
 import 'package:cnn_brasil_app/features/notifications_settings/notifications_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../core/index.dart';
 import './profile_view_model.dart';
@@ -35,16 +34,9 @@ class ProfileView extends ProfileViewModel {
               fontWeight: FontWeight.w400,
             ),
             subtitle: const CustomText(
-              'Configure o recebimento de notificações',
-              fontSize: 12,
-            ),
-            trailing: SvgPicture.asset(
-              'assets/icons/arrow_forward.svg',
-              colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
-              ),
-            ),
+                'Configure o recebimento de notificações',
+                fontSize: 12),
+            trailing: SvgPicture.asset('assets/icons/arrow_forward.svg'),
           ),
           Divider(
             indent: AppConstants.KPADDING_DEFAULT,
@@ -78,8 +70,9 @@ class ProfileView extends ProfileViewModel {
             color: Theme.of(context).colorScheme.primaryContainer,
             thickness: 1,
           ),
-          // const Spacer(),
+          const SizedBox(height: 8),
           ListView.separated(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             itemCount: listOfMenu.length,
@@ -88,6 +81,7 @@ class ProfileView extends ProfileViewModel {
               return SizedBox(
                 height: 50,
                 child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                   onTap: () => openLink(menu),
                   dense: true,
                   title:
@@ -108,6 +102,14 @@ class ProfileView extends ProfileViewModel {
               color: Theme.of(context).colorScheme.primaryContainer,
               thickness: 1,
             ),
+          ),
+          const SizedBox(height: 8),
+          const Divider(
+            indent: AppConstants.KPADDING_DEFAULT,
+            endIndent: AppConstants.KPADDING_DEFAULT,
+            color: Color(0xFFD6D6D6),
+            height: 1,
+            thickness: 1,
           ),
           const SizedBox(height: 49),
         ],

@@ -1,4 +1,8 @@
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
+import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
 import '../../core/index.dart';
 import './section_view_detail_view_model.dart';
 
@@ -68,9 +72,21 @@ class SectionViewDetailView extends SectionViewDetailViewModel {
               thickness: 1,
             ),
             Expanded(
-              child: CustomWebViewComponent(
-                webViewController: controller,
-                isLoading: isLoading,
+              child: FutureBuilder(
+                future: WebUri('${widget.model.url}?hidemenu=true')
+                    .withThemeQuery(context),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return CustomInAppWebViewComponent(
+                      initialUrl: snapshot.data!.rawValue,
+                      onCreated: (controllerOrigin) {
+                        controller = controllerOrigin;
+                      },
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
               ),
             ),
           ],

@@ -1,6 +1,8 @@
-import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
+import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:cnn_brasil_app/core/providers/theme_provider.dart';
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/index.dart';
@@ -17,12 +19,15 @@ class SearchView extends SearchViewModel {
               setState(() {});
             },
             onThemeUpdated: () async {
-              var url = await webViewController.currentUrl();
+              var url = await controller.getUrl();
 
               if (url == null) return;
 
-              webViewController
-                  .loadRequest(await Uri.parse(url).withThemeQuery(context));
+              controller.loadUrl(
+                urlRequest: URLRequest(
+                  url: await url.withThemeQuery(context),
+                ),
+              );
             },
             icon: SvgPicture.asset(
               'assets/icons/menu.svg',
@@ -108,9 +113,12 @@ class SearchView extends SearchViewModel {
           ),
           const SizedBox(height: AppConstants.KPADDING_DEFAULT),
           Expanded(
-            child: CustomWebViewComponent(
-              isLoading: isLoading,
-              webViewController: webViewController,
+            child: CustomInAppWebViewComponent(
+              initialUrl: '',
+              onCreated: (controllerOrigin) {
+                controller = controllerOrigin;
+              },
+              openExternalUrl: navigateToInternalPage,
             ),
           )
         ],

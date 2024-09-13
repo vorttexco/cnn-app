@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../core/index.dart';
-import '../index.dart';
 
 abstract class NotificationsSettingsViewModel
     extends State<NotificationsSettings> {

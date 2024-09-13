@@ -1,7 +1,8 @@
-import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
+import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/firebase_analytics_manager.dart';
 import '../../core/index.dart';
@@ -9,40 +10,16 @@ import '../index.dart';
 
 abstract class SearchViewModel extends State<Search> {
   //
-  final webViewController = WebViewController();
+  late InAppWebViewController controller;
   final _debounce = Debounce();
-  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-
-    webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
-    webViewController.setBackgroundColor(const Color(0x00000000));
-    webViewController.enableZoom(false);
-
-    webViewController.setNavigationDelegate(
-      NavigationDelegate(
-        onNavigationRequest: (request) {
-          if (!request.url.contains('${ApiHome.home}/?s=') &&
-              request.url.contains(ApiHome.home)) {
-            navigateToInternalPage(request.url);
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
-        onPageStarted: (String url) {
-          setState(() {
-            isLoading = true;
-          });
-        },
-        onPageFinished: (url) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-      ),
-    );
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+    ));
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
@@ -58,20 +35,23 @@ abstract class SearchViewModel extends State<Search> {
   }
 
   void navigateToInternalPage(String url) {
-    NavigatorManager(context).to(CustomWebView.route,
-        data: WebviewNavigatorModel(url: url, title: 'Voltar'),
-        onFinished: () {});
+    if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
+      NavigatorManager(context).to(CustomWebView.route,
+          data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+          onFinished: () {});
+    }
   }
 
   void onSearch(String value) {
     _debounce(
-      () {
-        Uri.parse(
-                '${ApiHome.home}/?s=$value&orderby=date&order=desc&hidemenu=true')
-            .withThemeQuery(context)
-            .then((uri) {
-          webViewController.loadRequest(uri);
-        });
+      () async {
+        controller.loadUrl(
+          urlRequest: URLRequest(
+            url: await WebUri(
+                    '${ApiHome.home}/?s=$value&orderby=date&order=desc&hidemenu=true')
+                .withThemeQuery(context),
+          ),
+        );
       },
     );
   }

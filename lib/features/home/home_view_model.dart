@@ -1,8 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
+import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import '../../core/index.dart';
 import '../../core/repositories/live_repository.dart';
@@ -11,10 +12,8 @@ import '../index.dart';
 abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   List<CnnMenuModel> listOfHomeMenu = [];
   final scrollControllerMenu = ScrollController();
-  bool isLoading = true;
-  bool isFromMenu = true;
+
   CnnMenuModel? selectedMenu;
-  final webViewController = WebViewController();
 
   final liveRepository = LiveRepository(ApiConnector());
 
@@ -24,43 +23,18 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
 
   LiveOnModel? liveOnModel;
 
+  InAppWebViewController? inAppWebViewController;
+
   @override
   void initState() {
     super.initState();
 
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+    ));
+
     WidgetsBinding.instance.addObserver(this);
-
-    webViewController.setJavaScriptMode(JavaScriptMode.unrestricted);
-    webViewController.setBackgroundColor(const Color(0x00000000));
-    webViewController.enableZoom(false);
-    webViewController.setNavigationDelegate(
-      NavigationDelegate(
-        onNavigationRequest: (request) {
-          return NavigationDecision.navigate;
-        },
-        onPageStarted: (String url) {
-          setState(() {
-            isLoading = true;
-          });
-          if (!isFromMenu && url.split('?').first != '${ApiHome.home}/') {
-            navigateToInternalPage(url);
-            return;
-          }
-          isFromMenu = false;
-        },
-        onPageFinished: (url) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-        onWebResourceError: (error) {
-          setState(() {
-            isLoading = false;
-          });
-        },
-      ),
-    );
-
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         loadView();
@@ -84,11 +58,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   }
 
   Future<void> loadView() async {
-    isFromMenu = true;
     try {
-      webViewController.loadRequest(
-          await Uri.parse('${ApiHome.home}/?hidemenu=true')
-              .withThemeQuery(context));
       listOfHomeMenu = await HomeRepository(ApiConnector()).menuHome();
     } finally {
       setState(() {});
@@ -113,28 +83,27 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   void navigateToInternalPage(String url) {
     NavigatorManager(context).to(CustomWebView.route,
         data: WebviewNavigatorModel(url: url, title: 'Voltar'), onFinished: () {
-      loadView();
+      inAppWebViewController?.goBack();
     });
   }
 
-  void onMenuSelected(CnnMenuModel menu) {
-    isFromMenu = true;
+  void onMenuSelected(CnnMenuModel menu) async {
     setState(() {
       selectedMenu = menu;
     });
     try {
-      Uri.parse('${menu.url}?hidemenu=true')
-          .withThemeQuery(context)
-          .then((uri) {
-        webViewController.loadRequest(uri);
-      });
+      inAppWebViewController?.loadUrl(
+        urlRequest: URLRequest(
+          url:
+              await WebUri('${menu.url}?hidemenu=true').withThemeQuery(context),
+        ),
+      );
     } on Exception catch (e) {
       Logger.log(e.toString());
     } finally {}
   }
 
-  void onTapLogo() {
-    isFromMenu = true;
+  void onTapLogo() async {
     scrollControllerMenu.animateTo(0,
         duration: Durations.short2, curve: Curves.linear);
 
@@ -145,11 +114,12 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
     });
 
     try {
-      Uri.parse('${ApiHome.home}/?hidemenu=true')
-          .withThemeQuery(context)
-          .then((uri) {
-        webViewController.loadRequest(uri);
-      });
+      inAppWebViewController?.loadUrl(
+        urlRequest: URLRequest(
+          url: await WebUri('${ApiHome.home}/?hidemenu=true')
+              .withThemeQuery(context),
+        ),
+      );
     } on Exception catch (e) {
       Logger.log(e.toString());
     } finally {}

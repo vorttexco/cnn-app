@@ -1,9 +1,10 @@
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-extension UriWithParams on Uri {
-  Future<Uri> withThemeQuery(BuildContext context) async {
+extension UriWithParams on WebUri {
+  Future<WebUri> withThemeQuery(BuildContext context) async {
     String theme = await StorageManager()
             .getString(AppConstants.SHARED_PREFERENCES_THEME_MODE) ??
         '';
@@ -19,6 +20,6 @@ extension UriWithParams on Uri {
 
     Map<String, String> newQueryParams = Map.from(queryParameters);
     newQueryParams['darkMode'] = '${isDark ? 1 : 0}';
-    return replace(queryParameters: newQueryParams);
+    return WebUri.uri(replace(queryParameters: newQueryParams));
   }
 }

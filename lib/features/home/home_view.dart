@@ -1,7 +1,9 @@
-import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
+import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
+import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:cnn_brasil_app/core/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 
 import './home_view_model.dart';
@@ -67,12 +69,17 @@ class HomeView extends HomeViewModel {
               setState(() {});
             },
             onThemeUpdated: () async {
-              var url = await webViewController.currentUrl();
+              if (inAppWebViewController == null) return;
 
-              if (url == null) return;
+              var url = await inAppWebViewController!.getUrl();
 
-              webViewController
-                  .loadRequest(await Uri.parse(url).withThemeQuery(context));
+              if (url == null || inAppWebViewController == null) return;
+
+              inAppWebViewController!.loadUrl(
+                urlRequest: URLRequest(
+                  url: await url.withThemeQuery(context),
+                ),
+              );
             },
           ),
           if (liveUrl.isNotEmpty)
@@ -87,9 +94,22 @@ class HomeView extends HomeViewModel {
             scrollController: scrollControllerMenu,
           ),
           Expanded(
-            child: CustomWebViewComponent(
-              webViewController: webViewController,
-              isLoading: isLoading,
+            child: FutureBuilder(
+              future: WebUri('${ApiHome.home}/?hidemenu=true')
+                  .withThemeQuery(context),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return CustomInAppWebViewComponent(
+                    openExternalUrl: navigateToInternalPage,
+                    initialUrl: snapshot.data!.toString(),
+                    onCreated: (controller) async {
+                      inAppWebViewController = controller;
+                    },
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
             ),
           )
         ],
