@@ -13,6 +13,7 @@ ThemeData lightTheme = ThemeData(
   colorScheme: const ColorScheme.light(
     primary: Colors.black,
     secondary: Color.fromARGB(255, 50, 50, 50),
+    tertiary: Color.fromARGB(255, 75, 75, 75),
     primaryContainer: Color(0xffE2E2E2),
     secondaryContainer: Color(0xffF4F4F4),
   ),
@@ -45,8 +46,9 @@ ThemeData darkTheme = ThemeData(
   colorScheme: const ColorScheme.dark(
     primary: Colors.white,
     secondary: Color.fromARGB(255, 206, 206, 206),
+    tertiary: Color(0xff8C8C8C),
     primaryContainer: Color.fromARGB(255, 50, 50, 50),
-    secondaryContainer: Color(0xff282828),
+    secondaryContainer: Color(0xff181a1b),
   ),
   checkboxTheme: CheckboxThemeData(
     shape: const CircleBorder(),

@@ -1,5 +1,7 @@
+import 'package:cnn_brasil_app/core/providers/theme_provider.dart';
 import 'package:cnn_brasil_app/features/live_stream/models/menu_model.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/index.dart';
 
@@ -31,6 +33,11 @@ class _LiveMenuHorizontalState extends State<LiveMenuHorizontal> {
     widget.onSelectedMenu?.call(item, index);
   }
 
+  bool get _isDark =>
+      Provider.of<ThemeProvider>(context).themeMode == ThemeMode.dark ||
+      (Provider.of<ThemeProvider>(context).themeMode == ThemeMode.system &&
+          MediaQuery.of(context).platformBrightness == Brightness.dark);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -52,21 +59,23 @@ class _LiveMenuHorizontalState extends State<LiveMenuHorizontal> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6),
                 color: widget.selectedIndex == index
-                    ? Theme.of(context).primaryColor
-                    : Theme.of(context).scaffoldBackgroundColor,
+                    ? (_isDark
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).primaryColor)
+                    : Colors.transparent,
                 border: widget.selectedIndex == index
                     ? null
                     : Border.all(
                         width: 1,
-                        color: Theme.of(context).colorScheme.primaryContainer,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
               ),
               child: Center(
                 child: CustomText(
                   menu.title,
                   textColor: widget.selectedIndex == index
-                      ? Colors.white
-                      : Theme.of(context).colorScheme.primary,
+                      ? Theme.of(context).colorScheme.secondaryContainer
+                      : Theme.of(context).colorScheme.tertiary,
                   fontWeight: FontWeight.w700,
                   fontSize: AppConstants.KFONTSIZE_12,
                 ),

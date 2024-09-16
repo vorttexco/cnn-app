@@ -50,10 +50,6 @@ class _CustomInAppWebViewComponentState
       children: [
         InAppWebView(
           initialUrlRequest: URLRequest(url: WebUri(widget.initialUrl)),
-          // onWebViewCreated: (controller) {
-          //   _controller = controller;
-          //   widget.onCreated(controller);
-          // },
           onWebViewCreated: widget.onCreated,
           initialSettings: settings,
           onLoadStop: (controller, url) async {
