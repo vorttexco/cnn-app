@@ -64,6 +64,7 @@ class NotificationsSettingsView extends NotificationsSettingsViewModel {
                                               ? Colors.white
                                               : Colors.black,
                                         ),
+                                        inactiveTrackColor: Colors.white,
                                         activeTrackColor: Colors.green,
                                         inactiveThumbColor: Colors.black,
                                         onChanged: (value) {

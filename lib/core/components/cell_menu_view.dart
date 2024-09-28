@@ -45,23 +45,20 @@ class CellMenuView extends StatelessWidget {
                       ),
                       const Spacer(),
                       isHeader
-                          ? SvgPicture.asset(
-                              'assets/icons/arrow_back.svg',
+                          ? SvgPicture.asset('assets/icons/arrow_back.svg',
                               width: 10,
                               colorFilter: ColorFilter.mode(
-                 Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
-              )
-                            )
+                                Theme.of(context).colorScheme.primary,
+                                BlendMode.srcIn,
+                              ))
                           : menu.child!.isNotEmpty
                               ? SvgPicture.asset(
                                   'assets/icons/arrow_forward.svg',
                                   width: 10,
                                   colorFilter: ColorFilter.mode(
-                 Theme.of(context).colorScheme.primary,
-                BlendMode.srcIn,
-              )
-                                )
+                                    Theme.of(context).colorScheme.primary,
+                                    BlendMode.srcIn,
+                                  ))
                               : const SizedBox.shrink(),
                       const SizedBox(width: AppConstants.KPADDING_DEFAULT),
                     ],

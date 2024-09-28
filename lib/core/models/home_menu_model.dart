@@ -8,6 +8,7 @@ class CnnMenuModel {
   String? parent;
   String? target;
   MenuColor? color;
+  bool? segmentedPush;
   List<CnnMenuModel>? child;
 
   CnnMenuModel(
@@ -31,6 +32,7 @@ class CnnMenuModel {
     url = json['url'];
     parent = json['parent'];
     target = json['target'];
+    segmentedPush = json['segmented_push'];
     color = json['color'] == null ? null : MenuColor.fromJson(json['color']);
     child = json['child'] == null
         ? []
@@ -53,6 +55,7 @@ class CnnMenuModel {
     data['target'] = target;
     data['color'] = color?.toJson();
     data['child'] = child;
+    data['segmented_push'] = segmentedPush;
     return data;
   }
 }

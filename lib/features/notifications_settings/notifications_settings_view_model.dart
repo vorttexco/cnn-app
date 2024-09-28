@@ -6,18 +6,8 @@ import '../../core/index.dart';
 
 abstract class NotificationsSettingsViewModel
     extends State<NotificationsSettings> {
-  final Map<String, bool> notificationOptions = {
-    'Política': true,
-    'Economia': true,
-    'Esportes': true,
-    'POP': true,
-    'Viagem e Gastronomia': true,
-    'Nacional': true,
-    'Internacional': true,
-    'Saúde': true,
-    'Tecnologia': true,
-    'Lifestyle': true,
-  };
+  final Map<String, bool> notificationOptions = {};
+  final Map<String, bool> _tagOptions = {};
   bool updatedPreferences = false;
   @override
   void initState() {
@@ -29,27 +19,41 @@ abstract class NotificationsSettingsViewModel
   void _getOptions() async {
     context.loaderOverlay.show();
 
-    for (var item in notificationOptions.entries) {
-      final value = await StorageManager().getBool(
-        AppConstants.SHARED_PREFERENCES_NOTIFICATIONS_SETTINGS + item.key,
-      );
+    var options = await HomeRepository(ApiConnector()).menuHome();
 
-      notificationOptions[item.key] = value ?? true;
+    for (var item in options) {
+      if (item.title == null) continue;
+
+      _tagOptions[item.title!] = item.segmentedPush ?? false;
+
+      if (item.segmentedPush != null && item.segmentedPush == true) {
+        final value = await StorageManager().getBool(
+          AppConstants.SHARED_PREFERENCES_NOTIFICATIONS_SETTINGS + item.title!,
+        );
+
+        notificationOptions[item.title!] = value ?? true;
+      }
     }
 
     setState(() {
       notificationOptions;
       updatedPreferences = true;
     });
+
     context.loaderOverlay.hide();
   }
 
   void onSavePreferences() async {
     context.loaderOverlay.show();
 
+    final saveOptions = Map.from(notificationOptions);
+
+    saveOptions.addEntries(_tagOptions.entries
+        .where((entry) => !notificationOptions.containsKey(entry.key)));
+
     try {
       await OneSignal.User.addTags(
-        notificationOptions.map(
+        saveOptions.map(
           (key, value) => MapEntry(
             key,
             value.toString(),
