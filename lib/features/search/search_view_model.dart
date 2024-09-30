@@ -1,6 +1,5 @@
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 
@@ -16,10 +15,6 @@ abstract class SearchViewModel extends State<Search> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-    ));
 
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {

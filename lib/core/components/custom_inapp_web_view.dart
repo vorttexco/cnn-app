@@ -60,7 +60,9 @@ class _CustomInAppWebViewComponentState
             ''');
           },
           onLoadStart: (controller, url) async {
-            if (url != null && !url.authority.contains('cnnbrasil.com.br')) {
+            if (url != null &&
+                url.authority != '' &&
+                !url.authority.contains('cnnbrasil.com.br')) {
               if (clicked) {
                 clicked = false;
               }
