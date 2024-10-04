@@ -7,7 +7,6 @@ import '../../core/index.dart';
 abstract class NotificationsSettingsViewModel
     extends State<NotificationsSettings> {
   final Map<String, bool> notificationOptions = {};
-  final Map<String, bool> _tagOptions = {};
   bool updatedPreferences = false;
   @override
   void initState() {
@@ -19,19 +18,16 @@ abstract class NotificationsSettingsViewModel
   void _getOptions() async {
     context.loaderOverlay.show();
 
-    var options = await HomeRepository(ApiConnector()).menuHome();
+    final options = await HomeRepository(ApiConnector()).menuHome();
+    final tags = await OneSignal.User.getTags();
 
     for (var item in options) {
       if (item.title == null) continue;
 
-      _tagOptions[item.title!] = item.segmentedPush ?? false;
-
       if (item.segmentedPush != null && item.segmentedPush == true) {
-        final value = await StorageManager().getBool(
-          AppConstants.SHARED_PREFERENCES_NOTIFICATIONS_SETTINGS + item.title!,
-        );
+        final bool value = bool.tryParse(tags[item.title!] ?? '') ?? false;
 
-        notificationOptions[item.title!] = value ?? true;
+        notificationOptions[item.title!] = value;
       }
     }
 
@@ -46,27 +42,15 @@ abstract class NotificationsSettingsViewModel
   void onSavePreferences() async {
     context.loaderOverlay.show();
 
-    final saveOptions = Map.from(notificationOptions);
-
-    saveOptions.addEntries(_tagOptions.entries
-        .where((entry) => !notificationOptions.containsKey(entry.key)));
-
     try {
       await OneSignal.User.addTags(
-        saveOptions.map(
+        notificationOptions.map(
           (key, value) => MapEntry(
             key,
             value.toString(),
           ),
         ),
       );
-
-      for (var item in notificationOptions.entries) {
-        await StorageManager().setBool(
-          AppConstants.SHARED_PREFERENCES_NOTIFICATIONS_SETTINGS + item.key,
-          item.value,
-        );
-      }
     } on Exception {
       //
     }
