@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/index.dart';
 import 'package:cnn_brasil_app/features/notifications_settings/notifications_settings.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class ProfileView extends ProfileViewModel {
           ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             onTap: () {
-              Navigator.pushNamed(context, NotificationsSettings.route);
+              NavigatorManager(context).to(NotificationsSettings.route);
             },
             title: const CustomText(
               'Notificações',

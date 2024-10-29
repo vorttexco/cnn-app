@@ -1,4 +1,5 @@
 import 'package:cnn_brasil_app/core/index.dart';
+import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
@@ -71,6 +72,7 @@ abstract class TabNavigatorViewModel extends State<TabNavigator> {
       NavigatorManager(context).to(
         CustomWebView.route,
         data: WebviewNavigatorModel(title: 'Voltar', url: url),
+        analytics: NavigatorAnalytics.fromUrl(url),
       );
     } on Exception catch (e) {
       Logger.log(e.toString());

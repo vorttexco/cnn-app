@@ -37,9 +37,10 @@ class AppRouters {
 
       case CustomWebView.route:
         return MaterialPageRoute(
-            builder: (_) => CustomWebView(
-                  navigatorModel: settings.arguments as WebviewNavigatorModel,
-                ));
+          builder: (_) => CustomWebView(
+            navigatorModel: settings.arguments as WebviewNavigatorModel,
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

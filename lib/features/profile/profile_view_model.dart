@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
@@ -73,8 +74,11 @@ abstract class ProfileViewModel extends State<Profile>
     NavigatorManager(context).to(
       CustomWebView.route,
       data: WebviewNavigatorModel(
-          url: '${menu.url}?hidemenu=true',
-          title: menu.title ?? AppLabel.appName),
+        url: '${menu.url}?hidemenu=true',
+        title: menu.title ?? AppLabel.appName,
+      ),
+      analytics:
+          menu.url != null ? NavigatorAnalytics.fromUrl(menu.url!) : null,
     );
   }
 }

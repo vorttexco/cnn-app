@@ -1,3 +1,4 @@
+import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -14,10 +15,14 @@ abstract class BlogsViewModel extends State<Blogs> {
   }
 
   Future<void> navigateToInternalPage(String url) async {
-    NavigatorManager(context).to(CustomWebView.route,
-        data: WebviewNavigatorModel(url: url, title: 'Voltar'), onFinished: () {
-      controller.goBack();
-    });
+    NavigatorManager(context).to(
+      CustomWebView.route,
+      data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+      onFinished: () {
+        controller.goBack();
+      },
+      analytics: NavigatorAnalytics.fromUrl(url),
+    );
   }
 
   void openMenu() {

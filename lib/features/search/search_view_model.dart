@@ -1,4 +1,5 @@
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
+import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
@@ -31,9 +32,12 @@ abstract class SearchViewModel extends State<Search> {
 
   void navigateToInternalPage(String url) {
     if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
-      NavigatorManager(context).to(CustomWebView.route,
-          data: WebviewNavigatorModel(url: url, title: 'Voltar'),
-          onFinished: () {});
+      NavigatorManager(context).to(
+        CustomWebView.route,
+        data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+        onFinished: () {},
+        analytics: NavigatorAnalytics.fromUrl(url),
+      );
     }
   }
 
