@@ -66,6 +66,12 @@ class NotificationsSettingsView extends NotificationsSettingsViewModel {
                                         ),
                                         inactiveTrackColor: Colors.white,
                                         activeTrackColor: Colors.green,
+                                        trackOutlineColor:
+                                            WidgetStatePropertyAll(
+                                          item.value
+                                              ? Colors.green
+                                              : Colors.black,
+                                        ),
                                         inactiveThumbColor: Colors.black,
                                         onChanged: (value) {
                                           setState(() {

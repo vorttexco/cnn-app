@@ -19,7 +19,7 @@ extension UriWithParams on WebUri {
     }
 
     Map<String, String> newQueryParams = Map.from(queryParameters);
-    newQueryParams['darkMode'] = '${isDark ? 1 : 0}';
+    newQueryParams['darkmode'] = isDark ? 'true' : 'false';
     return WebUri.uri(replace(queryParameters: newQueryParams));
   }
 }

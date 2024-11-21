@@ -20,7 +20,7 @@ abstract class SplashViewModel extends State<Splash> {
 
     if (viewNotificationValue == null) {
       await Navigator.pushNamed(context, NotificationsSettings.route);
-      // TODO Analytics
+
       await StorageManager().setBool(
         AppConstants.SHARED_PREFERENCES_VIEW_NOTIFICATIONS_SETTINGS,
         true,

@@ -12,22 +12,26 @@ class NavigatorManager {
   NavigatorManager(this.context);
 
   void logScreenFirebase(NavigatorAnalytics analytics) {
-    FirebaseAnalytics.instance.logScreenView(
-      screenClass: analytics.firebaseScreenClass,
-      screenName: analytics.firebaseScreen,
-      parameters: {
-        'firebase_screen': analytics.firebaseScreen,
-        'firebase_screen_class': analytics.firebaseScreenClass,
-        'firebase_screen_id': analytics.firebaseScreenId ?? '',
-        'firebase_previous_screen': analytics.firebasePreviousScreen ?? '',
-        'firebase_previous_class': analytics.firebasePreviousClass ?? '',
-        'firebase_previous_id': analytics.firebasePreviousId ?? '',
-        'engagement_time_msec': analytics.engagementTimeMsec ?? '',
-        'page_author_1': analytics.pageAuthor ?? '',
-        'page_publication_date': analytics.pagePublicationDate ?? '',
-        'page_category': analytics.pageCategory ?? '',
-      },
-    );
+    try {
+      FirebaseAnalytics.instance.logScreenView(
+        screenClass: analytics.firebaseScreenClass,
+        screenName: analytics.firebaseScreen,
+        parameters: {
+          'firebase_screen': analytics.firebaseScreen,
+          'firebase_screen_class': analytics.firebaseScreenClass,
+          'firebase_screen_id': analytics.firebaseScreenId ?? '',
+          'firebase_previous_screen': analytics.firebasePreviousScreen ?? '',
+          'firebase_previous_class': analytics.firebasePreviousClass ?? '',
+          'firebase_previous_id': analytics.firebasePreviousId ?? '',
+          'engagement_time_msec': analytics.engagementTimeMsec ?? '',
+          'page_author_1': analytics.pageAuthor ?? '',
+          'page_publication_date': analytics.pagePublicationDate ?? '',
+          'page_category': analytics.pageCategory ?? '',
+        },
+      );
+    } on Exception {
+      //Could not call firebase
+    }
   }
 
   void to(

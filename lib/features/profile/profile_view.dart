@@ -1,4 +1,3 @@
-import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/index.dart';
 import 'package:cnn_brasil_app/features/notifications_settings/notifications_settings.dart';
 import 'package:flutter/material.dart';
@@ -45,32 +44,32 @@ class ProfileView extends ProfileViewModel {
             color: Theme.of(context).colorScheme.primaryContainer,
             thickness: 1,
           ),
-          // ListTile(
-          //   contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-          //   onTap: () {
-          //     openPage(Themes.route);
-          //   },
-          //   title: const CustomText(
-          //     'Aparência',
-          //     fontWeight: FontWeight.w400,
-          //   ),
-          //   subtitle: const CustomText(
-          //       'Configure o modo claro ou escuro do app',
-          //       fontSize: 12),
-          //   trailing: SvgPicture.asset(
-          //     'assets/icons/arrow_forward.svg',
-          //     colorFilter: ColorFilter.mode(
-          //       Theme.of(context).colorScheme.primary,
-          //       BlendMode.srcIn,
-          //     ),
-          //   ),
-          // ),
-          // Divider(
-          //   indent: AppConstants.KPADDING_DEFAULT,
-          //   endIndent: AppConstants.KPADDING_DEFAULT,
-          //   color: Theme.of(context).colorScheme.primaryContainer,
-          //   thickness: 1,
-          // ),
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            onTap: () {
+              openPage(Themes.route);
+            },
+            title: const CustomText(
+              'Aparência',
+              fontWeight: FontWeight.w400,
+            ),
+            subtitle: const CustomText(
+                'Configure o modo claro ou escuro do app',
+                fontSize: 12),
+            trailing: SvgPicture.asset(
+              'assets/icons/arrow_forward.svg',
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.primary,
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+          Divider(
+            indent: AppConstants.KPADDING_DEFAULT,
+            endIndent: AppConstants.KPADDING_DEFAULT,
+            color: Theme.of(context).colorScheme.primaryContainer,
+            thickness: 1,
+          ),
           const SizedBox(height: 8),
           ListView.separated(
             padding: EdgeInsets.zero,
