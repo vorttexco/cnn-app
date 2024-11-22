@@ -3,7 +3,7 @@ class ApiAuth {
 }
 
 class ApiHome {
-  static const home = 'https://preprod.cnnbrasil.com.br';
+  static const home = 'https://www.cnnbrasil.com.br';
 
 //menus
   static const menuCopyright = '/menu/v1/items/menu-footer-copyright';
@@ -16,7 +16,7 @@ class ApiStories {
 }
 
 class ApiBlogs {
-  static const blogs = 'https://preprod.cnnbrasil.com.br/blogs/?hidemenu=true';
+  static const blogs = 'https://www.cnnbrasil.com.br/blogs/?hidemenu=true';
 }
 
 class ApiSections {

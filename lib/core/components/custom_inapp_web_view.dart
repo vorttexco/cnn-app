@@ -1,6 +1,7 @@
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class CustomInAppWebViewComponent extends StatefulWidget {
@@ -33,6 +34,8 @@ class _CustomInAppWebViewComponentState
   Brightness? _brightness;
   bool _visible = true;
 
+  Future? _urlFuture;
+
   InAppWebViewSettings settings = InAppWebViewSettings(
     mediaPlaybackRequiresUserGesture: true,
     allowsInlineMediaPlayback: true,
@@ -53,23 +56,23 @@ class _CustomInAppWebViewComponentState
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    if (_brightness == null) return;
+
     final brightness = MediaQuery.of(context).platformBrightness;
 
-    if (_brightness != null) {
-      if (brightness.index != _brightness!.index) {
-        _controller!.getUrl().then((uri) async {
-          if (uri == null) return;
+    if (_brightness != brightness) {
+      _brightness = brightness;
 
-          clicked = false;
-          _controller!.loadUrl(
-            urlRequest: URLRequest(
-              url: await uri.withThemeQuery(context),
-            ),
-          );
-        });
+      _controller!.getUrl().then((uri) async {
+        if (uri == null) return;
 
-        _brightness = brightness;
-      }
+        clicked = false;
+        _controller!.loadUrl(
+          urlRequest: URLRequest(
+            url: await uri.withThemeQuery(context),
+          ),
+        );
+      });
     }
   }
 
@@ -97,6 +100,7 @@ class _CustomInAppWebViewComponentState
             onWebViewCreated: (controller) {
               setState(() {
                 _controller = controller;
+                _urlFuture = _controller!.getUrl();
               });
               widget.onCreated(controller);
             },
@@ -109,7 +113,10 @@ class _CustomInAppWebViewComponentState
             ''');
             },
             onLoadStart: (controller, url) async {
-              setState(() => _visible = url?.rawValue != "about:blank");
+              setState(() {
+                _visible = url?.rawValue != "about:blank";
+                _urlFuture = _controller?.getUrl();
+              });
 
               if (url != null &&
                   url.authority != '' &&
@@ -167,20 +174,20 @@ class _CustomInAppWebViewComponentState
                 ),
               )
             : Container(),
-        // if (_controller != null)
-        //   FutureBuilder(
-        //     future: _controller!.getUrl(),
-        //     builder: (context, snapshot) {
-        //       if (snapshot.hasData) {
-        //         return Text(
-        //           snapshot.data!.rawValue,
-        //           style: TextStyle(fontSize: 18, color: Colors.red),
-        //         );
-        //       } else {
-        //         return const SizedBox();
-        //       }
-        //     },
-        //   )
+        if (_controller != null)
+          FutureBuilder(
+            future: _urlFuture,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(
+                  snapshot.data!.rawValue,
+                  style: TextStyle(fontSize: 18, color: Colors.red),
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          )
       ],
     );
   }

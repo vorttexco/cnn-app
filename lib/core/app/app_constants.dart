@@ -42,7 +42,7 @@ class AppConstants {
       '259226150264-6io68qvfkq3o1i1olcp6euoanvkqjult.apps.googleusercontent.com';
   static const GOOGLE_CLIENT_ANDROID =
       '259226150264-05h2krjig2oa4qkm7ivjb8plrivd04qq.apps.googleusercontent.com';
-  static const DEEPPLINK_AO_VIVO = 'https://preprod.cnnbrasil.com.br/ao-vivo';
+  static const DEEPPLINK_AO_VIVO = 'https://www.cnnbrasil.com.br/ao-vivo';
 
   static const MENU_LOGOUT_ID = -9999;
 
