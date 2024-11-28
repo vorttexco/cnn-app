@@ -50,7 +50,7 @@ dependencies:
   url_launcher: ^6.3.0
   share_plus: ^9.0.0
   firebase_analytics: ^11.2.1
-  flutter_inappwebview: ^6.1.5
+  flutter_inappwebview: ^6.0.0
 
 dependency_overrides:
   webview_flutter_android: 3.16.1
