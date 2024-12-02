@@ -1,5 +1,6 @@
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:cnn_brasil_app/features/index.dart';
+import 'package:cnn_brasil_app/features/login/login.dart';
 import 'package:cnn_brasil_app/features/notifications_settings/notifications_settings.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,8 @@ class AppRouters {
         return MaterialPageRoute(builder: (_) => const Home());
       case LiveStream.route:
         return MaterialPageRoute(builder: (_) => const LiveStream());
+      case Login.route:
+        return MaterialPageRoute(builder: (_) => const Login());
       case Blogs.route:
         return MaterialPageRoute(builder: (_) => const Blogs());
       case Stories.route:

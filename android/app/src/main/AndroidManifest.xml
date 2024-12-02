@@ -1,14 +1,14 @@
 <manifest xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
-        
-        <uses-permission android:name="android.permission.INTERNET"/> 
 
-        <meta-data
-            android:name="com.onesignal.messaging.default_notification_icon"
-            android:resource="@drawable/ic_stat_onesignal_default" />
-        <meta-data
-            android:name="com.onesignal.messaging.default_notification_color"
-            android:resource="@color/colorPrimary" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <meta-data
+        android:name="com.onesignal.messaging.default_notification_icon"
+        android:resource="@drawable/ic_stat_onesignal_default" />
+    <meta-data
+        android:name="com.onesignal.messaging.default_notification_color"
+        android:resource="@color/colorPrimary" />
 
     <application
         android:label="CNN Brasil"
@@ -17,10 +17,26 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         tools:targetApi="tiramisu">
-        
+
+        <!-- Set up the Sign in with Apple activity, such that it's callable from the
+        browser-redirect -->
+        <activity
+            android:name="com.aboutyou.dart_packages.sign_in_with_apple.SignInWithAppleCallback"
+            android:exported="true"
+        >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="signinwithapple" />
+                <data android:path="callback" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name="com.cnn.brasil.MainActivity"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"                
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:exported="true"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
@@ -32,12 +48,12 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+            />
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
@@ -54,8 +70,8 @@
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
         <intent>
-            <action android:name="android.intent.action.PROCESS_TEXT"/>
-            <data android:mimeType="text/plain"/>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
         </intent>
     </queries>
 </manifest>

@@ -3,6 +3,9 @@ import 'dart:io';
 
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
+enum LoginType { commom, google, apple }
 
 class UserRepository implements Repository<UserModel> {
   final InterfaceHttpClient client;
@@ -58,5 +61,26 @@ class UserRepository implements Repository<UserModel> {
     );
     await googleSignIn.signOut();
     await StorageManager().reset();
+  }
+
+  Future login(LoginType type) async {
+    switch (type) {
+      case LoginType.commom:
+      // TODO: Handle this case.
+      case LoginType.google:
+      // TODO: Handle this case.
+      case LoginType.apple:
+        final credentials = await SignInWithApple.getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+          webAuthenticationOptions: WebAuthenticationOptions(
+            clientId: 'com.cnn.brasil.service',
+            redirectUri: Uri.parse(
+                'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple'),
+          ),
+        );
+    }
   }
 }
