@@ -64,23 +64,38 @@ class UserRepository implements Repository<UserModel> {
   }
 
   Future login(LoginType type) async {
-    switch (type) {
-      case LoginType.commom:
-      // TODO: Handle this case.
-      case LoginType.google:
-      // TODO: Handle this case.
-      case LoginType.apple:
-        final credentials = await SignInWithApple.getAppleIDCredential(
-          scopes: [
-            AppleIDAuthorizationScopes.email,
-            AppleIDAuthorizationScopes.fullName,
-          ],
-          webAuthenticationOptions: WebAuthenticationOptions(
-            clientId: 'com.cnn.brasil.service',
-            redirectUri: Uri.parse(
-                'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple'),
-          ),
-        );
+    try {
+      switch (type) {
+        case LoginType.commom:
+          break;
+        case LoginType.google:
+          const List<String> scopes = <String>[
+            'email',
+            'https://www.googleapis.com/auth/contacts.readonly',
+          ];
+
+          GoogleSignIn googleSignIn = GoogleSignIn(
+            // Optional clientId
+            // clientId: 'your-client_id.apps.googleusercontent.com',
+            scopes: scopes,
+          );
+
+          googleSignIn.signIn();
+        case LoginType.apple:
+          await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+            webAuthenticationOptions: WebAuthenticationOptions(
+              clientId: 'com.cnn.brasil.service',
+              redirectUri: Uri.parse(
+                  'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple'),
+            ),
+          );
+      }
+    } on Exception {
+      //Error
     }
   }
 }

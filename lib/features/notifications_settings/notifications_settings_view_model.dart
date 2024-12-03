@@ -25,7 +25,7 @@ abstract class NotificationsSettingsViewModel
       if (item.title == null) continue;
 
       if (item.segmentedPush != null && item.segmentedPush == true) {
-        final bool value = bool.tryParse(tags[item.title!] ?? '') ?? false;
+        final bool value = bool.tryParse(tags[item.title!] ?? '') ?? true;
 
         notificationOptions[item.title!] = value;
       }

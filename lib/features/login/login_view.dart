@@ -1,5 +1,3 @@
-import 'package:cnn_brasil_app/features/index.dart';
-import 'package:cnn_brasil_app/features/notifications_settings/notifications_settings.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/index.dart';
@@ -35,8 +33,38 @@ class LoginView extends LoginViewModel {
               ),
             ),
             const Spacer(),
+            InkWell(
+              onTap: () {},
+              child: RichText(
+                text: TextSpan(
+                    text: 'Ao criar uma conta ou fazer login, concordo com os ',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    children: const [
+                      TextSpan(
+                        text: 'Termos de Uso',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      TextSpan(text: ' e li nosso '),
+                      TextSpan(
+                        text: 'Política de Privacidade.',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ]),
+              ),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                final login =
+                    UserRepository(ApiConnector()).login(LoginType.google);
+              },
               style: ElevatedButton.styleFrom(
                 elevation: 0,
                 minimumSize: const Size(double.infinity, 50),
@@ -64,7 +92,7 @@ class LoginView extends LoginViewModel {
                         Expanded(
                           child: Center(
                             child: Text(
-                              'Não desejo logar',
+                              'Conectar com Google',
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
                                 fontSize: 14,
@@ -129,7 +157,9 @@ class LoginView extends LoginViewModel {
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                NavigatorManager(context).back();
+              },
               style: ElevatedButton.styleFrom(
                 elevation: 0,
                 minimumSize: const Size(double.infinity, 50),
