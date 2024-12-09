@@ -34,7 +34,7 @@ class _CustomInAppWebViewComponentState
   Brightness? _brightness;
   bool _visible = true;
 
-  Future? _urlFuture;
+  // Future? _urlFuture;
 
   InAppWebViewSettings settings = InAppWebViewSettings(
     mediaPlaybackRequiresUserGesture: true,
@@ -100,7 +100,7 @@ class _CustomInAppWebViewComponentState
             onWebViewCreated: (controller) {
               setState(() {
                 _controller = controller;
-                _urlFuture = _controller!.getUrl();
+                // _urlFuture = _controller!.getUrl();
               });
               widget.onCreated(controller);
             },
@@ -115,7 +115,7 @@ class _CustomInAppWebViewComponentState
             onLoadStart: (controller, url) async {
               setState(() {
                 _visible = url?.rawValue != "about:blank";
-                _urlFuture = _controller?.getUrl();
+                // _urlFuture = _controller?.getUrl();
               });
 
               if (url != null &&
@@ -174,20 +174,20 @@ class _CustomInAppWebViewComponentState
                 ),
               )
             : Container(),
-        if (_controller != null)
-          FutureBuilder(
-            future: _urlFuture,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(
-                  snapshot.data!.rawValue,
-                  style: TextStyle(fontSize: 18, color: Colors.red),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          )
+        // if (_controller != null)
+        //   FutureBuilder(
+        //     future: _urlFuture,
+        //     builder: (context, snapshot) {
+        //       if (snapshot.hasData) {
+        //         return Text(
+        //           snapshot.data!.rawValue,
+        //           style: TextStyle(fontSize: 18, color: Colors.red),
+        //         );
+        //       } else {
+        //         return const SizedBox();
+        //       }
+        //     },
+        //   )
       ],
     );
   }
