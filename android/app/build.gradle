@@ -64,8 +64,8 @@ android {
         development {
             dimension "app"
             resValue "string", "app_name", "CNN Dev"
-            versionNameSuffix ".dev"
-            applicationId "com.cnn.brasil.dev"
+            // versionNameSuffix ".dev"
+            applicationId "com.cnn.brasil"
         }
 
         production {
