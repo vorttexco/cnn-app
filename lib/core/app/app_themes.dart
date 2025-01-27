@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 const Color _primaryColor = Color(0xffCC0000);
+const String _fontFamily = 'CNN Sans Display W04 Medium';
 
 ThemeData lightTheme = ThemeData(
+  fontFamily: _fontFamily,
   brightness: Brightness.light,
   useMaterial3: true,
   scaffoldBackgroundColor: Colors.white,
@@ -36,11 +38,12 @@ ThemeData lightTheme = ThemeData(
 );
 
 ThemeData darkTheme = ThemeData(
+  fontFamily: _fontFamily,
   brightness: Brightness.dark,
   useMaterial3: true,
-  scaffoldBackgroundColor: Colors.black,
+  scaffoldBackgroundColor: const Color(0xff181A1B),
   appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.black,
+    backgroundColor: Color(0xff181A1B),
   ),
   primaryColor: _primaryColor,
   colorScheme: const ColorScheme.dark(

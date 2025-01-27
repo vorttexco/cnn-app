@@ -1,4 +1,5 @@
 import 'package:cnn_brasil_app/core/index.dart';
+import 'package:cnn_brasil_app/features/article/article.dart';
 import 'package:cnn_brasil_app/features/index.dart';
 import 'package:cnn_brasil_app/features/notifications_settings/notifications_settings.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,11 @@ class AppRouters {
         return MaterialPageRoute(builder: (_) => const Themes());
       case NotificationsSettings.route:
         return MaterialPageRoute(builder: (_) => const NotificationsSettings());
+      case Article.route:
+        return MaterialPageRoute(
+            builder: (_) => Article(
+                  articleId: settings.arguments as String,
+                ));
       case SectionViewDetail.route:
         return MaterialPageRoute(
             builder: (_) => SectionViewDetail(

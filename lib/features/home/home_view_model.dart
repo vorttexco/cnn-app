@@ -2,6 +2,7 @@
 
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
+import 'package:cnn_brasil_app/features/article/article.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -76,14 +77,25 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   }
 
   void navigateToInternalPage(String url) {
-    NavigatorManager(context).to(
-      CustomWebView.route,
-      data: WebviewNavigatorModel(url: url, title: 'Voltar'),
-      onFinished: () {
-        inAppWebViewController?.goBack();
-      },
-      analytics: NavigatorAnalytics.fromUrl(url),
-    );
+    final articleId =
+        url.replaceAll('/?', '?').split('?').first.split('/').last;
+
+    if (articleId.characters.length > 15) {
+      NavigatorManager(context).to(
+        Article.route,
+        data: articleId,
+        onFinished: () => inAppWebViewController?.goBack(),
+      );
+    } else {
+      NavigatorManager(context).to(
+        CustomWebView.route,
+        data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+        onFinished: () {
+          inAppWebViewController?.goBack();
+        },
+        analytics: NavigatorAnalytics.fromUrl(url),
+      );
+    }
   }
 
   void onMenuSelected(CnnMenuModel menu) async {

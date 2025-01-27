@@ -38,6 +38,18 @@ class StorieRepository implements Repository<StorieModel> {
         .toList();
   }
 
+  Future<List<StorieModel>> listCategory(String category) async {
+    final req = BaseRequest(path: '${ApiStories.home}?category=$category');
+    final response = await client.get(
+      req,
+    );
+    return (response.data as List)
+        .map(
+          (e) => StorieModel.fromJson(e),
+        )
+        .toList();
+  }
+
   @override
   Future<BaseResponse> update(StorieModel model) {
     throw UnimplementedError();
