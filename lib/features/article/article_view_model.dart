@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:cnn_brasil_app/core/models/article_model.dart';
+import 'package:cnn_brasil_app/core/models/article_most_read_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +9,7 @@ import 'article.dart';
 
 abstract class ArticleViewModel extends State<Article> {
   late final ArticleModel article;
+  late final ArticleMostReadModel articlesMostRead;
   bool fetched = false;
 
   @override
@@ -15,7 +17,9 @@ abstract class ArticleViewModel extends State<Article> {
     super.initState();
 
     fetch();
+    fetchMostRead();
   }
+
 
   void fetch() async {
     final articleId = widget.articleId;
@@ -30,6 +34,17 @@ abstract class ArticleViewModel extends State<Article> {
 
       return;
     }
+
+    setState(() {
+      fetched = true;
+    });    
+  }
+
+  void fetchMostRead() async {
+    final json = await Dio().get(
+        'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/most-read');
+
+    articlesMostRead = ArticleMostReadModel.fromJson(json.data);
 
     setState(() {
       fetched = true;

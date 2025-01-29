@@ -1,6 +1,7 @@
 import 'package:cnn_brasil_app/core/components/app_bar_webview.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:cnn_brasil_app/core/models/article_model.dart';
+import 'package:cnn_brasil_app/core/models/article_most_read_model.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/article/article.dart';
 import 'package:cnn_brasil_app/features/article/article_css.dart';
@@ -290,6 +291,85 @@ class ArticleView extends ArticleViewModel {
                                 ),
                               ],
                             ),
+                          ),
+                        )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Divider(),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Mais Lidos',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          NavigatorManager(context).to(
+                            CustomWebView.route,
+                            data: WebviewNavigatorModel(
+                                url: articlesMostRead.posts.first.permalink, title: 'Voltar'),
+                            onFinished: () {},
+                            analytics: NavigatorAnalytics.fromUrl(
+                              articlesMostRead.posts.first.permalink,
+                            ),
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.network(articlesMostRead.posts.first.featuredMedia.image.url),
+                            const SizedBox(height: 8),
+                            Text(
+                              articlesMostRead.posts.first.title,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.primary,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),                        
+                      for (Post post in articlesMostRead.posts.skip(1).take(4))
+                        InkWell(
+                          onTap: () {
+                            NavigatorManager(context).to(
+                              CustomWebView.route,
+                              data: WebviewNavigatorModel(
+                                  url: post.permalink, title: 'Voltar'),
+                              onFinished: () {},
+                              analytics: NavigatorAnalytics.fromUrl(
+                                post.permalink,
+                              ),
+                            );
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.network(post.featuredMedia.image.url),
+                              const SizedBox(height: 8),
+                              Text(
+                                post.title,
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.primary,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         )
                     ],
