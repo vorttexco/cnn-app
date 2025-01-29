@@ -1,17 +1,21 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:cnn_brasil_app/core/extensions/string_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class CustomVideoPlayer extends StatelessWidget {
   final LiveOnModel? model;
-  final WebViewController? webViewController;
+  final String? url;
 
-  const CustomVideoPlayer({
+  CustomVideoPlayer({
     super.key,
     required this.model,
-    this.webViewController,
+    required this.url,
   });
+
+  late InAppWebViewController webViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +37,34 @@ class CustomVideoPlayer extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             clipBehavior: Clip.hardEdge,
-            child: WebViewWidget(
-              controller: webViewController ?? WebViewController(),
-            ),
+            child: InAppWebView(
+                  key: const Key('webView'),
+                  initialUrlRequest: URLRequest(url: WebUri(url ?? "")),
+                  initialOptions: InAppWebViewGroupOptions(
+                    crossPlatform: InAppWebViewOptions(
+                      javaScriptEnabled: true,
+                      mediaPlaybackRequiresUserGesture: false,
+                    ),
+                    ios: IOSInAppWebViewOptions(
+                      allowsInlineMediaPlayback: true,
+                    ),
+                  ),
+                  onWebViewCreated: (controller) {
+                    webViewController = controller;
+                  },
+                  onLoadStop: (controller, url) async {
+                    await controller.evaluateJavascript(
+                      source: """
+                      var video = document.querySelector('video');
+                      if (video) {
+                        video.style.width = '100%';
+                        video.style.height = '100%';
+                        video.play();
+                      }
+                      """
+                    );
+                  },
+                ),
           ),
         ),
         const SizedBox(height: AppConstants.KPADDING_DEFAULT),
