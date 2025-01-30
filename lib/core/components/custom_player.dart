@@ -54,43 +54,57 @@ class _CustomPlayerState extends State<CustomPlayer> {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          Visibility(
-            visible: !isExpanded,
-            child: SizedBox(
-              width: 125,
-              height: 70,
-              child: ClipRRect(
-                clipBehavior: Clip.hardEdge,
-                child: InAppWebView(
-                  key: const Key('webView'),
-                  initialUrlRequest: URLRequest(url: WebUri(widget.url)),
-                  initialOptions: InAppWebViewGroupOptions(
-                    crossPlatform: InAppWebViewOptions(
-                      javaScriptEnabled: true,
-                      mediaPlaybackRequiresUserGesture: false,
-                    ),
-                    ios: IOSInAppWebViewOptions(
-                      allowsInlineMediaPlayback: true,
+          Stack(
+            children: [
+              Visibility(
+                visible: !isExpanded,
+                child: SizedBox(
+                  width: 125,
+                  height: 70,
+                  child: ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                    child: InAppWebView(
+                      key: const Key('webView'),
+                      initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+                      initialOptions: InAppWebViewGroupOptions(
+                        crossPlatform: InAppWebViewOptions(
+                          javaScriptEnabled: true,
+                          mediaPlaybackRequiresUserGesture: false,
+                        ),
+                        ios: IOSInAppWebViewOptions(
+                          allowsInlineMediaPlayback: true,
+                        ),
+                      ),
+                      onWebViewCreated: (controller) {
+                        collapsedControle = controller;
+                      },
+                      onLoadStop: (controller, url) async {
+                        await controller.evaluateJavascript(
+                          source: """
+                          var video = document.querySelector('video');
+                          if (video) {
+                            video.style.width = '100%';
+                            video.style.height = '100%';
+                            video.play();
+                          }
+                          """
+                        );
+                      },
                     ),
                   ),
-                  onWebViewCreated: (controller) {
-                    collapsedControle = controller;
-                  },
-                  onLoadStop: (controller, url) async {
-                    await controller.evaluateJavascript(
-                      source: """
-                      var video = document.querySelector('video');
-                      if (video) {
-                        video.style.width = '100%';
-                        video.style.height = '100%';
-                        video.play();
-                      }
-                      """
-                    );
+                ),
+              ),
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    setState(() {
+                      isExpanded = true;
+                    });
                   },
                 ),
               ),
-            ),
+            ],
           ),
           Expanded(
               child: Row(
