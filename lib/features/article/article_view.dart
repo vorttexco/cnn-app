@@ -55,7 +55,7 @@ class ArticleView extends ArticleViewModel {
                   onIconPressed: onBack,
                   onShare: onShare,
                 ),
-                if (fetched && article.content?.content != null && articlesMostRead.posts.isNotEmpty) ...[
+                if (fetched && article.content?.content != null) ...[
                   Text(
                     article.title ?? '',
                     style: TextStyle(
@@ -293,22 +293,41 @@ class ArticleView extends ArticleViewModel {
                           ),
                         )
                     ],
-                  ),
-                  const SizedBox(height: 24),
-                  Divider(
-                    color: Theme.of(context).colorScheme.tertiaryContainer,
-                  ),
-                  const SizedBox(height: 40),
-                  Text(
-                    'Mais Lidos',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).primaryColor,
+                  ),                
+                  if (articlesMostRead.posts.isNotEmpty) ...[
+                    const SizedBox(height: 24),
+                    Divider(
+                      color: Theme.of(context).colorScheme.tertiaryContainer,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Wrap(
+                    const SizedBox(height: 40),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          article.category?.hierarchy?.isNotEmpty == true
+                            ? 'Mais Lidos de ${article.category!.hierarchy!.first[0].toUpperCase()}${article.category!.hierarchy!.first.substring(1)}'
+                            : 'Mais Lidos',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Transform.translate(
+                          offset: const Offset(0, 1.5),
+                          child: Container(
+                            width: 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Wrap(
                     spacing: 10,
                     runSpacing: 10,
                     children: [
@@ -436,6 +455,7 @@ class ArticleView extends ArticleViewModel {
                       ]
                     ],
                   ),
+                  ],
                   const SizedBox(height: 10),
                   if (article.category != null) ...[
                     Text(

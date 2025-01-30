@@ -19,20 +19,26 @@ abstract class ArticleViewModel extends State<Article> {
     fetch();
   }
 
-
   void fetch() async {
+    final dio = Dio();
+
     final articleId = widget.articleId;
 
-    final results = await Future.wait([
-      Dio().get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId'),
-      Dio().get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/most-read'),
-    ]);
+    final articleResponse = await dio.get(
+      'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
+    );
 
-    final articleJson = results[0].data;
-    final mostReadJson = results[1].data;
+    article = ArticleModel.fromJson(articleResponse.data);
 
-    article = ArticleModel.fromJson(articleJson);
-    articlesMostRead = ArticleMostReadModel.fromJson(mostReadJson);
+    final mostReadResponse = await dio.get(
+      'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/most-read',
+      queryParameters: {
+        'category': article.category?.hierarchy?.first,
+        'per_page': 5,
+      },
+    );
+
+    articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
 
     if (article.content == null) {
       NavigatorManager(context).back();
