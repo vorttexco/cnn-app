@@ -1,7 +1,6 @@
 import 'package:cnn_brasil_app/core/components/app_bar_webview.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:cnn_brasil_app/core/models/article_model.dart';
-import 'package:cnn_brasil_app/core/models/article_most_read_model.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/article/article.dart';
 import 'package:cnn_brasil_app/features/article/article_css.dart';
@@ -56,7 +55,7 @@ class ArticleView extends ArticleViewModel {
                   onIconPressed: onBack,
                   onShare: onShare,
                 ),
-                if (fetched && article.content?.content != null) ...[
+                if (fetched && article.content?.content != null && articlesMostRead.posts.isNotEmpty) ...[
                   Text(
                     article.title ?? '',
                     style: TextStyle(
@@ -295,9 +294,11 @@ class ArticleView extends ArticleViewModel {
                         )
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  const Divider(),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 24),
+                  Divider(
+                    color: Theme.of(context).colorScheme.tertiaryContainer,
+                  ),
+                  const SizedBox(height: 40),
                   Text(
                     'Mais Lidos',
                     style: TextStyle(
@@ -314,68 +315,127 @@ class ArticleView extends ArticleViewModel {
                       InkWell(
                         onTap: () {
                           NavigatorManager(context).to(
-                            CustomWebView.route,
-                            data: WebviewNavigatorModel(
-                                url: articlesMostRead.posts.first.permalink, title: 'Voltar'),
+                            Article.route,
+                            data: articlesMostRead.posts.first.slug,
                             onFinished: () {},
-                            analytics: NavigatorAnalytics.fromUrl(
-                              articlesMostRead.posts.first.permalink,
-                            ),
                           );
                         },
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.network(articlesMostRead.posts.first.featuredMedia.image.url),
+                            Stack(
+                              children: [
+                                Image.network(articlesMostRead.posts.first.featuredMedia.image.url),
+                                Container(
+                                  width: 19,
+                                  height: 19,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    '1',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontFamily: Theme.of(context).textTheme.titleMedium?.fontFamily,
+                                      fontWeight: FontWeight.bold
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               articlesMostRead.posts.first.title,
                               textAlign: TextAlign.left,
                               style: TextStyle(
-                                color:
-                                    Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: Theme.of(context).textTheme.titleMedium?.fontFamily,
                               ),
                             ),
                           ],
                         ),
-                      ),                        
-                      for (Post post in articlesMostRead.posts.skip(1).take(4))
+                      ),
+                      const SizedBox(height: 1),
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: Theme.of(context).colorScheme.tertiaryContainer,
+                      ),                  
+                      for (int index = 0; index < articlesMostRead.posts.skip(1).take(4).length; index++)...[    
+                        const SizedBox(height: 1),                    
                         InkWell(
                           onTap: () {
                             NavigatorManager(context).to(
-                              CustomWebView.route,
-                              data: WebviewNavigatorModel(
-                                  url: post.permalink, title: 'Voltar'),
+                              Article.route,
+                              data: articlesMostRead.posts[index + 1].slug,
                               onFinished: () {},
-                              analytics: NavigatorAnalytics.fromUrl(
-                                post.permalink,
-                              ),
                             );
                           },
-                          child: Column(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.network(post.featuredMedia.image.url),
-                              const SizedBox(height: 8),
-                              Text(
-                                post.title,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.primary,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                              Stack(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4)
+                                    ),
+                                    width: 152,
+                                    height: 134,
+                                    clipBehavior: Clip.hardEdge,
+                                    child: Image.network(
+                                      articlesMostRead.posts[index + 1].featuredMedia.image.url,
+                                      fit: BoxFit.cover,                    
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 19,
+                                    height: 19,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      '${index + 2}',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontFamily: Theme.of(context).textTheme.titleMedium?.fontFamily,
+                                        fontWeight: FontWeight.w700
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  articlesMostRead.posts[index + 1].title,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                     color: Theme.of(context).colorScheme.primary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: Theme.of(context).textTheme.titleMedium?.fontFamily,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        )
+                        ),         
+                        const SizedBox(height: 1),               
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Theme.of(context).colorScheme.tertiaryContainer,
+                        ),
+                      ]
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  const Divider(),
                   const SizedBox(height: 10),
                   if (article.category != null) ...[
                     Text(
