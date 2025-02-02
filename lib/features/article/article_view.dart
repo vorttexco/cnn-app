@@ -1,4 +1,5 @@
 import 'package:cnn_brasil_app/core/components/app_bar_webview.dart';
+import 'package:cnn_brasil_app/core/extensions/string_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:cnn_brasil_app/core/models/article_model.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
@@ -12,6 +13,20 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'article_view_model.dart';
 
 class ArticleView extends ArticleViewModel {
+  int currentIndex = 0;
+  final ScrollController _scrollController = ScrollController();
+
+  void _scrollToIndex(int index) {
+    const itemWidth = 150.0;
+    final offset = itemWidth * index;
+
+    _scrollController.animateTo(
+      offset,
+      duration: const Duration(seconds: 1),
+      curve: Curves.easeInOut,
+    );
+  }
+
   Widget renderContent(String htmlSnippet) {
     final shouldRenderWebView = htmlSnippet.contains('flourish-embed') &&
         htmlSnippet.contains('data-src');
@@ -57,7 +72,7 @@ class ArticleView extends ArticleViewModel {
                 ),
                 if (fetched && article.content?.content != null) ...[
                   Text(
-                    article.title ?? '',
+                    article.title?.replaceAll("&quot;", '"') ?? '',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 26,
@@ -66,7 +81,7 @@ class ArticleView extends ArticleViewModel {
                   ),
                   const Divider(),
                   Text(
-                    article.excerpt ?? '',
+                    article.excerpt?.replaceAll("&quot;", '"') ?? '',
                     style: TextStyle(
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.primary,
@@ -103,7 +118,183 @@ class ArticleView extends ArticleViewModel {
                     ),
                   ),
                   const SizedBox(height: AppConstants.KPADDING_8),
-                  if (article.featuredMedia?.image != null) ...[
+                  if (articleGallery.images != null && articleGallery.images!.isNotEmpty) ...[
+                    Column(
+                      children: [
+                        const SizedBox(height: AppConstants.KPADDING_8),
+                        GestureDetector(
+                          onHorizontalDragEnd: (details) {
+                            double dragEndPosition = details.velocity.pixelsPerSecond.dx;
+
+                            if (dragEndPosition > 0) {
+                              setState(() {
+                                if (currentIndex > 0) {
+                                  currentIndex--;
+                                  _scrollToIndex(currentIndex);
+                                }
+                              });
+                            } else if (dragEndPosition < 0) {
+                              setState(() {
+                                if (currentIndex < articleGallery.images!.length - 1) {
+                                  currentIndex++;
+                                  _scrollToIndex(currentIndex);
+                                }
+                              });
+                            }
+                          },
+                          child: Stack(
+                            children: [
+                              Image.network(
+                                articleGallery.images![currentIndex].url!,
+                                height: 300,
+                                  width: MediaQuery.of(context).size.width,
+                                fit: BoxFit.cover,              
+                              ),
+                              Positioned(
+                                top: 16,
+                                left: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    "${currentIndex + 1} de ${articleGallery.images!.length}",
+                                    style: const TextStyle(
+                                      color: Colors.white, 
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'CNN Sans Display',
+                                    ),
+                                  ),
+                                )
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                child: Container(
+                                  height: 192,
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.black.withOpacity(1),
+                                        Colors.black.withOpacity(0),
+                                      ],
+                                      stops: const [0.38, 0.59],
+                                    ),
+                                  ),
+                                  alignment: Alignment.bottomLeft,
+                                  child: SizedBox(
+                                    height: 64,
+                                    child: Scrollbar(
+                                      controller: ScrollController(),
+                                      thumbVisibility: true,
+                                      trackVisibility: true,
+                                      thickness: 6,
+                                      radius: const Radius.circular(8),
+                                      scrollbarOrientation: ScrollbarOrientation.right,         
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.vertical,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(right: 16, top: 2),
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                    text: articleGallery.images![currentIndex].caption?.stripHtml() ?? '',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: 'CNN Sans Display',
+                                                    ),
+                                                  ),
+                                                if (articleGallery.images![currentIndex].credits != null && articleGallery.images![currentIndex].credits!.isNotEmpty) ...[
+                                                  const TextSpan(
+                                                    text: ' • ',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: 'CNN Sans Display',
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text: articleGallery.images![currentIndex].credits!,
+                                                    style: const TextStyle(
+                                                      color: Colors.white, 
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: 'CNN Sans Display',
+                                                    ),
+                                                  )
+                                                ]
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 85,
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (int index = 0; index < articleGallery.images!.length; index++)
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    currentIndex = index;
+                                    _scrollToIndex(index);
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                                  child: Stack(
+                                    children: [
+                                      Image.network(
+                                        articleGallery.images![index].url!,
+                                        width: 150,
+                                        height: 85,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        height: 7,
+                                        color: index == currentIndex
+                                            ? Theme.of(context).primaryColor
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.KPADDING_8),
+                  ],
+                  if (article.featuredMedia?.image != null && articleGallery.images == null) ...[
                     Image.network(article.featuredMedia!.image!.url!),
                     const SizedBox(height: AppConstants.KPADDING_8),
                     Padding(

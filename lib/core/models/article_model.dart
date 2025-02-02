@@ -99,11 +99,13 @@ class ArticleModel {
 
 class FeaturedMedia {
   ArticleImage? image;
+  GalleryData? gallery;
 
-  FeaturedMedia({this.image});
+  FeaturedMedia({this.image, this.gallery});
 
   FeaturedMedia.fromJson(Map<String, dynamic> json) {
     image = json['image'] != null ? ArticleImage.fromJson(json['image']) : null;
+    gallery = json['gallery'] != null ? GalleryData.fromJson(json['gallery']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -111,6 +113,24 @@ class FeaturedMedia {
     if (image != null) {
       data['image'] = image!.toJson();
     }
+    return data;
+  }
+}
+
+class GalleryData {
+  String? id;
+
+  GalleryData({
+    this.id
+  });
+
+  GalleryData.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
     return data;
   }
 }

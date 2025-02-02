@@ -63,10 +63,14 @@ class Post {
 class FeaturedMedia {
   final ImageData image;
 
-  FeaturedMedia({required this.image});
+  FeaturedMedia({
+    required this.image
+  });
 
   factory FeaturedMedia.fromJson(Map<String, dynamic> json) {
-    return FeaturedMedia(image: ImageData.fromJson(json['image']));
+    return FeaturedMedia(
+      image: ImageData.fromJson(json['image']),
+    );
   }
 }
 
