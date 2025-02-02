@@ -27,6 +27,294 @@ class ArticleView extends ArticleViewModel {
     );
   }
 
+  void _showGalleryModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
+      builder: (context) {
+        bool showImagesGrid = false;
+
+        return Column(
+          children: [
+            IgnorePointer(
+              ignoring: false,
+              child: AppBarwebView(
+                onFinished: () {
+                  setState(() {});
+                },
+                title: 'Voltar',
+                onIconPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+
+                    Future.delayed(const Duration(milliseconds: 200), () {
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+                    });
+                  }
+                },
+                onShare: onShare,
+              ),
+            ),
+            StatefulBuilder(
+              builder: (context, setState) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xE6282828),
+                  ),
+                  height: MediaQuery.of(context).size.height - 110,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 60),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 16.0, bottom: 40.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  showImagesGrid = !showImagesGrid;
+                                });
+                              },
+                              child: Container(
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                                padding: const EdgeInsets.all(2),
+                                child: SvgPicture.network(
+                                  !showImagesGrid ? 'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-grid.svg' : 'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                  placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (!showImagesGrid) ... [
+                          GestureDetector(
+                            onHorizontalDragEnd: (details) {
+                              double dragEndPosition = details.velocity.pixelsPerSecond.dx;
+                              setState(() {
+                                if (dragEndPosition > 0 && currentIndex > 0) {
+                                  currentIndex--;
+                                } else if (dragEndPosition < 0 && currentIndex < articleGallery.images!.length - 1) {
+                                  currentIndex++;
+                                }
+                              });
+                            },
+                            child: Stack(
+                              children: [
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.black,
+                                  ),
+                                  child: Image.network(
+                                    articleGallery.images![currentIndex].url!,
+                                    height: 241,
+                                    width: MediaQuery.of(context).size.width,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 16,
+                                  left: 16,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      "${currentIndex + 1} de ${articleGallery.images!.length}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'CNN Sans Display',
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 16,
+                                  right: 16,
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.pop(context, currentIndex),
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                      child: SvgPicture.network(
+                                        'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                        placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16, left: 24, right: 24, bottom: 100),
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: articleGallery.images![currentIndex].caption?.stripHtml() ?? '',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'CNN Sans Display',
+                                    ),
+                                  ),
+                                  if (articleGallery.images![currentIndex].credits != null && 
+                                      articleGallery.images![currentIndex].credits!.isNotEmpty) ...[
+                                    const TextSpan(
+                                      text: ' • ',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'CNN Sans Display',
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: articleGallery.images![currentIndex].credits!,
+                                      style: const TextStyle(
+                                        color: Colors.white, 
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'CNN Sans Display',
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ),
+                          Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  if (currentIndex > 0) {
+                                    setState(() {
+                                      currentIndex--;
+                                      _scrollToIndex(currentIndex);
+                                    });
+                                  }                            
+                                },
+                                child: Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Icon(
+                                    Icons.chevron_left, 
+                                    color: Colors.white, 
+                                    size: 20
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 24),
+                              GestureDetector(
+                                onTap: () {
+                                  if (currentIndex < articleGallery.images!.length - 1) {
+                                    setState(() {
+                                      currentIndex++;
+                                      _scrollToIndex(currentIndex);
+                                    });
+                                  }                              
+                                },
+                                child: Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Icon(
+                                    Icons.chevron_right, 
+                                    color: Colors.white, 
+                                    size: 20
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                        ],
+                        if (showImagesGrid) ...[
+                          Expanded(
+                            child: GridView.builder(
+                              padding: const EdgeInsets.all(16),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 16,
+                                crossAxisSpacing: 16,
+                                childAspectRatio: 172 / 96,
+                              ),
+                              itemCount: articleGallery.images!.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      currentIndex = index;
+                                      _scrollToIndex(index);
+                                      showImagesGrid = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Image.network(
+                                      articleGallery.images![index].url!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+
+                        ]
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    ).then((newIndex) {
+      if (newIndex != null) {
+        setState(() {
+          currentIndex = newIndex;
+        });
+      }
+    });
+  }
+
   Widget renderContent(String htmlSnippet) {
     final shouldRenderWebView = htmlSnippet.contains('flourish-embed') &&
         htmlSnippet.contains('data-src');
@@ -144,11 +432,16 @@ class ArticleView extends ArticleViewModel {
                           },
                           child: Stack(
                             children: [
-                              Image.network(
-                                articleGallery.images![currentIndex].url!,
-                                height: 300,
-                                  width: MediaQuery.of(context).size.width,
-                                fit: BoxFit.cover,              
+                              Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.black
+                                ),
+                                child: Image.network(
+                                  articleGallery.images![currentIndex].url!,
+                                  height: 300,
+                                    width: MediaQuery.of(context).size.width,
+                                  fit: BoxFit.contain,              
+                                ),
                               ),
                               Positioned(
                                 top: 16,
@@ -166,6 +459,25 @@ class ArticleView extends ArticleViewModel {
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: 'CNN Sans Display',
+                                    ),
+                                  ),
+                                )
+                              ),
+                              Positioned(
+                                top: 16,
+                                right: 16,
+                                child: GestureDetector(
+                                  onTap: () => _showGalleryModal(context),
+                                  child: Container(
+                                    width: 24,
+                                    height: 24,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                    child: SvgPicture.network(
+                                      'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                      placeholderBuilder: (context) => const CircularProgressIndicator(),
                                     ),
                                   ),
                                 )
