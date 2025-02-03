@@ -166,101 +166,110 @@ class ArticleView extends ArticleViewModel {
                               ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16, left: 24, right: 24, bottom: 100),
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: articleGallery.images![currentIndex].caption?.stripHtml() ?? '',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: 'CNN Sans Display',
-                                    ),
+                          SizedBox(
+                            height: 64,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 16, left: 24, right: 24),
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: articleGallery.images![currentIndex].caption?.stripHtml() ?? '',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'CNN Sans Display',
+                                        ),
+                                      ),
+                                      if (articleGallery.images![currentIndex].credits != null && 
+                                          articleGallery.images![currentIndex].credits!.isNotEmpty) ...[
+                                        const TextSpan(
+                                          text: ' • ',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700,
+                                            fontFamily: 'CNN Sans Display',
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: articleGallery.images![currentIndex].credits!,
+                                          style: const TextStyle(
+                                            color: Colors.white, 
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: 'CNN Sans Display',
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
-                                  if (articleGallery.images![currentIndex].credits != null && 
-                                      articleGallery.images![currentIndex].credits!.isNotEmpty) ...[
-                                    const TextSpan(
-                                      text: ' • ',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: 'CNN Sans Display',
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: articleGallery.images![currentIndex].credits!,
-                                      style: const TextStyle(
-                                        color: Colors.white, 
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: 'CNN Sans Display',
-                                      ),
-                                    ),
-                                  ],
-                                ],
+                                ),
                               ),
                             ),
                           ),
-                          Center(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  if (currentIndex > 0) {
-                                    setState(() {
-                                      currentIndex--;
-                                      _scrollToIndex(currentIndex);
-                                    });
-                                  }                            
-                                },
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: BorderRadius.circular(2),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 100),
+                            child: Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (currentIndex > 0) {
+                                        setState(() {
+                                          currentIndex--;
+                                          _scrollToIndex(currentIndex);
+                                        });
+                                      }                            
+                                    },
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: const Icon(
+                                        Icons.chevron_left, 
+                                        color: Colors.white, 
+                                        size: 20
+                                      ),
+                                    ),
                                   ),
-                                  alignment: Alignment.center,
-                                  child: const Icon(
-                                    Icons.chevron_left, 
-                                    color: Colors.white, 
-                                    size: 20
-                                  ),
-                                ),
+                                  const SizedBox(width: 24),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (currentIndex < articleGallery.images!.length - 1) {
+                                        setState(() {
+                                          currentIndex++;
+                                          _scrollToIndex(currentIndex);
+                                        });
+                                      }                              
+                                    },
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).primaryColor,
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: const Icon(
+                                        Icons.chevron_right, 
+                                        color: Colors.white, 
+                                        size: 20
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
-                              const SizedBox(width: 24),
-                              GestureDetector(
-                                onTap: () {
-                                  if (currentIndex < articleGallery.images!.length - 1) {
-                                    setState(() {
-                                      currentIndex++;
-                                      _scrollToIndex(currentIndex);
-                                    });
-                                  }                              
-                                },
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: const Icon(
-                                    Icons.chevron_right, 
-                                    color: Colors.white, 
-                                    size: 20
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
+                            ),
+                          )
                         ],
                         if (showImagesGrid) ...[
                           Expanded(
