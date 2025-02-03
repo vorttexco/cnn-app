@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:cnn_brasil_app/core/components/app_bar_webview.dart';
 import 'package:cnn_brasil_app/core/extensions/string_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
@@ -14,6 +16,8 @@ import 'article_view_model.dart';
 
 class ArticleView extends ArticleViewModel {
   int currentIndex = 0;
+  
+  late InAppWebViewController collapsedControle;
   final ScrollController _scrollController = ScrollController();
 
   void _scrollToIndex(int index) {
@@ -415,7 +419,43 @@ class ArticleView extends ArticleViewModel {
                     ),
                   ),
                   const SizedBox(height: AppConstants.KPADDING_8),
-                  if (articleGallery.images != null && articleGallery.images!.isNotEmpty) ...[
+                  if (article.featuredMedia?.video != null) ...[
+                    const SizedBox(height: AppConstants.KPADDING_8),
+                    SizedBox(
+                      height: 300,
+                      width: MediaQuery.of(context).size.width,
+                      child: InAppWebView(
+                        key: const Key('webView'),
+                        initialUrlRequest: URLRequest(url: WebUri('${ApiHome.home}/youtube/video/?youtube_id=${article.featuredMedia?.video?.id}&youtube_adformat=aovivo&hidemenu=true&youtube_mode=teatro')),
+                          initialOptions: InAppWebViewGroupOptions(
+                            crossPlatform: InAppWebViewOptions(
+                              javaScriptEnabled: true,
+                              mediaPlaybackRequiresUserGesture: false,
+                            ),
+                            ios: IOSInAppWebViewOptions(
+                              allowsInlineMediaPlayback: true,
+                            ),
+                          ),
+                          onWebViewCreated: (controller) {
+                            collapsedControle = controller;
+                          },
+                          onLoadStop: (controller, url) async {
+                            await controller.evaluateJavascript(
+                              source: """
+                              var video = document.querySelector('video');
+                              if (video) {
+                                video.style.width = '100%';
+                                video.style.height = '100%';
+                                video.play();
+                              }
+                              """
+                            );
+                          },
+                        ),
+                    ),
+                    const SizedBox(height: AppConstants.KPADDING_8),
+                  ],
+                  if (articleGallery.images != null && articleGallery.images!.isNotEmpty && article.featuredMedia?.video == null) ...[
                     Column(
                       children: [
                         const SizedBox(height: AppConstants.KPADDING_8),
@@ -615,7 +655,7 @@ class ArticleView extends ArticleViewModel {
                     ),
                     const SizedBox(height: AppConstants.KPADDING_8),
                   ],
-                  if (article.featuredMedia?.image != null && articleGallery.images == null) ...[
+                  if (article.featuredMedia?.image != null && articleGallery.images == null && article.featuredMedia?.video == null) ...[
                     Image.network(article.featuredMedia!.image!.url!),
                     const SizedBox(height: AppConstants.KPADDING_8),
                     Padding(

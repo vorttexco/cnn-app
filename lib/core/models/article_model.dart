@@ -100,12 +100,14 @@ class ArticleModel {
 class FeaturedMedia {
   ArticleImage? image;
   GalleryData? gallery;
+  VideoData? video;
 
-  FeaturedMedia({this.image, this.gallery});
+  FeaturedMedia({this.image, this.gallery, this.video});
 
   FeaturedMedia.fromJson(Map<String, dynamic> json) {
     image = json['image'] != null ? ArticleImage.fromJson(json['image']) : null;
     gallery = json['gallery'] != null ? GalleryData.fromJson(json['gallery']) : null;
+    video = json['video'] != null ? VideoData.fromJson(json['video']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -113,6 +115,38 @@ class FeaturedMedia {
     if (image != null) {
       data['image'] = image!.toJson();
     }
+    if (gallery != null) {
+      data['gallery'] = gallery!.toJson();
+    }
+    if (video != null) {
+      data['video'] = video!.toJson();
+    }    
+    return data;
+  }
+}
+
+class VideoData {
+  String? id;
+  String? type;
+  String? permalink;
+
+  VideoData({
+    this.id,
+    this.type,
+    this.permalink
+  });
+
+  VideoData.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    type = json['type'];
+    permalink = json['type'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['type'] = type;
+    data['permalink'] = permalink;
     return data;
   }
 }
