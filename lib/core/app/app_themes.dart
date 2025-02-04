@@ -18,6 +18,7 @@ ThemeData lightTheme = ThemeData(
     tertiary: Color.fromARGB(255, 75, 75, 75),
     primaryContainer: Color(0xffE2E2E2),
     secondaryContainer: Color(0xffF4F4F4),
+    tertiaryContainer: Color(0xFFE6E6E6)
   ),
   checkboxTheme: CheckboxThemeData(
     shape: const CircleBorder(),
@@ -35,6 +36,11 @@ ThemeData lightTheme = ThemeData(
     }),
     checkColor: WidgetStateProperty.all(Colors.white),
   ),
+  textTheme: const TextTheme(
+    titleMedium: TextStyle(
+      fontFamily: _fontFamily
+    )
+  )
 );
 
 ThemeData darkTheme = ThemeData(
@@ -52,6 +58,7 @@ ThemeData darkTheme = ThemeData(
     tertiary: Color(0xff8C8C8C),
     primaryContainer: Color.fromARGB(255, 50, 50, 50),
     secondaryContainer: Color(0xff181a1b),
+    tertiaryContainer: Color(0xFFE6E6E6)
   ),
   checkboxTheme: CheckboxThemeData(
     shape: const CircleBorder(),
@@ -69,4 +76,9 @@ ThemeData darkTheme = ThemeData(
     }),
     checkColor: WidgetStateProperty.all(Colors.white),
   ),
+  textTheme: const TextTheme(
+    titleMedium: TextStyle(
+      fontFamily: _fontFamily
+    )
+  )
 );

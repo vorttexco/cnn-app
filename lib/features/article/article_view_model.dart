@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
+import 'package:cnn_brasil_app/core/models/article_gallery_model.dart';
 import 'package:cnn_brasil_app/core/models/article_model.dart';
+import 'package:cnn_brasil_app/core/models/article_most_read_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +10,9 @@ import 'article.dart';
 
 abstract class ArticleViewModel extends State<Article> {
   late final ArticleModel article;
+  late final ArticleMostReadModel articlesMostRead;
+  late final ArticleGalleryModel articleGallery;
+
   bool fetched = false;
 
   @override
@@ -18,12 +23,44 @@ abstract class ArticleViewModel extends State<Article> {
   }
 
   void fetch() async {
+    final dio = Dio();
+
     final articleId = widget.articleId;
 
-    final json = await Dio().get(
-        'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId');
+    final articleResponse = await dio.get(
+      'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
+    );
 
-    article = ArticleModel.fromJson(json.data);
+    article = ArticleModel.fromJson(articleResponse.data);
+
+    final responses = await Future.wait([
+      dio.get(
+        'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/most-read',
+        queryParameters: {
+          'category': article.category?.hierarchy?.first,
+          'per_page': 5,
+        },
+      ).catchError((e) {
+        return Response(requestOptions: RequestOptions(path: ''));
+      }),
+      dio.get(
+        'https://www.cnnbrasil.com.br/wp-json/content/v1/gallery/${article.featuredMedia?.gallery?.id}'
+      ).catchError((e) {
+        return Response(requestOptions: RequestOptions(path: ''));
+      }),
+    ]);
+
+    final mostReadResponse = responses[0];
+    final articleGalleryResponse = responses[1];
+
+    articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
+    
+    if (articleGalleryResponse.data is Map<String, dynamic> && 
+        !articleGalleryResponse.data.containsKey('mensagem')) {
+      articleGallery = ArticleGalleryModel.fromJson(articleGalleryResponse.data);
+    } else {
+      articleGallery = ArticleGalleryModel();
+    }
 
     if (article.content == null) {
       NavigatorManager(context).back();
