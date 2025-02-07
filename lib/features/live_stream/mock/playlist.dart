@@ -5,7 +5,7 @@ const listMenu = [
     "adformat": "aovivo"
   },
   {
-    "title": "Ultimas Noticias",
+    "title": "Últimas Notícias",
     "playlist": "PL8cUMXM_077d19ds8yALMCUCqi10Yq7W9",
     "adformat": "home-video"
   },
