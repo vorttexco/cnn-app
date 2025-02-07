@@ -80,7 +80,7 @@ class ListVideoCell extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               vertical: AppConstants.KPADDING_16),
                           child: CustomText(
-                            video.title ?? '',
+                            video.title?.replaceAll("&quot;", '"').replaceAll(RegExp(r"&.*?;"), '') ?? "",
                             fontWeight: FontWeight.w700,
                           ),
                         )
