@@ -29,7 +29,7 @@ class ListVideoCell extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 25),
                   child: CustomText(
-                    model.title,
+                    model.title.replaceAll("&quot;", '"'),
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
                   ),
@@ -62,7 +62,7 @@ class ListVideoCell extends StatelessWidget {
                               imageErrorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   color:
-                                      Theme.of(context).scaffoldBackgroundColor,
+                                      Theme.of(context).primaryColor,
                                   child: Center(
                                     child: Image.asset(
                                       'assets/images/logo_splash_wihite.png',

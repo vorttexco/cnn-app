@@ -292,22 +292,22 @@ class LiveStreamView extends LiveStreamViewModel {
           menu12: WrapperLiveStreamModel.toView(menu12),
         ),
         // Page 12
-        CustomPageView(
-          onSelectedVideo: onSelectVideo,
-          menu0: menu12,
-          menu1: WrapperLiveStreamModel.toView(menu0),
-          menu2: WrapperLiveStreamModel.toView(menu1),
-          menu3: WrapperLiveStreamModel.toView(menu2),
-          menu4: WrapperLiveStreamModel.toView(menu3),
-          menu5: WrapperLiveStreamModel.toView(menu4),
-          menu6: WrapperLiveStreamModel.toView(menu5),
-          menu7: WrapperLiveStreamModel.toView(menu6),
-          menu8: WrapperLiveStreamModel.toView(menu7),
-          menu9: WrapperLiveStreamModel.toView(menu8),
-          menu10: WrapperLiveStreamModel.toView(menu9),
-          menu11: WrapperLiveStreamModel.toView(menu10),
-          menu12: WrapperLiveStreamModel.toView(menu11),
-        )
+        // CustomPageView(
+        //   onSelectedVideo: onSelectVideo,
+        //   menu0: menu12,
+        //   menu1: WrapperLiveStreamModel.toView(menu0),
+        //   menu2: WrapperLiveStreamModel.toView(menu1),
+        //   menu3: WrapperLiveStreamModel.toView(menu2),
+        //   menu4: WrapperLiveStreamModel.toView(menu3),
+        //   menu5: WrapperLiveStreamModel.toView(menu4),
+        //   menu6: WrapperLiveStreamModel.toView(menu5),
+        //   menu7: WrapperLiveStreamModel.toView(menu6),
+        //   menu8: WrapperLiveStreamModel.toView(menu7),
+        //   menu9: WrapperLiveStreamModel.toView(menu8),
+        //   menu10: WrapperLiveStreamModel.toView(menu9),
+        //   menu11: WrapperLiveStreamModel.toView(menu10),
+        //   menu12: WrapperLiveStreamModel.toView(menu11),
+        // )
       ],
     );
   }
