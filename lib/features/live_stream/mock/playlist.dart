@@ -5,29 +5,19 @@ const listMenu = [
     "adformat": "aovivo"
   },
   {
-    "title": "Ultimas Noticias",
-    "playlist": "PL8cUMXM_077fN2YrJqoeQjAjwvX5iYovf",
+    "title": "Últimas Notícias",
+    "playlist": "PL8cUMXM_077d19ds8yALMCUCqi10Yq7W9",
     "adformat": "home-video"
   },
   {
-    "title": "Tabuleiro Eleitoral",
-    "playlist": "PL8cUMXM_077cNy8Em5NVYUj5Go5lUeauT",
+    "title": "COP30",
+    "playlist": "PL8cUMXM_077cjNYy8The5cjxGjkarqGO8",
     "adformat": "politica"
   },
   {
-    "title": "Indice",
-    "playlist": "PL8cUMXM_077fsTOngZlKFBUawBeBqm-rv",
+    "title": "Eleições no Congresso Nacional",
+    "playlist": "PL8cUMXM_077eCUDdSqkZP1c7UeD53GGaC",
     "adformat": "politica"
-  },
-  {
-    "title": "CNN nas Eleições",
-    "playlist": "PL8cUMXM_077epuNBi9Wvsj-EmJLlaaC3s",
-    "adformat": "politica"
-  },
-  {
-    "title": "América Decide",
-    "playlist": "PL8cUMXM_077f0dS5F93_sRMnxUMTYISK8",
-    "adformat": "internacional"
   },
   {
     "title": "CNN Economia",
@@ -48,11 +38,6 @@ const listMenu = [
     "title": "CNN Mercado",
     "playlist": "PL5PBP5DKEe7MW_VDa1oeZiyu2n7YWuxS-",
     "adformat": "economia"
-  },
-  {
-    "title": "Podio CNN",
-    "playlist": "PLk2Vxu2ZpUH2u_-lNcVS15_ODiQIeUg6h",
-    "adformat": "esportes"
   },
   {
     "title": "CNN Esportes",
