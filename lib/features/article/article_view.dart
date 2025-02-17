@@ -671,7 +671,7 @@ class ArticleView extends ArticleViewModel {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
-      throw 'Não foi possível abrir o link: $url';
+      throw 'Ocorreu um erro ao abrir a URL: $url';
     }
   }
 
@@ -748,6 +748,7 @@ class ArticleView extends ArticleViewModel {
 
                     if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
                       _openInBrowser(uri.toString());
+
                       return NavigationActionPolicy.CANCEL;
                     }
 
