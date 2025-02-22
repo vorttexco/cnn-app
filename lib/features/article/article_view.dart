@@ -12,9 +12,19 @@ import 'package:cnn_brasil_app/features/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'article_view_model.dart';
+
+class CounterProvider with ChangeNotifier {
+  bool _isGalleryOpen = false;
+
+  bool get isGalleryOpen => _isGalleryOpen;
+
+  void changeValue() {
+    _isGalleryOpen = !_isGalleryOpen;
+    notifyListeners();
+  }
+}
 
 class ArticleView extends ArticleViewModel {
   int currentIndex = 0;
@@ -24,6 +34,7 @@ class ArticleView extends ArticleViewModel {
   final ScrollController _scrollController = ScrollController();
   final ScrollController _embedScrollController = ScrollController();
   List<Images> htmlImages = [];
+  bool isGalleryOpen = false;  
 
   void _scrollToIndex(int index) {
     const itemWidth = 150.0;
@@ -344,18 +355,13 @@ class ArticleView extends ArticleViewModel {
     });
   }
 
-  _renderVideo(String url) {
-    return SizedBox(
-      height: 224,
-      child: InAppWebView(
-        initialUrlRequest: URLRequest(
-          url: WebUri(url),
-        ),
-      ),
-    );
-  }
-
   void _showEmbedGalleryModal(BuildContext context, Function setStateLocal) {
+    setState(() {
+      isGalleryOpen = true;
+    });
+
+    setStateLocal(() {});
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -370,26 +376,23 @@ class ArticleView extends ArticleViewModel {
 
         return Column(
           children: [
-            IgnorePointer(
-              ignoring: false,
-              child: AppBarwebView(
-                onFinished: () {
-                  setState(() {});
-                },
-                title: 'Voltar',
-                onIconPressed: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-
-                    Future.delayed(const Duration(milliseconds: 200), () {
-                      if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      }
-                    });
-                  }
-                },
-                onShare: onShare,
-              ),
+            AppBarwebView(
+              onFinished: () {
+                setState(() {});
+              },
+              title: 'Voltar',
+              onIconPressed: () {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+            
+                  Future.delayed(const Duration(milliseconds: 200), () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  });
+                }
+              },
+              onShare: onShare,
             ),
             StatefulBuilder(
               builder: (context, setState) {
@@ -658,6 +661,7 @@ class ArticleView extends ArticleViewModel {
         setState(() {
           currentEmbedIndex = newIndex;
           _scrollToEmbedIndex(newIndex);
+          isGalleryOpen = false;
         });
 
         setStateLocal(() {});
@@ -665,15 +669,129 @@ class ArticleView extends ArticleViewModel {
     });
   }
 
-  void _openInBrowser(String url) async {
-    final Uri uri = Uri.parse(url);
+  void _showModal(BuildContext context, String imageUrl) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.transparent,
+      isDismissible: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
+      builder: (context) {
+        return Column(
+          children: [
+            IgnorePointer(
+              ignoring: false,
+              child: AppBarwebView(
+                onFinished: () {
+                  setState(() {});
+                },
+                title: 'Voltar',
+                onIconPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
 
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      throw 'Ocorreu um erro ao abrir a URL: $url';
-    }
+                    Future.delayed(const Duration(milliseconds: 200), () {
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+                    });
+                  }
+                },
+                onShare: onShare,
+              ),
+            ),
+            StatefulBuilder(
+              builder: (context, setState) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xE6282828),
+                  ),
+                  height: MediaQuery.of(context).size.height - 110,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 60),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.black,
+                              ),
+                              child: Image.network(
+                                imageUrl,
+                                height: 241,
+                                width: MediaQuery.of(context).size.width,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                  child: SvgPicture.network(
+                                    'https://www.cnnbrasil.com.br/wp-content/themes/master-theme/template-parts/single//content/assets/img/ico-exit.svg',
+                                    placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, right: 16),
+                          child: RichText(
+                            text: TextSpan(
+                              text: article.featuredMedia!.image!.caption,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: ' • ${article.featuredMedia!.image!.credits}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
+
+  // void _openInBrowser(String url) async {
+  //   final Uri uri = Uri.parse(url);
+
+  //   if (await canLaunchUrl(uri)) {
+  //     await launchUrl(uri);
+  //   } else {
+  //     throw 'Ocorreu um erro ao abrir a URL: $url';
+  //   }
+  // }
 
   Widget renderContent(String htmlSnippet) {
     final shouldRenderWebView = htmlSnippet.contains('flourish-embed') &&
@@ -717,45 +835,45 @@ class ArticleView extends ArticleViewModel {
                 onIconPressed: onBack,
                 onShare: onShare,
               ),
-              Container(
-                constraints: const BoxConstraints(maxHeight: 150),
-                alignment: Alignment.center,
-                child: InAppWebView(
-                  initialUrlRequest: URLRequest(
-                    url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=stick")
-                  ),
-                  onLoadStop: (controller, url) {
-                    Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+              // Container(
+              //   constraints: const BoxConstraints(maxHeight: 150),
+              //   alignment: Alignment.center,
+              //   child: InAppWebView(
+              //     initialUrlRequest: URLRequest(
+              //       url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=stick")
+              //     ),
+              //     onLoadStop: (controller, url) {
+              //       Color bgColor = Theme.of(context).scaffoldBackgroundColor;
 
-                    String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
+              //       String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
 
-                    controller.evaluateJavascript(source: """
-                      (function() {
-                        let observer = new MutationObserver((mutations, obs) => {
-                          let adArea = document.querySelector(".ad__area.ad__area--only");
-                          if (adArea) {
-                            adArea.style.background = "$bgColorCss";
-                            obs.disconnect();
-                          }
-                        });
+              //       controller.evaluateJavascript(source: """
+              //         (function() {
+              //           let observer = new MutationObserver((mutations, obs) => {
+              //             let adArea = document.querySelector(".ad__area.ad__area--only");
+              //             if (adArea) {
+              //               adArea.style.background = "$bgColorCss";
+              //               obs.disconnect();
+              //             }
+              //           });
 
-                        observer.observe(document.body, { childList: true, subtree: true });
-                      })();
-                    """);
-                  },
-                  shouldOverrideUrlLoading: (controller, navigationAction) async {
-                    Uri uri = Uri.parse(navigationAction.request.url.toString());
+              //           observer.observe(document.body, { childList: true, subtree: true });
+              //         })();
+              //       """);
+              //     },
+              //     shouldOverrideUrlLoading: (controller, navigationAction) async {
+              //       Uri uri = Uri.parse(navigationAction.request.url.toString());
 
-                    if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
-                      _openInBrowser(uri.toString());
+              //       if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
+              //         _openInBrowser(uri.toString());
 
-                      return NavigationActionPolicy.CANCEL;
-                    }
+              //         return NavigationActionPolicy.CANCEL;
+              //       }
 
-                    return NavigationActionPolicy.ALLOW;
-                  },
-                ),
-              ),
+              //       return NavigationActionPolicy.ALLOW;
+              //     },
+              //   ),
+              // ),
               const SizedBox(height: AppConstants.KPADDING_8),
               Expanded(
                 child: SingleChildScrollView(
@@ -763,6 +881,14 @@ class ArticleView extends ArticleViewModel {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (fetched && article.content?.content != null) ...[
+                        // if (article.content != null && article.tags != null && article.tags!.isNotEmpty) ...[
+                        //   for (var tag in article.tags!) 
+                        //     if (tag.picture?.enabled == true)
+                        //       tag.picture!.url!.contains('.svg')
+                        //         ? SvgPicture.network(tag.picture!.url!)
+                        //         : Image.network(tag.picture!.url!)
+                        // ],
+                        const SizedBox(height: AppConstants.KPADDING_24),
                         Text(
                           article.title?.replaceAll("&quot;", '"') ?? '',
                           style: TextStyle(
@@ -779,7 +905,7 @@ class ArticleView extends ArticleViewModel {
                             color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
-                        const SizedBox(height: AppConstants.KPADDING_8),
+                        const SizedBox(height: AppConstants.KPADDING_16),
                         if ((article.author?.list ?? []).isNotEmpty)
                           RichText(
                             text: TextSpan(
@@ -790,20 +916,36 @@ class ArticleView extends ArticleViewModel {
                                   decoration: TextDecoration.underline,
                                   fontWeight: FontWeight.w600),
                               children: [
-                                TextSpan(
-                                  text:
-                                      ', ${article.author!.list!.first.type!.name!}',
-                                  style: const TextStyle(
-                                    decoration: TextDecoration.none,
-                                    fontWeight: FontWeight.normal,
+                                for (var author in article.author!.list!.skip(1).take(article.author!.list!.length - 1)) ...[
+                                  const TextSpan(
+                                    text: ' e ',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.none,
+                                      fontWeight: FontWeight.normal,
+                                    ),
                                   ),
-                                ),
+                                  TextSpan(
+                                    text: '${author.name}',
+                                    style: const TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  if (article.author != null && article.author?.region != null) TextSpan(
+                                    text: ', da CNN , ${article.author!.region}',
+                                    style: const TextStyle(
+                                      decoration: TextDecoration.none,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ]
+                                  
                               ],
                             ),
                           ),
-                        const SizedBox(height: AppConstants.KPADDING_8),
+                        const SizedBox(height: AppConstants.KPADDING_16),
                         Text(
-                          formatDateTime(article.publishDate!),
+                          "${formatDateTime(article.publishDate!)}${article.modifiedDate != null && article.modifiedDate!.isNotEmpty ? " | Atualizado ${formatDateTime(article.modifiedDate!)}" : ""}",
                           style: TextStyle(
                             fontSize: 12,
                             color: Theme.of(context).colorScheme.primary,
@@ -1047,7 +1189,30 @@ class ArticleView extends ArticleViewModel {
                           const SizedBox(height: AppConstants.KPADDING_8),
                         ],
                         if (article.featuredMedia?.image != null && articleGallery.images == null && article.featuredMedia?.video == null) ...[
-                          Image.network(article.featuredMedia!.image!.url!),
+                          Stack(
+                            children: [
+                              Image.network(article.featuredMedia!.image!.url!),
+                              Positioned(
+                                top: 16,
+                                right: 16,
+                                child: GestureDetector(
+                                  onTap: () => _showModal(context, article.featuredMedia!.image!.url!),
+                                  child: Container(
+                                    width: 24,
+                                    height: 24,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                    child: SvgPicture.network(
+                                      'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                      placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: AppConstants.KPADDING_8),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -1116,359 +1281,373 @@ class ArticleView extends ArticleViewModel {
                           //   ),
                           // ]
                         ],
-                        HtmlWidget(
-                          article.content!.content!.replaceAll('"', '"'),
-                          textStyle: const TextStyle(
-                            fontFamily: 'CNN Sans Display W04 Medium',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w300,
-                            // height: 26,
-                          ),
-                          onTapUrl: (url) {
-                            final articleId = url
-                                .replaceAll('/?', '?')
-                                .split('?')
-                                .first
-                                .split('/')
-                                .last;
-                              
-                            if (articleId.characters.length > 15) {
-                              NavigatorManager(context)
-                                  .to(Article.route, data: articleId);
-                            } else {
-                              NavigatorManager(context).to(
-                                CustomWebView.route,
-                                data:
-                                    WebviewNavigatorModel(url: url, title: 'Voltar'),
-                                onFinished: () {},
-                                analytics: NavigatorAnalytics.fromUrl(url),
-                              );
-                            }
-                              
-                            return false;
-                          },
-                          customStylesBuilder: (element) => cssBuilder(
-                            element,
-                            Theme.of(context).colorScheme.primary,
-                            Theme.of(context).primaryColor,
-                          ),
-                          customWidgetBuilder: (element) {
-                            if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
-                              String? divId = element.id;
-
-                              return Container(
-                                constraints: const BoxConstraints(maxHeight: 350),
-                                alignment: Alignment.center,
-                                child: InAppWebView(
-                                  initialUrlRequest: URLRequest(
-                                    url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=$divId")
-                                  ),
-                                  onLoadStop: (controller, url) {
-                                    Color bgColor = Theme.of(context).scaffoldBackgroundColor;
-
-                                    String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
-
-                                    controller.evaluateJavascript(source: """
-                                      (function() {
-                                        let observer = new MutationObserver((mutations, obs) => {
-                                          let adArea = document.querySelector(".ad__area.ad__area--only");
-                                          if (adArea) {
-                                            adArea.style.background = "$bgColorCss";
-                                            obs.disconnect();
-                                          }
-                                        });
-
-                                        observer.observe(document.body, { childList: true, subtree: true });
-                                      })();
-                                    """);
-                                  },
-                                  shouldOverrideUrlLoading: (controller, navigationAction) async {
-                                    Uri uri = Uri.parse(navigationAction.request.url.toString());
-
-                                    if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
-                                      _openInBrowser(uri.toString());
-                                      return NavigationActionPolicy.CANCEL;
-                                    }
-
-                                    return NavigationActionPolicy.ALLOW;
-                                  },
-                                ),
-                              );
-                            }
-
-                            if (element.localName == 'iframe' &&
-                                (element.attributes.containsKey('src') ||
-                                    element.attributes.containsKey('data-src'))) {
-                              return SizedBox(
-                                height: 400,
-                                child: InAppWebView(
-                                  initialUrlRequest: URLRequest(
-                                    url: WebUri(element.attributes['src'] ??
-                                        element.attributes['data-src']!),
-                                  ),
-                                ),
-                              );
-                            }
-                              
-                            if (element.localName == 'div' &&
-                                element.attributes.containsKey('data-src')) {
-                              return renderContent(element.outerHtml);
-                            }                    
-                              
-                            if (element.attributes.containsKey('data-youtube-id')) {
-                              String? youtubeId = element.attributes['data-youtube-id'];
-                              
-                              var url = "${ApiHome.home}/youtube/video/?youtube_id=$youtubeId&youtube_adformat=aovivo&hidemenu=true&youtube_mode=teatro";
-                              
-                              return _renderVideo(url);                        
-                            }
-                              
-                            if (element.localName == 'a' && element.parent?.localName == 'h2') {
-                              return Container(
-                                padding: EdgeInsets.zero,
-                                margin: EdgeInsets.zero,
-                                child: InkWell(
-                                  onTap: () {
-                                    String url = element.attributes['href'] ?? '';                              
-                              
-                                    if (url.endsWith('/')) {
-                                      url = url.substring(0, url.length - 1);
-                                    }
-                              
-                                    final articleId =
-                                        url.replaceAll('/?', '?').split('?').first.split('/').last;
-                              
-                                    if (articleId.characters.length > 15) {
-                                      NavigatorManager(context).to(
-                                        Article.route,
-                                        data: articleId,
-                                        onFinished: () {},
-                                      );
-                                    } else {
-                                      if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
-                                        NavigatorManager(context).to(
-                                          CustomWebView.route,
-                                          data: WebviewNavigatorModel(url: url, title: 'Voltar'),
-                                          onFinished: () {},
-                                          analytics: NavigatorAnalytics.fromUrl(url),
-                                        );
-                                      }
-                                    }
-                                  },
-                                  child: Text(
-                                    element.text,
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w500,
-                                      color: Theme.of(context).primaryColor,
-                                      decoration: TextDecoration.underline,
-                                      decorationColor: Theme.of(context).primaryColor,
+                          Visibility(
+                            visible: isGalleryOpen,
+                            child: HtmlWidget(
+                            article.content!.content!.replaceAll('"', '"'),
+                            textStyle: const TextStyle(
+                              fontFamily: 'CNN Sans Display W04 Medium',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                              // height: 26,
+                            ),
+                            onTapUrl: (url) {
+                               if (url.endsWith('/')) {
+                                  url = url.substring(0, url.length - 1);
+                                }
+                                                    
+                                final articleId =
+                                    url.replaceAll('/?', '?').split('?').first.split('/').last;
+                                
+                              if (articleId.characters.length > 15) {
+                                NavigatorManager(context).to(
+                                  Article.route,
+                                  data: articleId,
+                                  onFinished: () {},
+                                );
+                                                    
+                                return true; 
+                              } else {
+                                if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
+                                  NavigatorManager(context).to(
+                                    CustomWebView.route,
+                                    data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+                                    onFinished: () {},
+                                    analytics: NavigatorAnalytics.fromUrl(url),
+                                  );
+                                                    
+                                  return true; 
+                                }
+                              }
+                                
+                              return false;
+                            },
+                            customStylesBuilder: (element) => cssBuilder(
+                              element,
+                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).primaryColor,
+                            ),
+                            customWidgetBuilder: (element) {
+                              // if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
+                              //   String? divId = element.id;
+                                                    
+                              //   return Container(
+                              //     constraints: const BoxConstraints(maxHeight: 350),
+                              //     alignment: Alignment.center,
+                              //     child: InAppWebView(
+                              //       initialUrlRequest: URLRequest(
+                              //         url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=$divId")
+                              //       ),
+                              //       onLoadStop: (controller, url) {
+                              //         Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+                                                    
+                              //         String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
+                                                    
+                              //         controller.evaluateJavascript(source: """
+                              //           (function() {
+                              //             let observer = new MutationObserver((mutations, obs) => {
+                              //               let adArea = document.querySelector(".ad__area.ad__area--only");
+                              //               if (adArea) {
+                              //                 adArea.style.background = "$bgColorCss";
+                              //                 obs.disconnect();
+                              //               }
+                              //             });
+                                                    
+                              //             observer.observe(document.body, { childList: true, subtree: true });
+                              //           })();
+                              //         """);
+                              //       },
+                              //       shouldOverrideUrlLoading: (controller, navigationAction) async {
+                              //         Uri uri = Uri.parse(navigationAction.request.url.toString());
+                                                    
+                              //         if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
+                              //           _openInBrowser(uri.toString());
+                              //           return NavigationActionPolicy.CANCEL;
+                              //         }
+                                                    
+                              //         return NavigationActionPolicy.ALLOW;
+                              //       },
+                              //     ),
+                              //   );
+                              // }
+                                                    
+                              if (element.localName == 'iframe' &&
+                                  (element.attributes.containsKey('src') ||
+                                      element.attributes.containsKey('data-src'))) {
+                                return SizedBox(
+                                  height: 400,
+                                  child: InAppWebView(
+                                    initialUrlRequest: URLRequest(
+                                      url: WebUri(element.attributes['src'] ??
+                                          element.attributes['data-src']!),
                                     ),
                                   ),
-                                ),
-                              );
-                            }
-                              
-                            if (element.localName == "h2") {
-                              final nextElement = element.nextElementSibling;
-                              var titleText = element.text;
-                              
-                              if (nextElement?.localName == 'p') {
-                                var nextDiv = nextElement?.nextElementSibling;
-                              
-                                if (nextDiv != null && nextDiv.localName == 'div' && nextDiv.classes.contains('post__video')) {
-                                  return Container(
-                                    padding: EdgeInsets.zero,
-                                    margin: EdgeInsets.zero,
+                                );
+                              }
+                                
+                              if (element.localName == 'div' &&
+                                  element.attributes.containsKey('data-src')) {
+                                return renderContent(element.outerHtml);
+                              }                    
+                                
+                              if (element.attributes.containsKey('data-youtube-id')) {                                
+                                return SizedBox(
+                                  height: 224,
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.black12
+                                    ),
+                                  ),
+                                );                        
+                              }
+                                
+                              if (element.localName == 'a' && element.parent?.localName == 'h2') {
+                                return Container(
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.zero,
+                                  child: InkWell(
+                                    onTap: () {
+                                      String url = element.attributes['href'] ?? '';                              
+                                
+                                      if (url.endsWith('/')) {
+                                        url = url.substring(0, url.length - 1);
+                                      }
+                                
+                                      final articleId =
+                                          url.replaceAll('/?', '?').split('?').first.split('/').last;
+                                
+                                      if (articleId.characters.length > 15) {
+                                        NavigatorManager(context).to(
+                                          Article.route,
+                                          data: articleId,
+                                          onFinished: () {},
+                                        );
+                                      } else {
+                                        if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
+                                          NavigatorManager(context).to(
+                                            CustomWebView.route,
+                                            data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+                                            onFinished: () {},
+                                            analytics: NavigatorAnalytics.fromUrl(url),
+                                          );
+                                        }
+                                      }
+                                    },
                                     child: Text(
-                                      titleText,
-                                      style: const TextStyle(
+                                      element.text,
+                                      style: TextStyle(
                                         fontSize: 20,
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(context).primaryColor,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: Theme.of(context).primaryColor,
                                       ),
                                     ),
-                                  );
-                                }
+                                  ),
+                                );
                               }
-                              
-                              return null;
-                            }
-                              
-                            if (element.classes.contains('thumbnail-image') || element.classes.contains("video-title")) {
-                              return Container(height: 0);
-                            }
-                              
-                            if (element.classes.contains('gallery') && element.classes.contains('gallery--content')) {
-                              var galleryItems = element.querySelectorAll('.gallery__item');
-                              
-                              for (var item in galleryItems) {
-                                var imgElement = item.querySelector('.gallery__img');
-                                var descriptionElement = item.querySelector('.gallery__description p');
+                                                    
+                              if (element.localName == "h2") {
+                                final nextElement = element.nextElementSibling;
+                                var titleText = element.text;
                                 
-                                if (imgElement != null && descriptionElement != null) {
-                                  var src = imgElement.attributes['src'];
-                              
-                                  descriptionElement.querySelectorAll('span').forEach((span) {
-                                    span.remove();
-                                  });
-                              
-                                  var caption = descriptionElement.text.replaceAll("•", "").stripHtml();
-                                  var credits = descriptionElement.querySelector('.gallery__credit')?.text ?? '';
-                                  
-                                  htmlImages.add(Images(
-                                    url: src,
-                                    caption: caption,
-                                    credits: credits,
-                                    alt: caption,
-                                    id: htmlImages.length + 1
-                                  ));
+                                if (nextElement?.localName == 'p') {
+                                  var nextDiv = nextElement?.nextElementSibling;
+                                
+                                  if (nextDiv != null && nextDiv.localName == 'div' && nextDiv.classes.contains('post__video')) {
+                                    return Container(
+                                      padding: EdgeInsets.zero,
+                                      margin: EdgeInsets.zero,
+                                      child: Text(
+                                        titleText,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    );
+                                  }
                                 }
+                                
+                                return null;
                               }
-                            
-                              return StatefulBuilder(
-                                builder: (context, setStateLocal) {
-                                  return Column(
-                                    children: [
-                                      GestureDetector(
-                                        onHorizontalDragEnd: (details) {
-                                          double dragEndPosition = details.velocity.pixelsPerSecond.dx;
+                                
+                              if (element.classes.contains('thumbnail-image') || element.classes.contains("video-title")) {
+                                return Container(height: 0);
+                              }
+                                
+                              if (element.classes.contains('gallery') && element.classes.contains('gallery--content')) {
+                                var galleryItems = element.querySelectorAll('.gallery__item');
+                                
+                                for (var item in galleryItems) {
+                                  var imgElement = item.querySelector('.gallery__img');
+                                  var descriptionElement = item.querySelector('.gallery__description p');
                                   
-                                          if (dragEndPosition > 0) {
-                                            setState(() {
-                                              if (currentEmbedIndex > 0) {
-                                                currentEmbedIndex--;
-                                                _scrollToEmbedIndex(currentEmbedIndex);
-                                              }
-                                            });
+                                  if (imgElement != null && descriptionElement != null) {
+                                    var src = imgElement.attributes['src'];
+                                
+                                    descriptionElement.querySelectorAll('span').forEach((span) {
+                                      span.remove();
+                                    });
+                                
+                                    var caption = descriptionElement.text.replaceAll("•", "").stripHtml();
+                                    var credits = descriptionElement.querySelector('.gallery__credit')?.text ?? '';
+                                    
+                                    htmlImages.add(Images(
+                                      url: src,
+                                      caption: caption,
+                                      credits: credits,
+                                      alt: caption,
+                                      id: htmlImages.length + 1
+                                    ));
+                                  }
+                                }
                               
-                                            setStateLocal(() {});
-                                          } else if (dragEndPosition < 0) {
-                                            setState(() {
-                                              if (currentEmbedIndex < htmlImages.length - 1) {
-                                                currentEmbedIndex++;
-                                                _scrollToEmbedIndex(currentEmbedIndex);
-                                              }
-                                            });
-                              
-                                            setStateLocal(() {});
-                                          }
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            Container(
-                                              decoration: const BoxDecoration(
-                                                color: Colors.black
-                                              ),
-                                              child: Image.network(
-                                                htmlImages[currentEmbedIndex].url!,
-                                                height: 300,
-                                                  width: MediaQuery.of(context).size.width,
-                                                fit: BoxFit.contain,              
-                                              ),
-                                            ),
-                                            Positioned(
-                                              top: 16,
-                                              left: 16,
-                                              child: Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                                decoration: BoxDecoration(
-                                                  color: Theme.of(context).primaryColor,
-                                                  borderRadius: BorderRadius.circular(4),
+                                return StatefulBuilder(
+                                  builder: (context, setStateLocal) {
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onHorizontalDragEnd: (details) {
+                                            double dragEndPosition = details.velocity.pixelsPerSecond.dx;
+                                    
+                                            if (dragEndPosition > 0) {
+                                              setState(() {
+                                                if (currentEmbedIndex > 0) {
+                                                  currentEmbedIndex--;
+                                                  _scrollToEmbedIndex(currentEmbedIndex);
+                                                }
+                                              });
+                                
+                                              setStateLocal(() {});
+                                            } else if (dragEndPosition < 0) {
+                                              setState(() {
+                                                if (currentEmbedIndex < htmlImages.length - 1) {
+                                                  currentEmbedIndex++;
+                                                  _scrollToEmbedIndex(currentEmbedIndex);
+                                                }
+                                              });
+                                
+                                              setStateLocal(() {});
+                                            }
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.black
                                                 ),
-                                                child: Text(
-                                                  "${currentEmbedIndex + 1} de ${htmlImages.length}",
-                                                  style: const TextStyle(
-                                                    color: Colors.white, 
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w700,
-                                                    fontFamily: 'CNN Sans Display',
-                                                  ),
+                                                child: Image.network(
+                                                  htmlImages[currentEmbedIndex].url!,
+                                                  height: 300,
+                                                    width: MediaQuery.of(context).size.width,
+                                                  fit: BoxFit.contain,              
                                                 ),
-                                              )
-                                            ),
-                                            Positioned(
-                                              top: 16,
-                                              right: 16,
-                                              child: GestureDetector(
-                                                onTap: () => _showEmbedGalleryModal(context, setStateLocal),
+                                              ),
+                                              Positioned(
+                                                top: 16,
+                                                left: 16,
                                                 child: Container(
-                                                  width: 24,
-                                                  height: 24,
+                                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                                   decoration: BoxDecoration(
                                                     color: Theme.of(context).primaryColor,
-                                                    borderRadius: BorderRadius.circular(2),
+                                                    borderRadius: BorderRadius.circular(4),
                                                   ),
-                                                  child: SvgPicture.network(
-                                                    'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
-                                                    placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                                  child: Text(
+                                                    "${currentEmbedIndex + 1} de ${htmlImages.length}",
+                                                    style: const TextStyle(
+                                                      color: Colors.white, 
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: 'CNN Sans Display',
+                                                    ),
                                                   ),
-                                                ),
-                                              )
-                                            ),
-                                            Positioned(
-                                              bottom: 0,
-                                              child: Container(
-                                                height: 192,
-                                                width: MediaQuery.of(context).size.width,
-                                                padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                    begin: Alignment.bottomCenter,
-                                                    end: Alignment.topCenter,
-                                                    colors: [
-                                                      Colors.black.withOpacity(1),
-                                                      Colors.black.withOpacity(0),
-                                                    ],
-                                                    stops: const [0.38, 0.59],
+                                                )
+                                              ),
+                                              Positioned(
+                                                top: 16,
+                                                right: 16,
+                                                child: GestureDetector(
+                                                  onTap: () => _showEmbedGalleryModal(context, setStateLocal),
+                                                  child: Container(
+                                                    width: 24,
+                                                    height: 24,
+                                                    decoration: BoxDecoration(
+                                                      color: Theme.of(context).primaryColor,
+                                                      borderRadius: BorderRadius.circular(2),
+                                                    ),
+                                                    child: SvgPicture.network(
+                                                      'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                                      placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                                    ),
                                                   ),
-                                                ),
-                                                alignment: Alignment.bottomLeft,
-                                                child: SizedBox(
-                                                  height: 64,
-                                                  child: Scrollbar(
-                                                    controller: ScrollController(),
-                                                    thumbVisibility: true,
-                                                    trackVisibility: true,
-                                                    thickness: 6,
-                                                    radius: const Radius.circular(8),
-                                                    scrollbarOrientation: ScrollbarOrientation.right,         
-                                                    child: SingleChildScrollView(
-                                                      scrollDirection: Axis.vertical,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.only(right: 16, top: 2),
-                                                        child: RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                  text: htmlImages[currentEmbedIndex].caption?.stripHtml() ?? '',
-                                                                  style: const TextStyle(
-                                                                    color: Colors.white,
-                                                                    fontSize: 14,
-                                                                    fontWeight: FontWeight.w700,
-                                                                    fontFamily: 'CNN Sans Display',
-                                                                  ),
-                                                                ),
-                                                              if (htmlImages[currentEmbedIndex].credits != null && htmlImages[currentEmbedIndex].credits!.isNotEmpty) ...[
-                                                                const TextSpan(
-                                                                  text: ' • ',
-                                                                  style: TextStyle(
-                                                                    color: Colors.white,
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w700,
-                                                                    fontFamily: 'CNN Sans Display',
-                                                                  ),
-                                                                ),
+                                                )
+                                              ),
+                                              Positioned(
+                                                bottom: 0,
+                                                child: Container(
+                                                  height: 192,
+                                                  width: MediaQuery.of(context).size.width,
+                                                  padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.bottomCenter,
+                                                      end: Alignment.topCenter,
+                                                      colors: [
+                                                        Colors.black.withOpacity(1),
+                                                        Colors.black.withOpacity(0),
+                                                      ],
+                                                      stops: const [0.38, 0.59],
+                                                    ),
+                                                  ),
+                                                  alignment: Alignment.bottomLeft,
+                                                  child: SizedBox(
+                                                    height: 64,
+                                                    child: Scrollbar(
+                                                      controller: ScrollController(),
+                                                      thumbVisibility: true,
+                                                      trackVisibility: true,
+                                                      thickness: 6,
+                                                      radius: const Radius.circular(8),
+                                                      scrollbarOrientation: ScrollbarOrientation.right,         
+                                                      child: SingleChildScrollView(
+                                                        scrollDirection: Axis.vertical,
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.only(right: 16, top: 2),
+                                                          child: RichText(
+                                                            text: TextSpan(
+                                                              children: [
                                                                 TextSpan(
-                                                                  text: htmlImages[currentEmbedIndex].credits!,
-                                                                  style: const TextStyle(
-                                                                    color: Colors.white, 
-                                                                    fontSize: 12,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    fontFamily: 'CNN Sans Display',
+                                                                    text: htmlImages[currentEmbedIndex].caption?.stripHtml() ?? '',
+                                                                    style: const TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: 14,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontFamily: 'CNN Sans Display',
+                                                                    ),
                                                                   ),
-                                                                )
-                                                              ]
-                                                            ],
+                                                                if (htmlImages[currentEmbedIndex].credits != null && htmlImages[currentEmbedIndex].credits!.isNotEmpty) ...[
+                                                                  const TextSpan(
+                                                                    text: ' • ',
+                                                                    style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: 16,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontFamily: 'CNN Sans Display',
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: htmlImages[currentEmbedIndex].credits!,
+                                                                    style: const TextStyle(
+                                                                      color: Colors.white, 
+                                                                      fontSize: 12,
+                                                                      fontWeight: FontWeight.w500,
+                                                                      fontFamily: 'CNN Sans Display',
+                                                                    ),
+                                                                  )
+                                                                ]
+                                                              ],
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
@@ -1476,66 +1655,505 @@ class ArticleView extends ArticleViewModel {
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 3),
-                                      SizedBox(
-                                        height: 85,
-                                        child: SingleChildScrollView(
-                                          controller: _embedScrollController,
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            children: [
-                                              for (int index = 0; index < htmlImages.length; index++)
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      currentEmbedIndex = index;
-                                                      _scrollToEmbedIndex(index);
-                                                    });
-                              
-                                                    setStateLocal(() {});
-                                                  },
-                                                  child: Container(
-                                                    margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                                                    child: Stack(
-                                                      children: [
-                                                        Image.network(
-                                                          htmlImages[index].url!,
-                                                          width: 150,
-                                                          height: 85,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                        Positioned(
-                                                        bottom: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        child: Container(
-                                                          height: 7,
-                                                          color: index == currentEmbedIndex
-                                                              ? Theme.of(context).primaryColor
-                                                              : Colors.transparent,
-                                                        ),
-                                                      ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )
                                             ],
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  );
+                                        const SizedBox(height: 3),
+                                        SizedBox(
+                                          height: 85,
+                                          child: SingleChildScrollView(
+                                            controller: _embedScrollController,
+                                            scrollDirection: Axis.horizontal,
+                                            child: Row(
+                                              children: [
+                                                for (int index = 0; index < htmlImages.length; index++)
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        currentEmbedIndex = index;
+                                                        _scrollToEmbedIndex(index);
+                                                      });
+                                
+                                                      setStateLocal(() {});
+                                                    },
+                                                    child: Container(
+                                                      margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                                                      child: Stack(
+                                                        children: [
+                                                          Image.network(
+                                                            htmlImages[index].url!,
+                                                            width: 150,
+                                                            height: 85,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                          Positioned(
+                                                          bottom: 0,
+                                                          left: 0,
+                                                          right: 0,
+                                                          child: Container(
+                                                            height: 7,
+                                                            color: index == currentEmbedIndex
+                                                                ? Theme.of(context).primaryColor
+                                                                : Colors.transparent,
+                                                          ),
+                                                        ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                );
+                              }
+                                
+                              return null;
+                            },
+                                                    ),
+                          ),
+                          Visibility(
+                            visible: !isGalleryOpen,
+                            child: HtmlWidget(
+                            article.content!.content!.replaceAll('"', '"'),
+                            textStyle: const TextStyle(
+                              fontFamily: 'CNN Sans Display W04 Medium',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                              // height: 26,
+                            ),
+                            onTapUrl: (url) {
+                               if (url.endsWith('/')) {
+                                  url = url.substring(0, url.length - 1);
                                 }
-                              );
-                            }
+                                                    
+                                final articleId =
+                                    url.replaceAll('/?', '?').split('?').first.split('/').last;
+                                
+                              if (articleId.characters.length > 15) {
+                                NavigatorManager(context).to(
+                                  Article.route,
+                                  data: articleId,
+                                  onFinished: () {},
+                                );
+                                                    
+                                return true; 
+                              } else {
+                                if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
+                                  NavigatorManager(context).to(
+                                    CustomWebView.route,
+                                    data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+                                    onFinished: () {},
+                                    analytics: NavigatorAnalytics.fromUrl(url),
+                                  );
+                                                    
+                                  return true; 
+                                }
+                              }
+                                
+                              return false;
+                            },
+                            customStylesBuilder: (element) => cssBuilder(
+                              element,
+                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).primaryColor,
+                            ),
+                            customWidgetBuilder: (element) {
+                              // if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
+                              //   String? divId = element.id;
+                                                    
+                              //   return Container(
+                              //     constraints: const BoxConstraints(maxHeight: 350),
+                              //     alignment: Alignment.center,
+                              //     child: InAppWebView(
+                              //       initialUrlRequest: URLRequest(
+                              //         url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=$divId")
+                              //       ),
+                              //       onLoadStop: (controller, url) {
+                              //         Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+                                                    
+                              //         String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
+                                                    
+                              //         controller.evaluateJavascript(source: """
+                              //           (function() {
+                              //             let observer = new MutationObserver((mutations, obs) => {
+                              //               let adArea = document.querySelector(".ad__area.ad__area--only");
+                              //               if (adArea) {
+                              //                 adArea.style.background = "$bgColorCss";
+                              //                 obs.disconnect();
+                              //               }
+                              //             });
+                                                    
+                              //             observer.observe(document.body, { childList: true, subtree: true });
+                              //           })();
+                              //         """);
+                              //       },
+                              //       shouldOverrideUrlLoading: (controller, navigationAction) async {
+                              //         Uri uri = Uri.parse(navigationAction.request.url.toString());
+                                                    
+                              //         if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
+                              //           _openInBrowser(uri.toString());
+                              //           return NavigationActionPolicy.CANCEL;
+                              //         }
+                                                    
+                              //         return NavigationActionPolicy.ALLOW;
+                              //       },
+                              //     ),
+                              //   );
+                              // }
+                                                    
+                              if (element.localName == 'iframe' &&
+                                  (element.attributes.containsKey('src') ||
+                                      element.attributes.containsKey('data-src'))) {
+                                return SizedBox(
+                                  height: 400,
+                                  child: InAppWebView(
+                                    initialUrlRequest: URLRequest(
+                                      url: WebUri(element.attributes['src'] ??
+                                          element.attributes['data-src']!),
+                                    ),
+                                  ),
+                                );
+                              }
+                                
+                              if (element.localName == 'div' &&
+                                  element.attributes.containsKey('data-src')) {
+                                return renderContent(element.outerHtml);
+                              }                    
+                                
+                              if (element.attributes.containsKey('data-youtube-id')) {
+                                String? youtubeId = element.attributes['data-youtube-id'];
+                                
+                                var url = "${ApiHome.home}/youtube/video/?youtube_id=$youtubeId&youtube_adformat=aovivo&hidemenu=true&youtube_mode=teatro";
+                                
+                                return  SizedBox(
+                                  height: 224,
+                                  child: InAppWebView(
+                                    initialUrlRequest: URLRequest(
+                                      url: WebUri(url),
+                                    ),
+                                  ),
+                                );                        
+                              }
+                                
+                              if (element.localName == 'a' && element.parent?.localName == 'h2') {
+                                return Container(
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.zero,
+                                  child: InkWell(
+                                    onTap: () {
+                                      String url = element.attributes['href'] ?? '';                              
+                                
+                                      if (url.endsWith('/')) {
+                                        url = url.substring(0, url.length - 1);
+                                      }
+                                
+                                      final articleId =
+                                          url.replaceAll('/?', '?').split('?').first.split('/').last;
+                                
+                                      if (articleId.characters.length > 15) {
+                                        NavigatorManager(context).to(
+                                          Article.route,
+                                          data: articleId,
+                                          onFinished: () {},
+                                        );
+                                      } else {
+                                        if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
+                                          NavigatorManager(context).to(
+                                            CustomWebView.route,
+                                            data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+                                            onFinished: () {},
+                                            analytics: NavigatorAnalytics.fromUrl(url),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    child: Text(
+                                      element.text,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: Theme.of(context).primaryColor,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                                                    
+                              if (element.localName == "h2") {
+                                final nextElement = element.nextElementSibling;
+                                var titleText = element.text;
+                                
+                                if (nextElement?.localName == 'p') {
+                                  var nextDiv = nextElement?.nextElementSibling;
+                                
+                                  if (nextDiv != null && nextDiv.localName == 'div' && nextDiv.classes.contains('post__video')) {
+                                    return Container(
+                                      padding: EdgeInsets.zero,
+                                      margin: EdgeInsets.zero,
+                                      child: Text(
+                                        titleText,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                                
+                                return null;
+                              }
+                                
+                              if (element.classes.contains('thumbnail-image') || element.classes.contains("video-title")) {
+                                return Container(height: 0);
+                              }
+                                
+                              if (element.classes.contains('gallery') && element.classes.contains('gallery--content')) {
+                                var galleryItems = element.querySelectorAll('.gallery__item');
+                                
+                                for (var item in galleryItems) {
+                                  var imgElement = item.querySelector('.gallery__img');
+                                  var descriptionElement = item.querySelector('.gallery__description p');
+                                  
+                                  if (imgElement != null && descriptionElement != null) {
+                                    var src = imgElement.attributes['src'];
+                                
+                                    descriptionElement.querySelectorAll('span').forEach((span) {
+                                      span.remove();
+                                    });
+                                
+                                    var caption = descriptionElement.text.replaceAll("•", "").stripHtml();
+                                    var credits = descriptionElement.querySelector('.gallery__credit')?.text ?? '';
+                                    
+                                    htmlImages.add(Images(
+                                      url: src,
+                                      caption: caption,
+                                      credits: credits,
+                                      alt: caption,
+                                      id: htmlImages.length + 1
+                                    ));
+                                  }
+                                }
                               
-                            return null;
-                          },
-                        ),
+                                return StatefulBuilder(
+                                  builder: (context, setStateLocal) {
+                                    return Column(
+                                      children: [
+                                        GestureDetector(
+                                          onHorizontalDragEnd: (details) {
+                                            double dragEndPosition = details.velocity.pixelsPerSecond.dx;
+                                    
+                                            if (dragEndPosition > 0) {
+                                              setState(() {
+                                                if (currentEmbedIndex > 0) {
+                                                  currentEmbedIndex--;
+                                                  _scrollToEmbedIndex(currentEmbedIndex);
+                                                }
+                                              });
+                                
+                                              setStateLocal(() {});
+                                            } else if (dragEndPosition < 0) {
+                                              setState(() {
+                                                if (currentEmbedIndex < htmlImages.length - 1) {
+                                                  currentEmbedIndex++;
+                                                  _scrollToEmbedIndex(currentEmbedIndex);
+                                                }
+                                              });
+                                
+                                              setStateLocal(() {});
+                                            }
+                                          },
+                                          child: Stack(
+                                            children: [
+                                              Container(
+                                                decoration: const BoxDecoration(
+                                                  color: Colors.black
+                                                ),
+                                                child: Image.network(
+                                                  htmlImages[currentEmbedIndex].url!,
+                                                  height: 300,
+                                                    width: MediaQuery.of(context).size.width,
+                                                  fit: BoxFit.contain,              
+                                                ),
+                                              ),
+                                              Positioned(
+                                                top: 16,
+                                                left: 16,
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context).primaryColor,
+                                                    borderRadius: BorderRadius.circular(4),
+                                                  ),
+                                                  child: Text(
+                                                    "${currentEmbedIndex + 1} de ${htmlImages.length}",
+                                                    style: const TextStyle(
+                                                      color: Colors.white, 
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontFamily: 'CNN Sans Display',
+                                                    ),
+                                                  ),
+                                                )
+                                              ),
+                                              Positioned(
+                                                top: 16,
+                                                right: 16,
+                                                child: GestureDetector(
+                                                  onTap: () => _showEmbedGalleryModal(context, setStateLocal),
+                                                  child: Container(
+                                                    width: 24,
+                                                    height: 24,
+                                                    decoration: BoxDecoration(
+                                                      color: Theme.of(context).primaryColor,
+                                                      borderRadius: BorderRadius.circular(2),
+                                                    ),
+                                                    child: SvgPicture.network(
+                                                      'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                                      placeholderBuilder: (context) => const CircularProgressIndicator(),
+                                                    ),
+                                                  ),
+                                                )
+                                              ),
+                                              Positioned(
+                                                bottom: 0,
+                                                child: Container(
+                                                  height: 192,
+                                                  width: MediaQuery.of(context).size.width,
+                                                  padding: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
+                                                  decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.bottomCenter,
+                                                      end: Alignment.topCenter,
+                                                      colors: [
+                                                        Colors.black.withOpacity(1),
+                                                        Colors.black.withOpacity(0),
+                                                      ],
+                                                      stops: const [0.38, 0.59],
+                                                    ),
+                                                  ),
+                                                  alignment: Alignment.bottomLeft,
+                                                  child: SizedBox(
+                                                    height: 64,
+                                                    child: Scrollbar(
+                                                      controller: ScrollController(),
+                                                      thumbVisibility: true,
+                                                      trackVisibility: true,
+                                                      thickness: 6,
+                                                      radius: const Radius.circular(8),
+                                                      scrollbarOrientation: ScrollbarOrientation.right,         
+                                                      child: SingleChildScrollView(
+                                                        scrollDirection: Axis.vertical,
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.only(right: 16, top: 2),
+                                                          child: RichText(
+                                                            text: TextSpan(
+                                                              children: [
+                                                                TextSpan(
+                                                                    text: htmlImages[currentEmbedIndex].caption?.stripHtml() ?? '',
+                                                                    style: const TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: 14,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontFamily: 'CNN Sans Display',
+                                                                    ),
+                                                                  ),
+                                                                if (htmlImages[currentEmbedIndex].credits != null && htmlImages[currentEmbedIndex].credits!.isNotEmpty) ...[
+                                                                  const TextSpan(
+                                                                    text: ' • ',
+                                                                    style: TextStyle(
+                                                                      color: Colors.white,
+                                                                      fontSize: 16,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      fontFamily: 'CNN Sans Display',
+                                                                    ),
+                                                                  ),
+                                                                  TextSpan(
+                                                                    text: htmlImages[currentEmbedIndex].credits!,
+                                                                    style: const TextStyle(
+                                                                      color: Colors.white, 
+                                                                      fontSize: 12,
+                                                                      fontWeight: FontWeight.w500,
+                                                                      fontFamily: 'CNN Sans Display',
+                                                                    ),
+                                                                  )
+                                                                ]
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        SizedBox(
+                                          height: 85,
+                                          child: SingleChildScrollView(
+                                            controller: _embedScrollController,
+                                            scrollDirection: Axis.horizontal,
+                                            child: Row(
+                                              children: [
+                                                for (int index = 0; index < htmlImages.length; index++)
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        currentEmbedIndex = index;
+                                                        _scrollToEmbedIndex(index);
+                                                      });
+                                
+                                                      setStateLocal(() {});
+                                                    },
+                                                    child: Container(
+                                                      margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                                                      child: Stack(
+                                                        children: [
+                                                          Image.network(
+                                                            htmlImages[index].url!,
+                                                            width: 150,
+                                                            height: 85,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                          Positioned(
+                                                          bottom: 0,
+                                                          left: 0,
+                                                          right: 0,
+                                                          child: Container(
+                                                            height: 7,
+                                                            color: index == currentEmbedIndex
+                                                                ? Theme.of(context).primaryColor
+                                                                : Colors.transparent,
+                                                          ),
+                                                        ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                );
+                              }
+                                
+                              return null;
+                            },
+                                                    ),
+                          ),
+                   
                         const SizedBox(height: 16),
                         Text(
                           'Tópicos',
@@ -1550,7 +2168,7 @@ class ArticleView extends ArticleViewModel {
                           spacing: 10,
                           runSpacing: 10,
                           children: [
-                            for (ArticleTags tag in article.tags ?? [])
+                            for (ArticleTags tag in article.tags?.where((t) => t.hidden == false) ?? [])
                               InkWell(
                                 onTap: tag.permalink != null
                                     ? () {
@@ -1610,8 +2228,8 @@ class ArticleView extends ArticleViewModel {
                             children: [
                               Text(
                                 article.category?.hierarchy?.isNotEmpty == true
-                                  ? 'Mais Lidos de ${article.category!.hierarchy!.first[0].toUpperCase()}${article.category!.hierarchy!.first.substring(1)}'
-                                  : 'Mais Lidos',
+                                  ? 'Mais Lidas de ${article.category!.hierarchy!.first[0].toUpperCase()}${article.category!.hierarchy!.first.substring(1)}'
+                                  : 'Mais Lidas',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -1762,7 +2380,7 @@ class ArticleView extends ArticleViewModel {
                         ),
                         ],
                         const SizedBox(height: 10),
-                        if (article.category != null) ...[
+                        if (article.category?.id != null) ...[
                           Text(
                             'WebStories ${article.category!.name ?? ''}',
                             style: TextStyle(
@@ -1772,64 +2390,63 @@ class ArticleView extends ArticleViewModel {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          if (article.category?.id != null)
-                            FutureBuilder(
-                              future: getWebStorie(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  return Column(
-                                    children: [
-                                      for (var storie in snapshot.data!) ...[
-                                        const SizedBox(height: 10),
-                                        InkWell(
-                                          onTap: () {
-                                            NavigatorManager(context).modal(
-                                              StorieDetail(
-                                                url:
-                                                    '${storie.permalink}/?hidemenu=true',
-                                              ),
-                                              fullscreenDialog: true,
-                                            );
-                                          },
-                                          child: SizedBox(
-                                            height: 80,
-                                            child: Row(
-                                              children: [
-                                                if (storie.thumbnail != null)
-                                                  Image.network(
-                                                    storie.thumbnail!,
-                                                    width: 90,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                const SizedBox(width: 10),
-                                                Expanded(
-                                                  child: Text(
-                                                    storie.title ?? '',
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: 16,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .primary,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
+                          FutureBuilder(
+                            future: getWebStorie(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Column(
+                                  children: [
+                                    for (var storie in snapshot.data!) ...[
+                                      const SizedBox(height: 10),
+                                      InkWell(
+                                        onTap: () {
+                                          NavigatorManager(context).modal(
+                                            StorieDetail(
+                                              url:
+                                                  '${storie.permalink}/?hidemenu=true',
                                             ),
+                                            fullscreenDialog: true,
+                                          );
+                                        },
+                                        child: SizedBox(
+                                          height: 80,
+                                          child: Row(
+                                            children: [
+                                              if (storie.thumbnail != null)
+                                                Image.network(
+                                                  storie.thumbnail!,
+                                                  width: 90,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                child: Text(
+                                                  storie.title ?? '',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 16,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ),
-                                        const SizedBox(height: 10),
-                                        const Divider(
-                                          thickness: .5,
-                                        ),
-                                      ]
-                                    ],
-                                  );
-                                }
-                              
-                                return const SizedBox();
-                              },
-                            ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      const Divider(
+                                        thickness: .5,
+                                      ),
+                                    ]
+                                  ],
+                                );
+                              }
+                            
+                              return const SizedBox();
+                            },
+                          ),                            
                         ]
                       ],
                     ],
