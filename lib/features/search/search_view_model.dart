@@ -39,7 +39,9 @@ abstract class SearchViewModel extends State<Search> {
       NavigatorManager(context).to(
         Article.route,
         data: articleId,
-        onFinished: () {},
+        onFinished: () {
+          controller.goBack();
+        },
       );
     } else {
       if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
@@ -50,7 +52,7 @@ abstract class SearchViewModel extends State<Search> {
           analytics: NavigatorAnalytics.fromUrl(url),
         );
       }
-    }    
+    }
   }
 
   void onSearch(String value) {

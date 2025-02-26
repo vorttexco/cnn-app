@@ -106,7 +106,8 @@ class FeaturedMedia {
 
   FeaturedMedia.fromJson(Map<String, dynamic> json) {
     image = json['image'] != null ? ArticleImage.fromJson(json['image']) : null;
-    gallery = json['gallery'] != null ? GalleryData.fromJson(json['gallery']) : null;
+    gallery =
+        json['gallery'] != null ? GalleryData.fromJson(json['gallery']) : null;
     video = json['video'] != null ? VideoData.fromJson(json['video']) : null;
   }
 
@@ -120,7 +121,7 @@ class FeaturedMedia {
     }
     if (video != null) {
       data['video'] = video!.toJson();
-    }    
+    }
     return data;
   }
 }
@@ -130,11 +131,7 @@ class VideoData {
   String? type;
   String? permalink;
 
-  VideoData({
-    this.id,
-    this.type,
-    this.permalink
-  });
+  VideoData({this.id, this.type, this.permalink});
 
   VideoData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -154,9 +151,7 @@ class VideoData {
 class GalleryData {
   String? id;
 
-  GalleryData({
-    this.id
-  });
+  GalleryData({this.id});
 
   GalleryData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -362,12 +357,14 @@ class Category {
 
 class Author {
   String? region;
+  String? rendered;
   List<ArticleList>? list;
 
   Author({this.region, this.list});
 
   Author.fromJson(Map<String, dynamic> json) {
     region = json['region'];
+    rendered = json['rendered'];
     if (json['list'] != null) {
       list = <ArticleList>[];
       json['list'].forEach((v) {
@@ -379,6 +376,7 @@ class Author {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['region'] = region;
+    data['rendered'] = rendered;
     if (list != null) {
       data['list'] = list!.map((v) => v.toJson()).toList();
     }

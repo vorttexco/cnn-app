@@ -43,9 +43,10 @@ abstract class ArticleViewModel extends State<Article> {
       ).catchError((e) {
         return Response(requestOptions: RequestOptions(path: ''));
       }),
-      dio.get(
-        'https://www.cnnbrasil.com.br/wp-json/content/v1/gallery/${article.featuredMedia?.gallery?.id}'
-      ).catchError((e) {
+      dio
+          .get(
+              'https://www.cnnbrasil.com.br/wp-json/content/v1/gallery/${article.featuredMedia?.gallery?.id}')
+          .catchError((e) {
         return Response(requestOptions: RequestOptions(path: ''));
       }),
     ]);
@@ -54,10 +55,11 @@ abstract class ArticleViewModel extends State<Article> {
     final articleGalleryResponse = responses[1];
 
     articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
-    
-    if (articleGalleryResponse.data is Map<String, dynamic> && 
+
+    if (articleGalleryResponse.data is Map<String, dynamic> &&
         !articleGalleryResponse.data.containsKey('mensagem')) {
-      articleGallery = ArticleGalleryModel.fromJson(articleGalleryResponse.data);
+      articleGallery =
+          ArticleGalleryModel.fromJson(articleGalleryResponse.data);
     } else {
       articleGallery = ArticleGalleryModel();
     }
@@ -75,7 +77,7 @@ abstract class ArticleViewModel extends State<Article> {
 
   Future<List<StorieModel>> getWebStorie() async {
     final response = await StorieRepository(ApiConnector())
-        .listCategory(article.category!.id ?? '');
+        .listCategory(article.category!.slug ?? '');
 
     return response.length >= 3
         ? response.sublist(0, 3)
