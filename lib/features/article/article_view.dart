@@ -12,6 +12,7 @@ import 'package:cnn_brasil_app/features/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'article_view_model.dart';
 
@@ -35,6 +36,7 @@ class ArticleView extends ArticleViewModel {
   final ScrollController _embedScrollController = ScrollController();
   List<Images> htmlImages = [];
   bool isGalleryOpen = false;
+  bool onLoadInstragramEnded = false;
 
   void _scrollToIndex(int index) {
     const itemWidth = 150.0;
@@ -814,6 +816,14 @@ class ArticleView extends ArticleViewModel {
     );
   }
 
+  Future<void> launchProfileInExternalBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      print("Não foi possível abrir o link.");
+    }
+  }
+
   // void _openInBrowser(String url) async {
   //   final Uri uri = Uri.parse(url);
 
@@ -836,16 +846,34 @@ class ArticleView extends ArticleViewModel {
             'https://public.flourish.studio/$visualisationId/';
 
         return SizedBox(
-          height: 400,
+          height: 480,
           width: double.infinity,
           child: InAppWebView(
             initialUrlRequest: URLRequest(url: WebUri(visualisationUrl)),
+            initialSettings: InAppWebViewSettings(
+              javaScriptEnabled: true,
+              thirdPartyCookiesEnabled: true,
+              cacheEnabled: true,
+              transparentBackground: true,
+            ),
+            onWebViewCreated: (controller) async {
+              final cookieManager = CookieManager.instance();
+
+              await cookieManager.setCookie(
+                url: WebUri("https://public.flourish.studio"),
+                name: "cookie_consent",
+                value: "accepted",
+                domain: ".flourish.studio",
+              );
+
+              controller.reload();
+            },
           ),
         );
       }
     }
 
-    return const Center(child: Text("Conteúdo não requer WebView"));
+    return const Center();
   }
 
   ArticleTags? get featuredTag {
@@ -1009,7 +1037,7 @@ class ArticleView extends ArticleViewModel {
                           ),
                         const SizedBox(height: AppConstants.KPADDING_16),
                         Text(
-                          "${formatDateTime(article.publishDate!)}${article.modifiedDate != null && article.modifiedDate!.isNotEmpty ? " | Atualizado ${formatDateTime(article.modifiedDate!)}" : ""}",
+                          "${formatDateTime(article.publishDate!)}${article.modifiedDate != null && article.modifiedDate!.isNotEmpty &&formatDateTime(article.modifiedDate!) != formatDateTime(article.publishDate!) ? " | Atualizado ${formatDateTime(article.modifiedDate!)}" : ""}",
                           style: TextStyle(
                             fontSize: 12,
                             color: Theme.of(context).colorScheme.primary,
@@ -2032,6 +2060,121 @@ class ArticleView extends ArticleViewModel {
                               //   );
                               // }
 
+                              if (element.classes.contains('flourish-embed') && element.attributes.containsKey('data-src')) {
+                                final visualisationUrl = 'https://public.flourish.studio/${element.attributes['data-src']}/';
+
+                                return SizedBox(
+                                  height: 495,
+                                  width: double.infinity,
+                                  child: InAppWebView(
+                                    initialUrlRequest: URLRequest(url: WebUri(visualisationUrl)),
+                                    initialSettings: InAppWebViewSettings(
+                                      javaScriptEnabled: true,
+                                      thirdPartyCookiesEnabled: true,
+                                      cacheEnabled: true,
+                                      transparentBackground: true,
+                                    ),
+                                    onWebViewCreated: (controller) async {
+                                      final cookieManager = CookieManager.instance();
+
+                                      await cookieManager.setCookie(
+                                        url: WebUri(visualisationUrl),
+                                        name: "OptanonAlertBoxClosed",
+                                        value: "2025-02-26T08:47:35.404Z",
+                                        domain: "public.flourish.studio",
+                                      );
+
+                                      await cookieManager.setCookie(
+                                        url: WebUri(visualisationUrl),
+                                        name: "OptanonAlertBoxClosed",
+                                        value: "2025-02-26T08:47:35.397Z",
+                                        domain: ".flourish.studio",
+                                      );
+
+                                      await cookieManager.setCookie(
+                                        url: WebUri(visualisationUrl),
+                                        name: "OptanonConsent",
+                                        value: "isGpcEnabled=0&datestamp=Wed+Feb+26+2025+05%3A47%3A35+GMT-0300+(Brasilia+Standard+Time)&version=202301.2.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false",
+                                        domain: ".flourish.studio",
+                                      );
+
+
+                                      controller.reload();
+                                    },
+                                  ),
+                                );
+                              }
+
+                              if (element.classes.contains('instagram-media') && element.attributes.containsKey("data-instgrm-permalink")) {
+                                var instagramEmbedUrl = element.attributes['data-instgrm-permalink']!;
+
+                                final regex = RegExp(r"reel/([^/?]+)");
+                                final match = regex.firstMatch(instagramEmbedUrl);
+
+                                var finalInstagramUrl = instagramEmbedUrl;
+
+                                if (match != null) {
+                                  finalInstagramUrl = "https://www.instagram.com/p/${match.group(1)}/embed/captioned/?cr=1&v=14&wp=54";
+                                }
+                                
+                                return Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(3),
+                                    border: Border.all(color: const Color(0xFFDBDBDB)),
+                                    boxShadow: const [],
+                                  ),
+                                  child: SizedBox(
+                                    height: 975,
+                                    child: InAppWebView(
+                                      initialUrlRequest: URLRequest(
+                                        url: WebUri(finalInstagramUrl),
+                                        headers: {
+                                          'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36',
+                                        }
+                                      ),
+                                      initialSettings: InAppWebViewSettings(
+                                        useWideViewPort: true,
+                                        supportZoom: false,
+                                        mediaPlaybackRequiresUserGesture: false,
+                                        javaScriptEnabled: true,
+                                      ),
+                                      onLoadStop: (controller, url) {
+                                        setState(() {
+                                          onLoadInstragramEnded = true;
+                                        });
+                                      },
+                                      shouldOverrideUrlLoading: (controller, navigationAction) async {
+                                        final uri = navigationAction.request.url!;
+
+                                        if (uri.toString().startsWith('https://www.instagram.com') && onLoadInstragramEnded) {
+                                          launchUrl(uri);
+                                          return NavigationActionPolicy.CANCEL;
+                                        }
+
+                                        return NavigationActionPolicy.ALLOW;
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              if (element.classes.contains('read-too__post-title')) {
+                                return Expanded(
+                                  child: Text(
+                                    element.text.trim(),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    softWrap: true,
+                                    overflow: TextOverflow.visible,
+                                  ),
+                                );
+                              }
+
                               if (element.localName == 'iframe' &&
                                   (element.attributes.containsKey('src') ||
                                       element.attributes
@@ -2045,11 +2188,6 @@ class ArticleView extends ArticleViewModel {
                                     ),
                                   ),
                                 );
-                              }
-
-                              if (element.localName == 'div' &&
-                                  element.attributes.containsKey('data-src')) {
-                                return renderContent(element.outerHtml);
                               }
 
                               if (element.attributes
@@ -2751,21 +2889,22 @@ class ArticleView extends ArticleViewModel {
                         ],
                         const SizedBox(height: 10),
                         if (article.category?.slug != null) ...[
-                          Text(
-                            'WebStories ${article.category!.name ?? ''}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
                           FutureBuilder(
                             future: getWebStorie(),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
                                 return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Text(
+                                      'WebStories ${article.category!.name ?? ''}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
                                     for (var storie in snapshot.data!) ...[
                                       const SizedBox(height: 10),
                                       InkWell(
