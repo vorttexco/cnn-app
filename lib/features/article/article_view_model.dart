@@ -77,7 +77,7 @@ abstract class ArticleViewModel extends State<Article> {
 
   Future<List<StorieModel>> getWebStorie() async {
     final response = await StorieRepository(ApiConnector())
-        .listCategory(article.category!.slug ?? '');
+        .listCategory(article.category?.hierarchy?.first ?? '');
 
     return response.length >= 3
         ? response.sublist(0, 3)

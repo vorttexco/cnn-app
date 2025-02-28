@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 
 Map<String, String> cssBuilder(
-    dom.Element element, Color primary, Color focus) {
+    dom.Element element, Color primary, Color focus, Color divider) {
   // Create an empty map to store the styles
   final Map<String, String> styles = {};
 
@@ -78,8 +78,8 @@ Map<String, String> cssBuilder(
     styles.addAll({
       'margin': '24px 0',
       'padding': '24px 0',
-      'border-top': '1px solid ${primary.toHex()}',
-      'border-bottom': '1px solid ${primary.toHex()}',
+      'border-top': '1px solid ${divider.toHex()}',
+      'border-bottom': '1px solid ${divider.toHex()}',
     });
   }
 

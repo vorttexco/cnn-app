@@ -216,47 +216,50 @@ class ArticleView extends ArticleViewModel {
                               child: Padding(
                                 padding: const EdgeInsets.only(
                                     top: 16, left: 24, right: 24),
-                                child: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: articleGallery
-                                                .images![currentIndex].caption
-                                                ?.stripHtml() ??
-                                            '',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          fontFamily: 'CNN Sans Display',
-                                        ),
-                                      ),
-                                      if (articleGallery.images![currentIndex]
-                                                  .credits !=
-                                              null &&
-                                          articleGallery.images![currentIndex]
-                                              .credits!.isNotEmpty) ...[
-                                        const TextSpan(
-                                          text: ' • ',
-                                          style: TextStyle(
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: articleGallery
+                                                  .images![currentIndex].caption
+                                                  ?.stripHtml() ??
+                                              '',
+                                          style: const TextStyle(
                                             color: Colors.white,
-                                            fontSize: 20,
+                                            fontSize: 16,
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'CNN Sans Display',
                                           ),
                                         ),
-                                        TextSpan(
-                                          text: articleGallery
-                                              .images![currentIndex].credits!,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'CNN Sans Display',
+                                        if (articleGallery.images![currentIndex]
+                                                    .credits !=
+                                                null &&
+                                            articleGallery.images![currentIndex]
+                                                .credits!.isNotEmpty) ...[
+                                          const TextSpan(
+                                            text: ' • ',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: 'CNN Sans Display',
+                                            ),
                                           ),
-                                        ),
+                                          TextSpan(
+                                            text: articleGallery
+                                                .images![currentIndex].credits!,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: 'CNN Sans Display',
+                                            ),
+                                          ),
+                                        ],
                                       ],
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -977,7 +980,9 @@ class ArticleView extends ArticleViewModel {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        const Divider(),
+                        Divider(
+                          color: Theme.of(context).colorScheme.tertiaryContainer,
+                        ),
                         Text(
                           article.excerpt?.replaceAll("&quot;", '"') ?? '',
                           style: TextStyle(
@@ -1375,7 +1380,9 @@ class ArticleView extends ArticleViewModel {
                             ),
                           ),
                           const SizedBox(height: AppConstants.KPADDING_8),
-                          const Divider(),
+                          Divider(
+                            color: Theme.of(context).colorScheme.tertiaryContainer,
+                          ),
                           // if (article.permalink != null) ...[
                           //   Padding(
                           //     padding: const EdgeInsets.symmetric(
@@ -1471,6 +1478,7 @@ class ArticleView extends ArticleViewModel {
                               element,
                               Theme.of(context).colorScheme.primary,
                               Theme.of(context).primaryColor,
+                              Theme.of(context).colorScheme.tertiaryContainer
                             ),
                             customWidgetBuilder: (element) {
                               // if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
@@ -2015,6 +2023,7 @@ class ArticleView extends ArticleViewModel {
                               element,
                               Theme.of(context).colorScheme.primary,
                               Theme.of(context).primaryColor,
+                              Theme.of(context).colorScheme.tertiaryContainer                              
                             ),
                             customWidgetBuilder: (element) {
                               // if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
@@ -2161,6 +2170,38 @@ class ArticleView extends ArticleViewModel {
                                 );
                               }
 
+                              if (element.classes.contains('read-too__title')) {
+                                return Column(
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          element.text,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            color: Theme.of(context).primaryColor,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Transform.translate(
+                                          offset: const Offset(0, 1.5),
+                                          child: Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).primaryColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                  ],
+                                );
+                              }
+
                               if (element.classes.contains('read-too__post-title')) {
                                 return Expanded(
                                   child: Text(
@@ -2173,6 +2214,10 @@ class ArticleView extends ArticleViewModel {
                                     overflow: TextOverflow.visible,
                                   ),
                                 );
+                              }
+
+                              if (element.localName == 'hr') {
+                                return Container();
                               }
 
                               if (element.localName == 'iframe' &&
@@ -2896,13 +2941,28 @@ class ArticleView extends ArticleViewModel {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      'WebStories ${article.category!.name ?? ''}',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'WebStories ${article.category!.name ?? ''}',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            color: Theme.of(context).primaryColor,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Transform.translate(
+                                          offset: const Offset(0, 1.5),
+                                          child: Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).primaryColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(height: 10),
                                     for (var storie in snapshot.data!) ...[
@@ -2945,8 +3005,8 @@ class ArticleView extends ArticleViewModel {
                                         ),
                                       ),
                                       const SizedBox(height: 10),
-                                      const Divider(
-                                        thickness: .5,
+                                      Divider(
+                                        color: Theme.of(context).colorScheme.tertiaryContainer,
                                       ),
                                     ]
                                   ],
