@@ -9,6 +9,7 @@ import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/article/article.dart';
 import 'package:cnn_brasil_app/features/article/article_css.dart';
 import 'package:cnn_brasil_app/features/index.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -704,7 +705,7 @@ class ArticleView extends ArticleViewModel {
     });
   }
 
-  void _showModal(BuildContext context, String imageUrl) {
+  void _showModal(BuildContext context, String imageUrl, String? caption) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -790,13 +791,13 @@ class ArticleView extends ArticleViewModel {
                           padding: const EdgeInsets.only(left: 16.0, right: 16),
                           child: RichText(
                             text: TextSpan(
-                              text: article.featuredMedia!.image!.caption,
+                              text: caption ?? article.featuredMedia!.image!.caption,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
                               ),
-                              children: [
+                              children: caption != null ? [] : [
                                 TextSpan(
                                   text:
                                       ' • ${article.featuredMedia!.image!.credits}',
@@ -823,6 +824,7 @@ class ArticleView extends ArticleViewModel {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
+      // ignore: avoid_print
       print("Não foi possível abrir o link.");
     }
   }
@@ -1009,6 +1011,22 @@ class ArticleView extends ArticleViewModel {
                                       decoration: TextDecoration.underline,
                                       fontWeight: FontWeight.w600,
                                     ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        if (author.permalink != null) {
+                                          NavigatorManager(context).to(
+                                            CustomWebView.route,
+                                            data: WebviewNavigatorModel(
+                                              url: '${author.permalink!}?hidemenu=true',
+                                              title: 'Voltar'
+                                            ),
+                                            onFinished: () {},
+                                            analytics: NavigatorAnalytics.fromUrl(
+                                              author.permalink!,
+                                            )
+                                          );
+                                        }                                        
+                                      },
                                   ),
                                   if (article.author!.list!.indexOf(author) ==
                                           (article.author!.list!.length - 2) &&
@@ -1339,7 +1357,7 @@ class ArticleView extends ArticleViewModel {
                                 right: 16,
                                 child: GestureDetector(
                                   onTap: () => _showModal(context,
-                                      article.featuredMedia!.image!.url!),
+                                      article.featuredMedia!.image!.url!, null),
                                   child: Container(
                                     width: 24,
                                     height: 24,
@@ -1427,1124 +1445,676 @@ class ArticleView extends ArticleViewModel {
                           //   ),
                           // ]
                         ],
-                        Visibility(
-                          visible: isGalleryOpen,
-                          child: HtmlWidget(
-                            article.content!.content!.replaceAll('"', '"'),
-                            textStyle: const TextStyle(
-                              fontFamily: 'CNN Sans Display W04 Medium',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w300,
-                              // height: 26,
-                            ),
-                            onTapUrl: (url) {
-                              if (url.endsWith('/')) {
-                                url = url.substring(0, url.length - 1);
-                              }
-
-                              final articleId = url
-                                  .replaceAll('/?', '?')
-                                  .split('?')
-                                  .first
-                                  .split('/')
-                                  .last;
-
-                              if (articleId.characters.length > 15) {
+                        HtmlWidget(
+                          article.content!.content!.replaceAll('"', '"'),
+                          textStyle: const TextStyle(
+                            fontFamily: 'CNN Sans Display W04 Medium',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w300,
+                            // height: 26,
+                          ),
+                          onTapUrl: (url) {
+                            if (url.endsWith('/')) {
+                              url = url.substring(0, url.length - 1);
+                            }
+                        
+                            final articleId = url
+                                .replaceAll('/?', '?')
+                                .split('?')
+                                .first
+                                .split('/')
+                                .last;
+                        
+                            if (articleId.characters.length > 15) {
+                              NavigatorManager(context).to(
+                                Article.route,
+                                data: articleId,
+                                onFinished: () {},
+                              );
+                        
+                              return true;
+                            } else {
+                              if (!url.contains('${ApiHome.home}/?s=') &&
+                                  url.contains(ApiHome.home)) {
                                 NavigatorManager(context).to(
-                                  Article.route,
-                                  data: articleId,
+                                  CustomWebView.route,
+                                  data: WebviewNavigatorModel(
+                                      url: url, title: 'Voltar'),
                                   onFinished: () {},
+                                  analytics: NavigatorAnalytics.fromUrl(url),
                                 );
-
+                        
                                 return true;
-                              } else {
-                                if (!url.contains('${ApiHome.home}/?s=') &&
-                                    url.contains(ApiHome.home)) {
-                                  NavigatorManager(context).to(
-                                    CustomWebView.route,
-                                    data: WebviewNavigatorModel(
-                                        url: url, title: 'Voltar'),
-                                    onFinished: () {},
-                                    analytics: NavigatorAnalytics.fromUrl(url),
-                                  );
-
-                                  return true;
-                                }
                               }
-
-                              return false;
-                            },
-                            customStylesBuilder: (element) => cssBuilder(
-                              element,
-                              Theme.of(context).colorScheme.primary,
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).colorScheme.tertiaryContainer
-                            ),
-                            customWidgetBuilder: (element) {
-                              // if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
-                              //   String? divId = element.id;
-
-                              //   return Container(
-                              //     constraints: const BoxConstraints(maxHeight: 350),
-                              //     alignment: Alignment.center,
-                              //     child: InAppWebView(
-                              //       initialUrlRequest: URLRequest(
-                              //         url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=$divId")
-                              //       ),
-                              //       onLoadStop: (controller, url) {
-                              //         Color bgColor = Theme.of(context).scaffoldBackgroundColor;
-
-                              //         String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
-
-                              //         controller.evaluateJavascript(source: """
-                              //           (function() {
-                              //             let observer = new MutationObserver((mutations, obs) => {
-                              //               let adArea = document.querySelector(".ad__area.ad__area--only");
-                              //               if (adArea) {
-                              //                 adArea.style.background = "$bgColorCss";
-                              //                 obs.disconnect();
-                              //               }
-                              //             });
-
-                              //             observer.observe(document.body, { childList: true, subtree: true });
-                              //           })();
-                              //         """);
-                              //       },
-                              //       shouldOverrideUrlLoading: (controller, navigationAction) async {
-                              //         Uri uri = Uri.parse(navigationAction.request.url.toString());
-
-                              //         if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
-                              //           _openInBrowser(uri.toString());
-                              //           return NavigationActionPolicy.CANCEL;
-                              //         }
-
-                              //         return NavigationActionPolicy.ALLOW;
-                              //       },
-                              //     ),
-                              //   );
-                              // }
-
-                              if (element.localName == 'iframe' &&
-                                  (element.attributes.containsKey('src') ||
-                                      element.attributes
-                                          .containsKey('data-src'))) {
-                                return SizedBox(
-                                  height: 400,
-                                  child: InAppWebView(
-                                    initialUrlRequest: URLRequest(
-                                      url: WebUri(element.attributes['src'] ??
-                                          element.attributes['data-src']!),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (element.localName == 'div' &&
-                                  element.attributes.containsKey('data-src')) {
-                                return renderContent(element.outerHtml);
-                              }
-
-                              if (element.attributes
-                                  .containsKey('data-youtube-id')) {
-                                return SizedBox(
-                                  height: 224,
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                        color: Colors.black12),
-                                  ),
-                                );
-                              }
-
-                              if (element.localName == 'a' &&
-                                  element.parent?.localName == 'h2') {
-                                return Container(
-                                  padding: EdgeInsets.zero,
-                                  margin: EdgeInsets.zero,
-                                  child: InkWell(
-                                    onTap: () {
-                                      String url =
-                                          element.attributes['href'] ?? '';
-
-                                      if (url.endsWith('/')) {
-                                        url = url.substring(0, url.length - 1);
-                                      }
-
-                                      final articleId = url
-                                          .replaceAll('/?', '?')
-                                          .split('?')
-                                          .first
-                                          .split('/')
-                                          .last;
-
-                                      if (articleId.characters.length > 15) {
-                                        NavigatorManager(context).to(
-                                          Article.route,
-                                          data: articleId,
-                                          onFinished: () {},
-                                        );
-                                      } else {
-                                        if (!url.contains(
-                                                '${ApiHome.home}/?s=') &&
-                                            url.contains(ApiHome.home)) {
-                                          NavigatorManager(context).to(
-                                            CustomWebView.route,
-                                            data: WebviewNavigatorModel(
-                                                url: url, title: 'Voltar'),
-                                            onFinished: () {},
-                                            analytics:
-                                                NavigatorAnalytics.fromUrl(url),
-                                          );
-                                        }
-                                      }
-                                    },
-                                    child: Text(
-                                      element.text,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: Theme.of(context).primaryColor,
-                                        decoration: TextDecoration.underline,
-                                        decorationColor:
-                                            Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (element.localName == "h2") {
-                                final nextElement = element.nextElementSibling;
-                                var titleText = element.text;
-
-                                if (nextElement?.localName == 'p') {
-                                  var nextDiv = nextElement?.nextElementSibling;
-
-                                  if (nextDiv != null &&
-                                      nextDiv.localName == 'div' &&
-                                      nextDiv.classes.contains('post__video')) {
-                                    return Container(
-                                      padding: EdgeInsets.zero,
-                                      margin: EdgeInsets.zero,
-                                      child: Text(
-                                        titleText,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-
-                                return null;
-                              }
-
-                              if (element.classes.contains('thumbnail-image') ||
-                                  element.classes.contains("video-title")) {
-                                return Container(height: 0);
-                              }
-
-                              if (element.classes.contains('gallery') &&
-                                  element.classes
-                                      .contains('gallery--content')) {
-                                var galleryItems =
-                                    element.querySelectorAll('.gallery__item');
-
-                                for (var item in galleryItems) {
-                                  var imgElement =
-                                      item.querySelector('.gallery__img');
-                                  var descriptionElement = item
-                                      .querySelector('.gallery__description p');
-
-                                  if (imgElement != null &&
-                                      descriptionElement != null) {
-                                    var src = imgElement.attributes['src'];
-
-                                    descriptionElement
-                                        .querySelectorAll('span')
-                                        .forEach((span) {
-                                      span.remove();
-                                    });
-
-                                    var caption = descriptionElement.text
-                                        .replaceAll("•", "")
-                                        .stripHtml();
-                                    var credits = descriptionElement
-                                            .querySelector('.gallery__credit')
-                                            ?.text ??
-                                        '';
-
-                                    htmlImages.add(Images(
-                                        url: src,
-                                        caption: caption,
-                                        credits: credits,
-                                        alt: caption,
-                                        id: htmlImages.length + 1));
-                                  }
-                                }
-
-                                return StatefulBuilder(
-                                    builder: (context, setStateLocal) {
-                                  return Column(
+                            }
+                        
+                            return false;
+                          },
+                          customStylesBuilder: (element) => cssBuilder(
+                            element,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).colorScheme.tertiaryContainer                              
+                          ),
+                          customWidgetBuilder: (element) {
+                            // if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
+                            //   String? divId = element.id;
+                        
+                            //   return Container(
+                            //     constraints: const BoxConstraints(maxHeight: 350),
+                            //     alignment: Alignment.center,
+                            //     child: InAppWebView(
+                            //       initialUrlRequest: URLRequest(
+                            //         url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=$divId")
+                            //       ),
+                            //       onLoadStop: (controller, url) {
+                            //         Color bgColor = Theme.of(context).scaffoldBackgroundColor;
+                        
+                            //         String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
+                        
+                            //         controller.evaluateJavascript(source: """
+                            //           (function() {
+                            //             let observer = new MutationObserver((mutations, obs) => {
+                            //               let adArea = document.querySelector(".ad__area.ad__area--only");
+                            //               if (adArea) {
+                            //                 adArea.style.background = "$bgColorCss";
+                            //                 obs.disconnect();
+                            //               }
+                            //             });
+                        
+                            //             observer.observe(document.body, { childList: true, subtree: true });
+                            //           })();
+                            //         """);
+                            //       },
+                            //       shouldOverrideUrlLoading: (controller, navigationAction) async {
+                            //         Uri uri = Uri.parse(navigationAction.request.url.toString());
+                        
+                            //         if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
+                            //           _openInBrowser(uri.toString());
+                            //           return NavigationActionPolicy.CANCEL;
+                            //         }
+                        
+                            //         return NavigationActionPolicy.ALLOW;
+                            //       },
+                            //     ),
+                            //   );
+                            // }
+                        
+                            if (element.localName == 'figure' && element.classes.contains('fullscreen-wrapper')) {
+                              var imgElement = element.children.firstWhere((child) => child.localName == 'img');
+                              
+                              var src = imgElement.attributes['src'];
+                        
+                              var figcaptionElement = element.children.firstWhere(
+                                (child) => child.localName == 'figcaption'
+                              );
+                        
+                              var figcaptionText = figcaptionElement.text;
+                        
+                              return Column(
+                                children: [
+                                  Stack(
                                     children: [
-                                      GestureDetector(
-                                        onHorizontalDragEnd: (details) {
-                                          double dragEndPosition = details
-                                              .velocity.pixelsPerSecond.dx;
-
-                                          if (dragEndPosition > 0) {
-                                            setState(() {
-                                              if (currentEmbedIndex > 0) {
-                                                currentEmbedIndex--;
-                                                _scrollToEmbedIndex(
-                                                    currentEmbedIndex);
-                                              }
-                                            });
-
-                                            setStateLocal(() {});
-                                          } else if (dragEndPosition < 0) {
-                                            setState(() {
-                                              if (currentEmbedIndex <
-                                                  htmlImages.length - 1) {
-                                                currentEmbedIndex++;
-                                                _scrollToEmbedIndex(
-                                                    currentEmbedIndex);
-                                              }
-                                            });
-
-                                            setStateLocal(() {});
-                                          }
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            Container(
-                                              decoration: const BoxDecoration(
-                                                  color: Colors.black),
-                                              child: Image.network(
-                                                htmlImages[currentEmbedIndex]
-                                                    .url!,
-                                                height: 300,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                fit: BoxFit.contain,
-                                              ),
+                                      Image.network(src!),
+                                      Positioned(
+                                        top: 16,
+                                        right: 16,
+                                        child: GestureDetector(
+                                          onTap: () => _showModal(context, src, figcaptionText),
+                                          child: Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: BoxDecoration(
+                                              color: Theme.of(context).primaryColor,
+                                              borderRadius: BorderRadius.circular(2),
                                             ),
-                                            Positioned(
-                                                top: 16,
-                                                left: 16,
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 6,
-                                                      vertical: 2),
-                                                  decoration: BoxDecoration(
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            4),
-                                                  ),
-                                                  child: Text(
-                                                    "${currentEmbedIndex + 1} de ${htmlImages.length}",
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      fontFamily:
-                                                          'CNN Sans Display',
-                                                    ),
-                                                  ),
-                                                )),
-                                            Positioned(
-                                                top: 16,
-                                                right: 16,
-                                                child: GestureDetector(
-                                                  onTap: () =>
-                                                      _showEmbedGalleryModal(
-                                                          context,
-                                                          setStateLocal),
-                                                  child: Container(
-                                                    width: 24,
-                                                    height: 24,
-                                                    decoration: BoxDecoration(
-                                                      color: Theme.of(context)
-                                                          .primaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              2),
-                                                    ),
-                                                    child: SvgPicture.network(
-                                                      'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
-                                                      placeholderBuilder:
-                                                          (context) =>
-                                                              const CircularProgressIndicator(),
-                                                    ),
-                                                  ),
-                                                )),
-                                            Positioned(
-                                              bottom: 0,
-                                              child: Container(
-                                                height: 192,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                padding: const EdgeInsets.only(
-                                                    left: 24,
-                                                    right: 24,
-                                                    bottom: 16),
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                    begin:
-                                                        Alignment.bottomCenter,
-                                                    end: Alignment.topCenter,
-                                                    colors: [
-                                                      Colors.black
-                                                          .withOpacity(1),
-                                                      Colors.black
-                                                          .withOpacity(0),
-                                                    ],
-                                                    stops: const [0.38, 0.59],
-                                                  ),
-                                                ),
-                                                alignment: Alignment.bottomLeft,
-                                                child: SizedBox(
-                                                  height: 64,
-                                                  child: Scrollbar(
-                                                    controller:
-                                                        ScrollController(),
-                                                    thumbVisibility: true,
-                                                    trackVisibility: true,
-                                                    thickness: 6,
-                                                    radius:
-                                                        const Radius.circular(
-                                                            8),
-                                                    scrollbarOrientation:
-                                                        ScrollbarOrientation
-                                                            .right,
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                right: 16,
-                                                                top: 2),
-                                                        child: RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text: htmlImages[
-                                                                            currentEmbedIndex]
-                                                                        .caption
-                                                                        ?.stripHtml() ??
-                                                                    '',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 14,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  fontFamily:
-                                                                      'CNN Sans Display',
-                                                                ),
-                                                              ),
-                                                              if (htmlImages[currentEmbedIndex]
-                                                                          .credits !=
-                                                                      null &&
-                                                                  htmlImages[
-                                                                          currentEmbedIndex]
-                                                                      .credits!
-                                                                      .isNotEmpty) ...[
-                                                                const TextSpan(
-                                                                  text: ' • ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                    fontFamily:
-                                                                        'CNN Sans Display',
-                                                                  ),
-                                                                ),
-                                                                TextSpan(
-                                                                  text: htmlImages[
-                                                                          currentEmbedIndex]
-                                                                      .credits!,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    fontFamily:
-                                                                        'CNN Sans Display',
-                                                                  ),
-                                                                )
-                                                              ]
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
+                                            child: SvgPicture.network(
+                                              'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                              placeholderBuilder: (context) =>
+                                                  const CircularProgressIndicator(),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 3),
-                                      SizedBox(
-                                        height: 85,
-                                        child: SingleChildScrollView(
-                                          controller: _embedScrollController,
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            children: [
-                                              for (int index = 0;
-                                                  index < htmlImages.length;
-                                                  index++)
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      currentEmbedIndex = index;
-                                                      _scrollToEmbedIndex(
-                                                          index);
-                                                    });
-
-                                                    setStateLocal(() {});
-                                                  },
-                                                  child: Container(
-                                                    margin: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 1.5),
-                                                    child: Stack(
-                                                      children: [
-                                                        Image.network(
-                                                          htmlImages[index]
-                                                              .url!,
-                                                          width: 150,
-                                                          height: 85,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                        Positioned(
-                                                          bottom: 0,
-                                                          left: 0,
-                                                          right: 0,
-                                                          child: Container(
-                                                            height: 7,
-                                                            color: index ==
-                                                                    currentEmbedIndex
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                : Colors
-                                                                    .transparent,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )
-                                            ],
                                           ),
                                         ),
                                       ),
                                     ],
-                                  );
-                                });
-                              }
-
-                              return null;
-                            },
-                          ),
-                        ),
-                        Visibility(
-                          visible: !isGalleryOpen,
-                          child: HtmlWidget(
-                            article.content!.content!.replaceAll('"', '"'),
-                            textStyle: const TextStyle(
-                              fontFamily: 'CNN Sans Display W04 Medium',
-                              fontSize: 18,
-                              fontWeight: FontWeight.w300,
-                              // height: 26,
-                            ),
-                            onTapUrl: (url) {
-                              if (url.endsWith('/')) {
-                                url = url.substring(0, url.length - 1);
-                              }
-
-                              final articleId = url
-                                  .replaceAll('/?', '?')
-                                  .split('?')
-                                  .first
-                                  .split('/')
-                                  .last;
-
-                              if (articleId.characters.length > 15) {
-                                NavigatorManager(context).to(
-                                  Article.route,
-                                  data: articleId,
-                                  onFinished: () {},
-                                );
-
-                                return true;
-                              } else {
-                                if (!url.contains('${ApiHome.home}/?s=') &&
-                                    url.contains(ApiHome.home)) {
-                                  NavigatorManager(context).to(
-                                    CustomWebView.route,
-                                    data: WebviewNavigatorModel(
-                                        url: url, title: 'Voltar'),
-                                    onFinished: () {},
-                                    analytics: NavigatorAnalytics.fromUrl(url),
-                                  );
-
-                                  return true;
-                                }
-                              }
-
-                              return false;
-                            },
-                            customStylesBuilder: (element) => cssBuilder(
-                              element,
-                              Theme.of(context).colorScheme.primary,
-                              Theme.of(context).primaryColor,
-                              Theme.of(context).colorScheme.tertiaryContainer                              
-                            ),
-                            customWidgetBuilder: (element) {
-                              // if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
-                              //   String? divId = element.id;
-
-                              //   return Container(
-                              //     constraints: const BoxConstraints(maxHeight: 350),
-                              //     alignment: Alignment.center,
-                              //     child: InAppWebView(
-                              //       initialUrlRequest: URLRequest(
-                              //         url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=$divId")
-                              //       ),
-                              //       onLoadStop: (controller, url) {
-                              //         Color bgColor = Theme.of(context).scaffoldBackgroundColor;
-
-                              //         String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
-
-                              //         controller.evaluateJavascript(source: """
-                              //           (function() {
-                              //             let observer = new MutationObserver((mutations, obs) => {
-                              //               let adArea = document.querySelector(".ad__area.ad__area--only");
-                              //               if (adArea) {
-                              //                 adArea.style.background = "$bgColorCss";
-                              //                 obs.disconnect();
-                              //               }
-                              //             });
-
-                              //             observer.observe(document.body, { childList: true, subtree: true });
-                              //           })();
-                              //         """);
-                              //       },
-                              //       shouldOverrideUrlLoading: (controller, navigationAction) async {
-                              //         Uri uri = Uri.parse(navigationAction.request.url.toString());
-
-                              //         if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
-                              //           _openInBrowser(uri.toString());
-                              //           return NavigationActionPolicy.CANCEL;
-                              //         }
-
-                              //         return NavigationActionPolicy.ALLOW;
-                              //       },
-                              //     ),
-                              //   );
-                              // }
-
-                              if (element.classes.contains('flourish-embed') && element.attributes.containsKey('data-src')) {
-                                final visualisationUrl = 'https://public.flourish.studio/${element.attributes['data-src']}/';
-
-                                return SizedBox(
-                                  height: 495,
-                                  width: double.infinity,
-                                  child: InAppWebView(
-                                    initialUrlRequest: URLRequest(url: WebUri(visualisationUrl)),
-                                    initialSettings: InAppWebViewSettings(
-                                      javaScriptEnabled: true,
-                                      thirdPartyCookiesEnabled: true,
-                                      cacheEnabled: true,
-                                      transparentBackground: true,
+                                  ),
+                                  const SizedBox(height: AppConstants.KPADDING_8),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text: figcaptionText,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Theme.of(context).colorScheme.primary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                                     ),
-                                    onWebViewCreated: (controller) async {
-                                      final cookieManager = CookieManager.instance();
-
-                                      await cookieManager.setCookie(
-                                        url: WebUri(visualisationUrl),
-                                        name: "OptanonAlertBoxClosed",
-                                        value: "2025-02-26T08:47:35.404Z",
-                                        domain: "public.flourish.studio",
-                                      );
-
-                                      await cookieManager.setCookie(
-                                        url: WebUri(visualisationUrl),
-                                        name: "OptanonAlertBoxClosed",
-                                        value: "2025-02-26T08:47:35.397Z",
-                                        domain: ".flourish.studio",
-                                      );
-
-                                      await cookieManager.setCookie(
-                                        url: WebUri(visualisationUrl),
-                                        name: "OptanonConsent",
-                                        value: "isGpcEnabled=0&datestamp=Wed+Feb+26+2025+05%3A47%3A35+GMT-0300+(Brasilia+Standard+Time)&version=202301.2.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false",
-                                        domain: ".flourish.studio",
-                                      );
-
-
-                                      controller.reload();
+                                  ),
+                                  const SizedBox(height: AppConstants.KPADDING_8),
+                                ],
+                              );
+                            }
+                        
+                            if (element.classes.contains('flourish-embed') && element.attributes.containsKey('data-src')) {
+                              final visualisationUrl = 'https://public.flourish.studio/${element.attributes['data-src']}/';
+                        
+                              return SizedBox(
+                                height: 495,
+                                width: double.infinity,
+                                child: InAppWebView(
+                                  initialUrlRequest: URLRequest(url: WebUri(visualisationUrl)),
+                                  initialSettings: InAppWebViewSettings(
+                                    javaScriptEnabled: true,
+                                    thirdPartyCookiesEnabled: true,
+                                    cacheEnabled: true,
+                                    transparentBackground: true,
+                                  ),
+                                  onWebViewCreated: (controller) async {
+                                    final cookieManager = CookieManager.instance();
+                        
+                                    await cookieManager.setCookie(
+                                      url: WebUri(visualisationUrl),
+                                      name: "OptanonAlertBoxClosed",
+                                      value: "2025-02-26T08:47:35.404Z",
+                                      domain: "public.flourish.studio",
+                                    );
+                        
+                                    await cookieManager.setCookie(
+                                      url: WebUri(visualisationUrl),
+                                      name: "OptanonAlertBoxClosed",
+                                      value: "2025-02-26T08:47:35.397Z",
+                                      domain: ".flourish.studio",
+                                    );
+                        
+                                    await cookieManager.setCookie(
+                                      url: WebUri(visualisationUrl),
+                                      name: "OptanonConsent",
+                                      value: "isGpcEnabled=0&datestamp=Wed+Feb+26+2025+05%3A47%3A35+GMT-0300+(Brasilia+Standard+Time)&version=202301.2.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false",
+                                      domain: ".flourish.studio",
+                                    );
+                        
+                        
+                                    controller.reload();
+                                  },
+                                ),
+                              );
+                            }
+                        
+                            if (element.classes.contains('instagram-media') && element.attributes.containsKey("data-instgrm-permalink")) {
+                              var instagramEmbedUrl = element.attributes['data-instgrm-permalink']!;
+                        
+                              final regex = RegExp(r"reel/([^/?]+)");
+                              final match = regex.firstMatch(instagramEmbedUrl);
+                        
+                              var finalInstagramUrl = instagramEmbedUrl;
+                        
+                              if (match != null) {
+                                finalInstagramUrl = "https://www.instagram.com/p/${match.group(1)}/embed/captioned/?cr=1&v=14&wp=54";
+                              }
+                              
+                              return Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(3),
+                                  border: Border.all(color: const Color(0xFFDBDBDB)),
+                                  boxShadow: const [],
+                                ),
+                                child: SizedBox(
+                                  height: 975,
+                                  child: InAppWebView(
+                                    initialUrlRequest: URLRequest(
+                                      url: WebUri(finalInstagramUrl),
+                                      headers: {
+                                        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36',
+                                      }
+                                    ),
+                                    initialSettings: InAppWebViewSettings(
+                                      useWideViewPort: true,
+                                      supportZoom: false,
+                                      mediaPlaybackRequiresUserGesture: false,
+                                      javaScriptEnabled: true,
+                                    ),
+                                    onLoadStop: (controller, url) {
+                                      setState(() {
+                                        onLoadInstragramEnded = true;
+                                      });
+                                    },
+                                    shouldOverrideUrlLoading: (controller, navigationAction) async {
+                                      final uri = navigationAction.request.url!;
+                        
+                                      if (uri.toString().startsWith('https://www.instagram.com') && onLoadInstragramEnded) {
+                                        launchUrl(uri);
+                                        return NavigationActionPolicy.CANCEL;
+                                      }
+                        
+                                      return NavigationActionPolicy.ALLOW;
                                     },
                                   ),
-                                );
-                              }
-
-                              if (element.classes.contains('instagram-media') && element.attributes.containsKey("data-instgrm-permalink")) {
-                                var instagramEmbedUrl = element.attributes['data-instgrm-permalink']!;
-
-                                final regex = RegExp(r"reel/([^/?]+)");
-                                final match = regex.firstMatch(instagramEmbedUrl);
-
-                                var finalInstagramUrl = instagramEmbedUrl;
-
-                                if (match != null) {
-                                  finalInstagramUrl = "https://www.instagram.com/p/${match.group(1)}/embed/captioned/?cr=1&v=14&wp=54";
-                                }
-                                
-                                return Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.all(0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(3),
-                                    border: Border.all(color: const Color(0xFFDBDBDB)),
-                                    boxShadow: const [],
-                                  ),
-                                  child: SizedBox(
-                                    height: 975,
-                                    child: InAppWebView(
-                                      initialUrlRequest: URLRequest(
-                                        url: WebUri(finalInstagramUrl),
-                                        headers: {
-                                          'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36',
-                                        }
+                                ),
+                              );
+                            }
+                        
+                            if (element.classes.contains('read-too__title')) {
+                              return Column(
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        element.text,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
                                       ),
-                                      initialSettings: InAppWebViewSettings(
-                                        useWideViewPort: true,
-                                        supportZoom: false,
-                                        mediaPlaybackRequiresUserGesture: false,
-                                        javaScriptEnabled: true,
-                                      ),
-                                      onLoadStop: (controller, url) {
-                                        setState(() {
-                                          onLoadInstragramEnded = true;
-                                        });
-                                      },
-                                      shouldOverrideUrlLoading: (controller, navigationAction) async {
-                                        final uri = navigationAction.request.url!;
-
-                                        if (uri.toString().startsWith('https://www.instagram.com') && onLoadInstragramEnded) {
-                                          launchUrl(uri);
-                                          return NavigationActionPolicy.CANCEL;
-                                        }
-
-                                        return NavigationActionPolicy.ALLOW;
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (element.classes.contains('read-too__title')) {
-                                return Column(
-                                  children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          element.text,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
+                                      const SizedBox(width: 8),
+                                      Transform.translate(
+                                        offset: const Offset(0, 1.5),
+                                        child: Container(
+                                          width: 8,
+                                          height: 8,
+                                          decoration: BoxDecoration(
                                             color: Theme.of(context).primaryColor,
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
-                                        Transform.translate(
-                                          offset: const Offset(0, 1.5),
-                                          child: Container(
-                                            width: 8,
-                                            height: 8,
-                                            decoration: BoxDecoration(
-                                              color: Theme.of(context).primaryColor,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                ],
+                              );
+                            }
+                        
+                            if (element.classes.contains('read-too__post-title')) {
+                              return Expanded(
+                                child: Text(
+                                  element.text.trim(),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  softWrap: true,
+                                  overflow: TextOverflow.visible,
+                                ),
+                              );
+                            }
+                        
+                            if (element.localName == 'hr') {
+                              return Container();
+                            }
+                        
+                            if (element.localName == 'iframe' &&
+                                (element.attributes.containsKey('src') ||
+                                    element.attributes
+                                        .containsKey('data-src'))) {
+                        
+                              var dataSrc = element.attributes['data-src'];
+                        
+                              if (dataSrc != null && dataSrc.contains('/embed/')) {
+                                dataSrc = dataSrc.replaceAll("/embed/", "/");
+                              }
+                        
+                              if (dataSrc != null && dataSrc.contains('stories.cnnbrasil.com.br')) {
+                                return SizedBox(
+                                  height: 650,
+                                  child: InAppWebView(
+                                    initialUrlRequest: URLRequest(
+                                      url: WebUri(dataSrc),
+                                      headers: {
+                                        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36',
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                        
+                              return SizedBox(
+                                height: 400,
+                                child: InAppWebView(
+                                  initialUrlRequest: URLRequest(
+                                    url: WebUri(element.attributes['src'] ?? dataSrc!),
+                                  ),
+                                ),
+                              );
+                            }
+                        
+                            if (element.attributes
+                                .containsKey('data-youtube-id')) {
+                              String? youtubeId =
+                                  element.attributes['data-youtube-id'];
+                        
+                              var url =
+                                  "${ApiHome.home}/youtube/video/?youtube_id=$youtubeId&youtube_adformat=aovivo&hidemenu=true&youtube_mode=teatro";
+                        
+                              return SizedBox(
+                                height: 224,
+                                child: InAppWebView(
+                                  initialUrlRequest: URLRequest(
+                                    url: WebUri(url),
+                                  ),
+                                ),
+                              );
+                            }
+                        
+                            if (element.localName == 'a' &&
+                                element.parent?.localName == 'h2') {
+                              return Container(
+                                padding: EdgeInsets.zero,
+                                margin: EdgeInsets.zero,
+                                child: InkWell(
+                                  onTap: () {
+                                    String url =
+                                        element.attributes['href'] ?? '';
+                        
+                                    if (url.endsWith('/')) {
+                                      url = url.substring(0, url.length - 1);
+                                    }
+                        
+                                    final articleId = url
+                                        .replaceAll('/?', '?')
+                                        .split('?')
+                                        .first
+                                        .split('/')
+                                        .last;
+                        
+                                    if (articleId.characters.length > 15) {
+                                      NavigatorManager(context).to(
+                                        Article.route,
+                                        data: articleId,
+                                        onFinished: () {},
+                                      );
+                                    } else {
+                                      if (!url.contains(
+                                              '${ApiHome.home}/?s=') &&
+                                          url.contains(ApiHome.home)) {
+                                        NavigatorManager(context).to(
+                                          CustomWebView.route,
+                                          data: WebviewNavigatorModel(
+                                              url: url, title: 'Voltar'),
+                                          onFinished: () {},
+                                          analytics:
+                                              NavigatorAnalytics.fromUrl(url),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Text(
+                                    element.text,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                      color: Theme.of(context).primaryColor,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor:
+                                          Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                        
+                            if (element.localName == "h2") {
+                              final nextElement = element.nextElementSibling;
+                              var titleText = element.text;
+                        
+                              if (nextElement?.localName == 'p') {
+                                var nextDiv = nextElement?.nextElementSibling;
+                        
+                                if (nextDiv != null &&
+                                    nextDiv.localName == 'div' &&
+                                    nextDiv.classes.contains('post__video')) {
+                                  return Container(
+                                    padding: EdgeInsets.zero,
+                                    margin: EdgeInsets.zero,
+                                    child: Text(
+                                      titleText,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                        
+                              return null;
+                            }
+                        
+                            if (element.classes.contains('thumbnail-image') ||
+                                element.classes.contains("video-title")) {
+                              return Container(height: 0);
+                            }
+                        
+                            if (element.classes.contains('gallery') &&
+                                element.classes
+                                    .contains('gallery--content')) {
+                              var galleryItems =
+                                  element.querySelectorAll('.gallery__item');
+                        
+                              for (var item in galleryItems) {
+                                var imgElement =
+                                    item.querySelector('.gallery__img');
+                                var descriptionElement = item
+                                    .querySelector('.gallery__description p');
+                        
+                                if (imgElement != null &&
+                                    descriptionElement != null) {
+                                  var src = imgElement.attributes['src'];
+                        
+                                  descriptionElement
+                                      .querySelectorAll('span')
+                                      .forEach((span) {
+                                    span.remove();
+                                  });
+                        
+                                  var caption = descriptionElement.text
+                                      .replaceAll("•", "")
+                                      .stripHtml();
+                                  var credits = descriptionElement
+                                          .querySelector('.gallery__credit')
+                                          ?.text ??
+                                      '';
+                        
+                                  htmlImages.add(Images(
+                                      url: src,
+                                      caption: caption,
+                                      credits: credits,
+                                      alt: caption,
+                                      id: htmlImages.length + 1));
+                                }
+                              }
+                        
+                              return StatefulBuilder(
+                                  builder: (context, setStateLocal) {
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onHorizontalDragEnd: (details) {
+                                        double dragEndPosition = details
+                                            .velocity.pixelsPerSecond.dx;
+                        
+                                        if (dragEndPosition > 0) {
+                                          setState(() {
+                                            if (currentEmbedIndex > 0) {
+                                              currentEmbedIndex--;
+                                              _scrollToEmbedIndex(
+                                                  currentEmbedIndex);
+                                            }
+                                          });
+                        
+                                          setStateLocal(() {});
+                                        } else if (dragEndPosition < 0) {
+                                          setState(() {
+                                            if (currentEmbedIndex <
+                                                htmlImages.length - 1) {
+                                              currentEmbedIndex++;
+                                              _scrollToEmbedIndex(
+                                                  currentEmbedIndex);
+                                            }
+                                          });
+                        
+                                          setStateLocal(() {});
+                                        }
+                                      },
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            decoration: const BoxDecoration(
+                                                color: Colors.black),
+                                            child: Image.network(
+                                              htmlImages[currentEmbedIndex]
+                                                  .url!,
+                                              height: 300,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              fit: BoxFit.contain,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                  ],
-                                );
-                              }
-
-                              if (element.classes.contains('read-too__post-title')) {
-                                return Expanded(
-                                  child: Text(
-                                    element.text.trim(),
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    softWrap: true,
-                                    overflow: TextOverflow.visible,
-                                  ),
-                                );
-                              }
-
-                              if (element.localName == 'hr') {
-                                return Container();
-                              }
-
-                              if (element.localName == 'iframe' &&
-                                  (element.attributes.containsKey('src') ||
-                                      element.attributes
-                                          .containsKey('data-src'))) {
-                                return SizedBox(
-                                  height: 400,
-                                  child: InAppWebView(
-                                    initialUrlRequest: URLRequest(
-                                      url: WebUri(element.attributes['src'] ??
-                                          element.attributes['data-src']!),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (element.attributes
-                                  .containsKey('data-youtube-id')) {
-                                String? youtubeId =
-                                    element.attributes['data-youtube-id'];
-
-                                var url =
-                                    "${ApiHome.home}/youtube/video/?youtube_id=$youtubeId&youtube_adformat=aovivo&hidemenu=true&youtube_mode=teatro";
-
-                                return SizedBox(
-                                  height: 224,
-                                  child: InAppWebView(
-                                    initialUrlRequest: URLRequest(
-                                      url: WebUri(url),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (element.localName == 'a' &&
-                                  element.parent?.localName == 'h2') {
-                                return Container(
-                                  padding: EdgeInsets.zero,
-                                  margin: EdgeInsets.zero,
-                                  child: InkWell(
-                                    onTap: () {
-                                      String url =
-                                          element.attributes['href'] ?? '';
-
-                                      if (url.endsWith('/')) {
-                                        url = url.substring(0, url.length - 1);
-                                      }
-
-                                      final articleId = url
-                                          .replaceAll('/?', '?')
-                                          .split('?')
-                                          .first
-                                          .split('/')
-                                          .last;
-
-                                      if (articleId.characters.length > 15) {
-                                        NavigatorManager(context).to(
-                                          Article.route,
-                                          data: articleId,
-                                          onFinished: () {},
-                                        );
-                                      } else {
-                                        if (!url.contains(
-                                                '${ApiHome.home}/?s=') &&
-                                            url.contains(ApiHome.home)) {
-                                          NavigatorManager(context).to(
-                                            CustomWebView.route,
-                                            data: WebviewNavigatorModel(
-                                                url: url, title: 'Voltar'),
-                                            onFinished: () {},
-                                            analytics:
-                                                NavigatorAnalytics.fromUrl(url),
-                                          );
-                                        }
-                                      }
-                                    },
-                                    child: Text(
-                                      element.text,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: Theme.of(context).primaryColor,
-                                        decoration: TextDecoration.underline,
-                                        decorationColor:
-                                            Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (element.localName == "h2") {
-                                final nextElement = element.nextElementSibling;
-                                var titleText = element.text;
-
-                                if (nextElement?.localName == 'p') {
-                                  var nextDiv = nextElement?.nextElementSibling;
-
-                                  if (nextDiv != null &&
-                                      nextDiv.localName == 'div' &&
-                                      nextDiv.classes.contains('post__video')) {
-                                    return Container(
-                                      padding: EdgeInsets.zero,
-                                      margin: EdgeInsets.zero,
-                                      child: Text(
-                                        titleText,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-
-                                return null;
-                              }
-
-                              if (element.classes.contains('thumbnail-image') ||
-                                  element.classes.contains("video-title")) {
-                                return Container(height: 0);
-                              }
-
-                              if (element.classes.contains('gallery') &&
-                                  element.classes
-                                      .contains('gallery--content')) {
-                                var galleryItems =
-                                    element.querySelectorAll('.gallery__item');
-
-                                for (var item in galleryItems) {
-                                  var imgElement =
-                                      item.querySelector('.gallery__img');
-                                  var descriptionElement = item
-                                      .querySelector('.gallery__description p');
-
-                                  if (imgElement != null &&
-                                      descriptionElement != null) {
-                                    var src = imgElement.attributes['src'];
-
-                                    descriptionElement
-                                        .querySelectorAll('span')
-                                        .forEach((span) {
-                                      span.remove();
-                                    });
-
-                                    var caption = descriptionElement.text
-                                        .replaceAll("•", "")
-                                        .stripHtml();
-                                    var credits = descriptionElement
-                                            .querySelector('.gallery__credit')
-                                            ?.text ??
-                                        '';
-
-                                    htmlImages.add(Images(
-                                        url: src,
-                                        caption: caption,
-                                        credits: credits,
-                                        alt: caption,
-                                        id: htmlImages.length + 1));
-                                  }
-                                }
-
-                                return StatefulBuilder(
-                                    builder: (context, setStateLocal) {
-                                  return Column(
-                                    children: [
-                                      GestureDetector(
-                                        onHorizontalDragEnd: (details) {
-                                          double dragEndPosition = details
-                                              .velocity.pixelsPerSecond.dx;
-
-                                          if (dragEndPosition > 0) {
-                                            setState(() {
-                                              if (currentEmbedIndex > 0) {
-                                                currentEmbedIndex--;
-                                                _scrollToEmbedIndex(
-                                                    currentEmbedIndex);
-                                              }
-                                            });
-
-                                            setStateLocal(() {});
-                                          } else if (dragEndPosition < 0) {
-                                            setState(() {
-                                              if (currentEmbedIndex <
-                                                  htmlImages.length - 1) {
-                                                currentEmbedIndex++;
-                                                _scrollToEmbedIndex(
-                                                    currentEmbedIndex);
-                                              }
-                                            });
-
-                                            setStateLocal(() {});
-                                          }
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            Container(
-                                              decoration: const BoxDecoration(
-                                                  color: Colors.black),
-                                              child: Image.network(
-                                                htmlImages[currentEmbedIndex]
-                                                    .url!,
-                                                height: 300,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                fit: BoxFit.contain,
-                                              ),
-                                            ),
-                                            Positioned(
-                                                top: 16,
-                                                left: 16,
+                                          Positioned(
+                                              top: 16,
+                                              left: 16,
+                                              child: Container(
+                                                padding: const EdgeInsets
+                                                    .symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2),
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          4),
+                                                ),
+                                                child: Text(
+                                                  "${currentEmbedIndex + 1} de ${htmlImages.length}",
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w700,
+                                                    fontFamily:
+                                                        'CNN Sans Display',
+                                                  ),
+                                                ),
+                                              )),
+                                          Positioned(
+                                              top: 16,
+                                              right: 16,
+                                              child: GestureDetector(
+                                                onTap: () =>
+                                                    _showEmbedGalleryModal(
+                                                        context,
+                                                        setStateLocal),
                                                 child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 6,
-                                                      vertical: 2),
+                                                  width: 24,
+                                                  height: 24,
                                                   decoration: BoxDecoration(
                                                     color: Theme.of(context)
                                                         .primaryColor,
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            4),
+                                                            2),
                                                   ),
-                                                  child: Text(
-                                                    "${currentEmbedIndex + 1} de ${htmlImages.length}",
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      fontFamily:
-                                                          'CNN Sans Display',
-                                                    ),
-                                                  ),
-                                                )),
-                                            Positioned(
-                                                top: 16,
-                                                right: 16,
-                                                child: GestureDetector(
-                                                  onTap: () =>
-                                                      _showEmbedGalleryModal(
-                                                          context,
-                                                          setStateLocal),
-                                                  child: Container(
-                                                    width: 24,
-                                                    height: 24,
-                                                    decoration: BoxDecoration(
-                                                      color: Theme.of(context)
-                                                          .primaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              2),
-                                                    ),
-                                                    child: SvgPicture.network(
-                                                      'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
-                                                      placeholderBuilder:
-                                                          (context) =>
-                                                              const CircularProgressIndicator(),
-                                                    ),
-                                                  ),
-                                                )),
-                                            Positioned(
-                                              bottom: 0,
-                                              child: Container(
-                                                height: 192,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                padding: const EdgeInsets.only(
-                                                    left: 24,
-                                                    right: 24,
-                                                    bottom: 16),
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                    begin:
-                                                        Alignment.bottomCenter,
-                                                    end: Alignment.topCenter,
-                                                    colors: [
-                                                      Colors.black
-                                                          .withOpacity(1),
-                                                      Colors.black
-                                                          .withOpacity(0),
-                                                    ],
-                                                    stops: const [0.38, 0.59],
+                                                  child: SvgPicture.network(
+                                                    'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                                    placeholderBuilder:
+                                                        (context) =>
+                                                            const CircularProgressIndicator(),
                                                   ),
                                                 ),
-                                                alignment: Alignment.bottomLeft,
-                                                child: SizedBox(
-                                                  height: 64,
-                                                  child: Scrollbar(
-                                                    controller:
-                                                        ScrollController(),
-                                                    thumbVisibility: true,
-                                                    trackVisibility: true,
-                                                    thickness: 6,
-                                                    radius:
-                                                        const Radius.circular(
-                                                            8),
-                                                    scrollbarOrientation:
-                                                        ScrollbarOrientation
-                                                            .right,
-                                                    child:
-                                                        SingleChildScrollView(
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                right: 16,
-                                                                top: 2),
-                                                        child: RichText(
-                                                          text: TextSpan(
-                                                            children: [
-                                                              TextSpan(
-                                                                text: htmlImages[
-                                                                            currentEmbedIndex]
-                                                                        .caption
-                                                                        ?.stripHtml() ??
-                                                                    '',
+                                              )),
+                                          Positioned(
+                                            bottom: 0,
+                                            child: Container(
+                                              height: 192,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              padding: const EdgeInsets.only(
+                                                  left: 24,
+                                                  right: 24,
+                                                  bottom: 16),
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin:
+                                                      Alignment.bottomCenter,
+                                                  end: Alignment.topCenter,
+                                                  colors: [
+                                                    Colors.black
+                                                        .withOpacity(1),
+                                                    Colors.black
+                                                        .withOpacity(0),
+                                                  ],
+                                                  stops: const [0.38, 0.59],
+                                                ),
+                                              ),
+                                              alignment: Alignment.bottomLeft,
+                                              child: SizedBox(
+                                                height: 64,
+                                                child: Scrollbar(
+                                                  controller:
+                                                      ScrollController(),
+                                                  thumbVisibility: true,
+                                                  trackVisibility: true,
+                                                  thickness: 6,
+                                                  radius:
+                                                      const Radius.circular(
+                                                          8),
+                                                  scrollbarOrientation:
+                                                      ScrollbarOrientation
+                                                          .right,
+                                                  child:
+                                                      SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets
+                                                              .only(
+                                                              right: 16,
+                                                              top: 2),
+                                                      child: RichText(
+                                                        text: TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text: htmlImages[
+                                                                          currentEmbedIndex]
+                                                                      .caption
+                                                                      ?.stripHtml() ??
+                                                                  '',
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontFamily:
+                                                                    'CNN Sans Display',
+                                                              ),
+                                                            ),
+                                                            if (htmlImages[currentEmbedIndex]
+                                                                        .credits !=
+                                                                    null &&
+                                                                htmlImages[
+                                                                        currentEmbedIndex]
+                                                                    .credits!
+                                                                    .isNotEmpty) ...[
+                                                              const TextSpan(
+                                                                text: ' • ',
                                                                 style:
-                                                                    const TextStyle(
+                                                                    TextStyle(
                                                                   color: Colors
                                                                       .white,
-                                                                  fontSize: 14,
+                                                                  fontSize:
+                                                                      16,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w700,
@@ -2552,48 +2122,25 @@ class ArticleView extends ArticleViewModel {
                                                                       'CNN Sans Display',
                                                                 ),
                                                               ),
-                                                              if (htmlImages[currentEmbedIndex]
-                                                                          .credits !=
-                                                                      null &&
-                                                                  htmlImages[
-                                                                          currentEmbedIndex]
-                                                                      .credits!
-                                                                      .isNotEmpty) ...[
-                                                                const TextSpan(
-                                                                  text: ' • ',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                    fontFamily:
-                                                                        'CNN Sans Display',
-                                                                  ),
+                                                              TextSpan(
+                                                                text: htmlImages[
+                                                                        currentEmbedIndex]
+                                                                    .credits!,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize:
+                                                                      12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontFamily:
+                                                                      'CNN Sans Display',
                                                                 ),
-                                                                TextSpan(
-                                                                  text: htmlImages[
-                                                                          currentEmbedIndex]
-                                                                      .credits!,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    fontFamily:
-                                                                        'CNN Sans Display',
-                                                                  ),
-                                                                )
-                                                              ]
-                                                            ],
-                                                          ),
+                                                              )
+                                                            ]
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
@@ -2601,74 +2148,74 @@ class ArticleView extends ArticleViewModel {
                                                 ),
                                               ),
                                             ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    SizedBox(
+                                      height: 85,
+                                      child: SingleChildScrollView(
+                                        controller: _embedScrollController,
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            for (int index = 0;
+                                                index < htmlImages.length;
+                                                index++)
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    currentEmbedIndex = index;
+                                                    _scrollToEmbedIndex(
+                                                        index);
+                                                  });
+                        
+                                                  setStateLocal(() {});
+                                                },
+                                                child: Container(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 1.5),
+                                                  child: Stack(
+                                                    children: [
+                                                      Image.network(
+                                                        htmlImages[index]
+                                                            .url!,
+                                                        width: 150,
+                                                        height: 85,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                      Positioned(
+                                                        bottom: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        child: Container(
+                                                          height: 7,
+                                                          color: index ==
+                                                                  currentEmbedIndex
+                                                              ? Theme.of(
+                                                                      context)
+                                                                  .primaryColor
+                                                              : Colors
+                                                                  .transparent,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
                                           ],
                                         ),
                                       ),
-                                      const SizedBox(height: 3),
-                                      SizedBox(
-                                        height: 85,
-                                        child: SingleChildScrollView(
-                                          controller: _embedScrollController,
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            children: [
-                                              for (int index = 0;
-                                                  index < htmlImages.length;
-                                                  index++)
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      currentEmbedIndex = index;
-                                                      _scrollToEmbedIndex(
-                                                          index);
-                                                    });
-
-                                                    setStateLocal(() {});
-                                                  },
-                                                  child: Container(
-                                                    margin: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 1.5),
-                                                    child: Stack(
-                                                      children: [
-                                                        Image.network(
-                                                          htmlImages[index]
-                                                              .url!,
-                                                          width: 150,
-                                                          height: 85,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                        Positioned(
-                                                          bottom: 0,
-                                                          left: 0,
-                                                          right: 0,
-                                                          child: Container(
-                                                            height: 7,
-                                                            color: index ==
-                                                                    currentEmbedIndex
-                                                                ? Theme.of(
-                                                                        context)
-                                                                    .primaryColor
-                                                                : Colors
-                                                                    .transparent,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                });
-                              }
-
-                              return null;
-                            },
-                          ),
+                                    ),
+                                  ],
+                                );
+                              });
+                            }
+                        
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
                         Text(
@@ -2690,15 +2237,26 @@ class ArticleView extends ArticleViewModel {
                               InkWell(
                                 onTap: tag.permalink != null
                                     ? () {
+                                        var url = tag.permalink!;
+
+                                        if (!url.contains('https://www.cnnbrasil.com.br')) {
+                                          url = "https://www.cnnbrasil.com.br$url?hidemenu=true";
+                                        }
+
+                                        if (!url.contains("hidemenu")) {
+                                          url = "$url?hidemenu=true";
+                                        }
+
                                         NavigatorManager(context).to(
                                           CustomWebView.route,
                                           data: WebviewNavigatorModel(
-                                              url: tag.permalink!,
-                                              title: 'Voltar'),
+                                            url: url,
+                                            title: 'Voltar'
+                                          ),
                                           onFinished: () {},
                                           analytics: NavigatorAnalytics.fromUrl(
                                             tag.permalink!,
-                                          ),
+                                          )
                                         );
                                       }
                                     : null,
