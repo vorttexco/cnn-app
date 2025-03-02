@@ -829,15 +829,15 @@ class ArticleView extends ArticleViewModel {
     }
   }
 
-  // void _openInBrowser(String url) async {
-  //   final Uri uri = Uri.parse(url);
+  void _openInBrowser(String url) async {
+    final Uri uri = Uri.parse(url);
 
-  //   if (await canLaunchUrl(uri)) {
-  //     await launchUrl(uri);
-  //   } else {
-  //     throw 'Ocorreu um erro ao abrir a URL: $url';
-  //   }
-  // }
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      throw 'Ocorreu um erro ao abrir a URL: $url';
+    }
+  }
 
   Widget renderContent(String htmlSnippet) {
     final shouldRenderWebView = htmlSnippet.contains('flourish-embed') &&
@@ -2489,6 +2489,67 @@ class ArticleView extends ArticleViewModel {
                               ]
                             ],
                           ),
+                        ],
+                        if (articlePartners.posts.isNotEmpty) ...[
+                          const SizedBox(height: 40),
+                          Text(
+                            'Conteúdo de parceiros',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          for(var partner in articlePartners.posts) ...[
+                            InkWell(
+                              onTap: () {
+                                _openInBrowser(partner.permalink);
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    partner.title,
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.fontFamily,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Por: ${partner.partnerName}',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      decoration: TextDecoration.underline,
+                                      fontFamily: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.fontFamily,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Divider(
+                                    color:
+                                        Theme.of(context).colorScheme.tertiaryContainer,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ]
                         ],
                         const SizedBox(height: 10),
                         if (article.category?.slug != null) ...[
