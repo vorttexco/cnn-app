@@ -1,5 +1,4 @@
 // ignore_for_file: deprecated_member_use
-
 import 'package:cnn_brasil_app/core/components/app_bar_webview.dart';
 import 'package:cnn_brasil_app/core/extensions/string_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
@@ -211,7 +210,7 @@ class ArticleView extends ArticleViewModel {
                             ),
                           ),
                           SizedBox(
-                            height: 64,
+                            height: 74,
                             child: SingleChildScrollView(
                               scrollDirection: Axis.vertical,
                               child: Padding(
@@ -532,7 +531,7 @@ class ArticleView extends ArticleViewModel {
                             ),
                           ),
                           SizedBox(
-                            height: 64,
+                            height: 74,
                             child: SingleChildScrollView(
                               scrollDirection: Axis.vertical,
                               child: Padding(
@@ -1755,13 +1754,27 @@ class ArticleView extends ArticleViewModel {
                         
                               var dataSrc = element.attributes['data-src'];
                         
-                              if (dataSrc != null && dataSrc.contains('/embed/')) {
+                              if (dataSrc != null && dataSrc.contains('stories.cnnbrasil.com.br') && dataSrc.contains('/embed/')) {
                                 dataSrc = dataSrc.replaceAll("/embed/", "/");
                               }
                         
                               if (dataSrc != null && dataSrc.contains('stories.cnnbrasil.com.br')) {
                                 return SizedBox(
                                   height: 650,
+                                  child: InAppWebView(
+                                    initialUrlRequest: URLRequest(
+                                      url: WebUri(dataSrc),
+                                      headers: {
+                                        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36',
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              if (dataSrc != null && dataSrc.contains('https://www.riddle.com/embed/')) {
+                                return SizedBox(
+                                  height: 912,
                                   child: InAppWebView(
                                     initialUrlRequest: URLRequest(
                                       url: WebUri(dataSrc),
