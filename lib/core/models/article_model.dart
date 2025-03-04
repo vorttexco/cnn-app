@@ -392,6 +392,7 @@ class ArticleList {
   String? position;
   String? bio;
   String? picture;
+  String? permalink;
   Social? social;
   Type? type;
 
@@ -403,6 +404,7 @@ class ArticleList {
       this.position,
       this.bio,
       this.picture,
+      this.permalink,
       this.social,
       this.type});
 
@@ -414,6 +416,7 @@ class ArticleList {
     position = json['position'];
     bio = json['bio'];
     picture = json['picture'];
+    permalink = json['permalink'];
     social = json['social'] != null ? Social.fromJson(json['social']) : null;
     type = json['type'] != null ? Type.fromJson(json['type']) : null;
   }
@@ -427,6 +430,7 @@ class ArticleList {
     data['position'] = position;
     data['bio'] = bio;
     data['picture'] = picture;
+    data['permalink'] = permalink;
     if (social != null) {
       data['social'] = social!.toJson();
     }

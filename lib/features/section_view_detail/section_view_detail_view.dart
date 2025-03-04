@@ -1,5 +1,6 @@
 import 'package:cnn_brasil_app/core/components/custom_inapp_web_view.dart';
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
+import 'package:cnn_brasil_app/features/article/article.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -81,6 +82,19 @@ class SectionViewDetailView extends SectionViewDetailViewModel {
                       initialUrl: snapshot.data!.rawValue,
                       onCreated: (controllerOrigin) {
                         controller = controllerOrigin;
+                      },
+                      openExternalUrl: (url) {
+                        final articleId = url.replaceAll('/?', '?').split('?').first.split('/').last;
+
+                        if (articleId.characters.length > 15) {
+                          NavigatorManager(context).to(
+                            Article.route,
+                            data: articleId,
+                            onFinished: () {
+                              controller.goBack();
+                            },
+                          );
+                        }
                       },
                     );
                   } else {

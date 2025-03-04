@@ -2,6 +2,7 @@
 import 'package:cnn_brasil_app/core/models/article_gallery_model.dart';
 import 'package:cnn_brasil_app/core/models/article_model.dart';
 import 'package:cnn_brasil_app/core/models/article_most_read_model.dart';
+import 'package:cnn_brasil_app/core/models/article_partners_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ abstract class ArticleViewModel extends State<Article> {
   late final ArticleModel article;
   late final ArticleMostReadModel articlesMostRead;
   late final ArticleGalleryModel articleGallery;
+  late final ArticlePartnersModel articlePartners;
 
   bool fetched = false;
 
@@ -49,12 +51,18 @@ abstract class ArticleViewModel extends State<Article> {
           .catchError((e) {
         return Response(requestOptions: RequestOptions(path: ''));
       }),
+      dio.get('https://www.cnnbrasil.com.br/wp-json/partners/v1/feed/${article.category?.hierarchy?.first}').catchError((e) {
+        return Response(requestOptions: RequestOptions(path: ''));
+      }),
     ]);
 
     final mostReadResponse = responses[0];
     final articleGalleryResponse = responses[1];
+    final articlePartnersResponse = responses[2];
 
     articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
+
+    articlePartners = ArticlePartnersModel.fromJson(articlePartnersResponse.data);
 
     if (articleGalleryResponse.data is Map<String, dynamic> &&
         !articleGalleryResponse.data.containsKey('mensagem')) {
@@ -77,7 +85,7 @@ abstract class ArticleViewModel extends State<Article> {
 
   Future<List<StorieModel>> getWebStorie() async {
     final response = await StorieRepository(ApiConnector())
-        .listCategory(article.category!.slug ?? '');
+        .listCategory(article.category?.hierarchy?.first ?? '');
 
     return response.length >= 3
         ? response.sublist(0, 3)
