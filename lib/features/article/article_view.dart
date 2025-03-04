@@ -531,7 +531,10 @@ class ArticleView extends ArticleViewModel {
                               scrollDirection: Axis.vertical,
                               child: Padding(
                                 padding: const EdgeInsets.only(
-                                    top: 16, left: 24, right: 24),
+                                  top: 16,
+                                  left: 24,
+                                  right: 24,
+                                ),
                                 child: RichText(
                                   text: TextSpan(
                                     children: [
@@ -2607,8 +2610,13 @@ class ArticleView extends ArticleViewModel {
                                   children: [
                                     Stack(
                                       children: [
-                                        Image.network(articlesMostRead.posts
-                                            .first.featuredMedia.image.url),
+                                        if (articlesMostRead
+                                                .posts.first.featuredMedia !=
+                                            null)
+                                          Image.network(
+                                            articlesMostRead.posts.first
+                                                .featuredMedia!.image.url,
+                                          ),
                                         Container(
                                           width: 19,
                                           height: 19,
@@ -2633,7 +2641,7 @@ class ArticleView extends ArticleViewModel {
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
-                                      articlesMostRead.posts.first.title,
+                                      articlesMostRead.posts.first.title ?? '',
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                         color: Theme.of(context)
@@ -2680,19 +2688,25 @@ class ArticleView extends ArticleViewModel {
                                     children: [
                                       Stack(
                                         children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(4)),
-                                            width: 152,
-                                            height: 134,
-                                            clipBehavior: Clip.hardEdge,
-                                            child: Image.network(
-                                              articlesMostRead.posts[index + 1]
-                                                  .featuredMedia.image.url,
-                                              fit: BoxFit.cover,
+                                          if (articlesMostRead.posts[index + 1]
+                                                  .featuredMedia !=
+                                              null)
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4)),
+                                              width: 152,
+                                              height: 134,
+                                              clipBehavior: Clip.hardEdge,
+                                              child: Image.network(
+                                                articlesMostRead
+                                                    .posts[index + 1]
+                                                    .featuredMedia!
+                                                    .image
+                                                    .url,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
-                                          ),
                                           Container(
                                             width: 19,
                                             height: 19,
@@ -2719,7 +2733,8 @@ class ArticleView extends ArticleViewModel {
                                       Expanded(
                                         child: Text(
                                           articlesMostRead
-                                              .posts[index + 1].title,
+                                                  .posts[index + 1].title ??
+                                              '',
                                           textAlign: TextAlign.left,
                                           style: TextStyle(
                                             color: Theme.of(context)
