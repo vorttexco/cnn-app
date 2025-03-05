@@ -8,11 +8,13 @@ import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/article/article.dart';
 import 'package:cnn_brasil_app/features/article/article_css.dart';
 import 'package:cnn_brasil_app/features/index.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import 'article_view_model.dart';
 
@@ -30,10 +32,11 @@ class CounterProvider with ChangeNotifier {
 class ArticleView extends ArticleViewModel {
   int currentIndex = 0;
   int currentEmbedIndex = 0;
-
+  
   late InAppWebViewController collapsedControle;
   final ScrollController _scrollController = ScrollController();
   final ScrollController _embedScrollController = ScrollController();
+  
   List<Images> htmlImages = [];
   bool isGalleryOpen = false;
   bool onLoadInstragramEnded = false;
@@ -1762,15 +1765,41 @@ class ArticleView extends ArticleViewModel {
                               }
                         
                               if (dataSrc != null && dataSrc.contains('stories.cnnbrasil.com.br')) {
+                                late WebViewController webViewController;
+
+                                webViewController = WebViewController()
+                                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
+                                  ..setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36") // Configura o User-Agent
+                                  ..loadRequest(Uri.parse(dataSrc));
+
                                 return SizedBox(
                                   height: 650,
-                                  child: InAppWebView(
-                                    initialUrlRequest: URLRequest(
-                                      url: WebUri(dataSrc),
-                                      headers: {
-                                        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Pixel 4 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36',
-                                      },
-                                    ),
+                                  child: Stack(
+                                    children: [
+                                      WebViewWidget(
+                                        controller: webViewController,
+                                        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                                          Factory<OneSequenceGestureRecognizer>(
+                                            () => EagerGestureRecognizer(),
+                                          ),
+                                        },
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          NavigatorManager(context).modal(
+                                            StorieDetail(
+                                              url:
+                                                  '$dataSrc/?hidemenu=true',
+                                            ),
+                                            fullscreenDialog: true,
+                                          );
+                                        },
+                                        child: const SizedBox(
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 );
                               }
