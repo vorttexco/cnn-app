@@ -1,0 +1,7 @@
+workflows:
+  default-workflow:
+    name: Android
+    environment:
+      java: 17
+    scripts:
+      - echo "Usando JDK 17 para compilar o projeto."
