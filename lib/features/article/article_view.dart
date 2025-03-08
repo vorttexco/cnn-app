@@ -2009,6 +2009,37 @@ class ArticleView extends ArticleViewModel {
                                 ),
                               );
                             }
+
+                            if (element.classes.contains('twitter-tweet')) {
+                              var htmlContent = element.outerHtml;
+
+                              htmlContent = '''
+                                <html>
+                                  <head>
+                                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                                  </head>
+                                  $htmlContent
+                                  <p><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+                                </html>
+                              ''';
+
+                              return SizedBox(
+                                height: 700,
+                                child: InAppWebView(
+                                  initialData: InAppWebViewInitialData(
+                                    data: htmlContent
+                                  ),
+                                  initialOptions: InAppWebViewGroupOptions(
+                                    crossPlatform: InAppWebViewOptions(
+                                      javaScriptEnabled: true,
+                                      mediaPlaybackRequiresUserGesture: false,
+                                      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                                      supportZoom: true
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                         
                             if (element.classes.contains('thumbnail-image') ||
                                 element.classes.contains("video-title")) {
