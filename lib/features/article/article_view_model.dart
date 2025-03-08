@@ -33,7 +33,31 @@ abstract class ArticleViewModel extends State<Article> {
       'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
     );
 
-    article = ArticleModel.fromJson(articleResponse.data);
+    if (articleResponse.data is! Map<String, dynamic>) {
+      final alternativeResponses = await Future.wait([
+        dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=blogs')
+            .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
+        dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=colunas')
+            .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
+        dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=forum')
+            .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
+      ]);
+
+      for (final response in alternativeResponses) {
+        if (response.data is Map<String, dynamic>) {
+          article = ArticleModel.fromJson(response.data);
+          break;
+        }
+      }      
+    } else {
+      article = ArticleModel.fromJson(articleResponse.data);
+    }
+
+    if (article.content == null) {
+      NavigatorManager(context).back();
+
+      return;
+    }
 
     final responses = await Future.wait([
       dio.get(
@@ -70,12 +94,6 @@ abstract class ArticleViewModel extends State<Article> {
           ArticleGalleryModel.fromJson(articleGalleryResponse.data);
     } else {
       articleGallery = ArticleGalleryModel();
-    }
-
-    if (article.content == null) {
-      NavigatorManager(context).back();
-
-      return;
     }
 
     setState(() {

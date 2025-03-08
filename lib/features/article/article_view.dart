@@ -898,13 +898,18 @@ class ArticleView extends ArticleViewModel {
   }
 
   String get renderedAuthor {
-    if (article.author?.rendered == null) return '';
+    if (article.author?.rendered == null || article.author!.list?.isEmpty == true) {
+      return '';
+    }
 
-    final index =
-        article.author!.rendered!.lastIndexOf(article.author!.list!.last.name!);
+    final lastName = article.author!.list!.last.name;
+    if (lastName == null || lastName.isEmpty) return '';
 
-    final resp = article.author!.rendered!
-        .substring(index + article.author!.list!.last.name!.length);
+    final index = article.author!.rendered!.lastIndexOf(lastName);
+    
+    if (index == -1) return article.author!.rendered!.trim();
+
+    final resp = article.author!.rendered!.substring(index + lastName.length);
 
     return ' ${resp.trim()}';
   }
@@ -1015,6 +1020,7 @@ class ArticleView extends ArticleViewModel {
                                     style: const TextStyle(
                                       decoration: TextDecoration.underline,
                                       fontWeight: FontWeight.w600,
+                                      fontSize: 14
                                     ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
@@ -1041,6 +1047,7 @@ class ArticleView extends ArticleViewModel {
                                       style: TextStyle(
                                         decoration: TextDecoration.none,
                                         fontWeight: FontWeight.normal,
+                                        fontSize: 14
                                       ),
                                     )
                                   else if (article.author!.list!.length > 1)
@@ -1049,6 +1056,7 @@ class ArticleView extends ArticleViewModel {
                                       style: TextStyle(
                                         decoration: TextDecoration.none,
                                         fontWeight: FontWeight.normal,
+                                        fontSize: 14
                                       ),
                                     )
                                 ],
@@ -1058,6 +1066,7 @@ class ArticleView extends ArticleViewModel {
                                     style: const TextStyle(
                                       decoration: TextDecoration.none,
                                       fontWeight: FontWeight.normal,
+                                      fontSize: 14
                                     ),
                                   ),
                               ],
@@ -1074,9 +1083,8 @@ class ArticleView extends ArticleViewModel {
                         const SizedBox(height: AppConstants.KPADDING_8),
                         if (article.featuredMedia?.video != null) ...[
                           const SizedBox(height: AppConstants.KPADDING_8),
-                          SizedBox(
-                            height: 300,
-                            width: MediaQuery.of(context).size.width,
+                          AspectRatio(
+                            aspectRatio: 16 / 9,
                             child: InAppWebView(
                               key: const Key('webView'),
                               initialUrlRequest: URLRequest(
@@ -1456,7 +1464,7 @@ class ArticleView extends ArticleViewModel {
                             fontFamily: 'CNN Sans Display W04 Medium',
                             fontSize: 18,
                             fontWeight: FontWeight.w300,
-                            // height: 26,
+                            color: Color(0XFF282828)
                           ),
                           onTapUrl: (url) {
                             if (url.endsWith('/')) {
@@ -1702,6 +1710,82 @@ class ArticleView extends ArticleViewModel {
                                 ),
                               );
                             }
+
+                            if (element.classes.contains('read-too__link')) {
+                              final imageUrl = element.querySelector('img')?.attributes['src'];
+                              final title = element.querySelector('h3')?.text ?? '';
+                              
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: InkWell(
+                                    onTap: () {
+                                      String url =
+                                          element.attributes['href'] ?? '';
+                                                        
+                                      if (url.endsWith('/')) {
+                                        url = url.substring(0, url.length - 1);
+                                      }
+                                                        
+                                      final articleId = url
+                                          .replaceAll('/?', '?')
+                                          .split('?')
+                                          .first
+                                          .split('/')
+                                          .last;
+                                                        
+                                      if (articleId.characters.length > 15) {
+                                        NavigatorManager(context).to(
+                                          Article.route,
+                                          data: articleId,
+                                          onFinished: () {},
+                                        );
+                                      } else {
+                                        if (!url.contains(
+                                                '${ApiHome.home}/?s=') &&
+                                            url.contains(ApiHome.home)) {
+                                          NavigatorManager(context).to(
+                                            CustomWebView.route,
+                                            data: WebviewNavigatorModel(
+                                                url: url, title: 'Voltar'),
+                                            onFinished: () {},
+                                            analytics:
+                                                NavigatorAnalytics.fromUrl(url),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        imageUrl != null
+                                            ? Padding(
+                                                padding: const EdgeInsets.only(right: 16.0),
+                                                child: Image.network(
+                                                  imageUrl,
+                                                  height: 80,
+                                                  width: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                            : Container(),                              
+                                        Expanded(
+                                          child: Text(
+                                            title.trim(),
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            softWrap: true,
+                                            overflow: TextOverflow.visible,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
                         
                             if (element.classes.contains('read-too__title')) {
                               return Column(
@@ -1732,20 +1816,6 @@ class ArticleView extends ArticleViewModel {
                                   ),
                                   const SizedBox(height: 8),
                                 ],
-                              );
-                            }
-                        
-                            if (element.classes.contains('read-too__post-title')) {
-                              return Expanded(
-                                child: Text(
-                                  element.text.trim(),
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  softWrap: true,
-                                  overflow: TextOverflow.visible,
-                                ),
                               );
                             }
                         
@@ -1927,7 +1997,17 @@ class ArticleView extends ArticleViewModel {
                                 }
                               }
                         
-                              return null;
+                              return Container(
+                                padding: EdgeInsets.zero,
+                                margin: EdgeInsets.zero,
+                                child: Text(
+                                  titleText,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              );
                             }
                         
                             if (element.classes.contains('thumbnail-image') ||
@@ -2620,7 +2700,7 @@ class ArticleView extends ArticleViewModel {
                                     Row(
                                       children: [
                                         Text(
-                                          'WebStories ${article.category!.name ?? ''}',
+                                          'Webstories ${article.category!.hierarchy!.first[0].toUpperCase()}${article.category!.hierarchy!.first.substring(1)}',
                                           style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w700,
@@ -2654,13 +2734,14 @@ class ArticleView extends ArticleViewModel {
                                           );
                                         },
                                         child: SizedBox(
-                                          height: 80,
+                                          height: 134,
                                           child: Row(
                                             children: [
                                               if (storie.thumbnail != null)
                                                 Image.network(
                                                   storie.thumbnail!,
-                                                  width: 90,
+                                                  width: 152,
+                                                  height: 134,
                                                   fit: BoxFit.cover,
                                                 ),
                                               const SizedBox(width: 10),
@@ -2668,7 +2749,7 @@ class ArticleView extends ArticleViewModel {
                                                 child: Text(
                                                   storie.title ?? '',
                                                   style: TextStyle(
-                                                    fontWeight: FontWeight.w500,
+                                                    fontWeight: FontWeight.w700,
                                                     fontSize: 16,
                                                     color: Theme.of(context)
                                                         .colorScheme
