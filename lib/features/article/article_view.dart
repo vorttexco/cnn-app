@@ -184,6 +184,13 @@ class ArticleView extends ArticleViewModel {
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                       ),
                                     ),
                                   ),
@@ -234,6 +241,13 @@ class ArticleView extends ArticleViewModel {
                                             fontSize: 16,
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                           ),
                                         ),
                                         if (articleGallery.images![currentIndex]
@@ -248,6 +262,13 @@ class ArticleView extends ArticleViewModel {
                                               fontSize: 20,
                                               fontWeight: FontWeight.w700,
                                               fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                             ),
                                           ),
                                           TextSpan(
@@ -258,6 +279,13 @@ class ArticleView extends ArticleViewModel {
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                             ),
                                           ),
                                         ],
@@ -505,6 +533,13 @@ class ArticleView extends ArticleViewModel {
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                       ),
                                     ),
                                   ),
@@ -556,6 +591,13 @@ class ArticleView extends ArticleViewModel {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
                                           fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                         ),
                                       ),
                                       if (htmlImages[currentEmbedIndex]
@@ -571,6 +613,13 @@ class ArticleView extends ArticleViewModel {
                                             fontSize: 20,
                                             fontWeight: FontWeight.w700,
                                             fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                           ),
                                         ),
                                         TextSpan(
@@ -581,6 +630,13 @@ class ArticleView extends ArticleViewModel {
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                           ),
                                         ),
                                       ],
@@ -801,6 +857,14 @@ class ArticleView extends ArticleViewModel {
                                 fontSize: 14,
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
+                                fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                               ),
                               children: caption != null ? [] : [
                                 TextSpan(
@@ -909,7 +973,11 @@ class ArticleView extends ArticleViewModel {
     
     if (index == -1) return article.author!.rendered!.trim();
 
-    final resp = article.author!.rendered!.substring(index + lastName.length);
+    var resp = article.author!.rendered!.substring(index + lastName.length);
+
+    if (resp.startsWith(',')) {
+      resp = resp.substring(1);
+    }
 
     return ' ${resp.trim()}';
   }
@@ -985,11 +1053,20 @@ class ArticleView extends ArticleViewModel {
                         ],
                         const SizedBox(height: AppConstants.KPADDING_24),
                         Text(
-                          article.title?.replaceAll("&quot;", '"') ?? '',
+                          article.title?.replaceAll("&quot;", '"').replaceAll("&#039;", "'") ?? '',
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontSize: 26,
+                            height: 33 / 26,
                             fontWeight: FontWeight.w700,
+                            fontFamily: 'CNN Sans Display',
+                            fontFamilyFallback: const [
+                              'HelveticaNeue',
+                              'Helvetica',
+                              'Arial',
+                              'Utkal',
+                              'sans-serif'
+                            ],
                           ),
                         ),
                         Divider(
@@ -1000,6 +1077,14 @@ class ArticleView extends ArticleViewModel {
                           style: TextStyle(
                             fontSize: 16,
                             color: Theme.of(context).colorScheme.primary,
+                            fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: const [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                           ),
                         ),
                         const SizedBox(height: AppConstants.KPADDING_16),
@@ -1012,6 +1097,14 @@ class ArticleView extends ArticleViewModel {
                                 color: Theme.of(context).colorScheme.primary,
                                 decoration: TextDecoration.underline,
                                 fontWeight: FontWeight.w600,
+                                fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: const [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                               ),
                               children: [
                                 for (var author in article.author!.list!) ...[
@@ -1020,7 +1113,15 @@ class ArticleView extends ArticleViewModel {
                                     style: const TextStyle(
                                       decoration: TextDecoration.underline,
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 14
+                                      fontSize: 14,
+                                      fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                     ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
@@ -1047,7 +1148,15 @@ class ArticleView extends ArticleViewModel {
                                       style: TextStyle(
                                         decoration: TextDecoration.none,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 14
+                                        fontSize: 14,
+                                        fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                       ),
                                     )
                                   else if (article.author!.list!.length > 1)
@@ -1056,7 +1165,15 @@ class ArticleView extends ArticleViewModel {
                                       style: TextStyle(
                                         decoration: TextDecoration.none,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 14
+                                        fontSize: 14,
+                                        fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                       ),
                                     )
                                 ],
@@ -1066,7 +1183,15 @@ class ArticleView extends ArticleViewModel {
                                     style: const TextStyle(
                                       decoration: TextDecoration.none,
                                       fontWeight: FontWeight.normal,
-                                      fontSize: 14
+                                      fontSize: 14,
+                                      fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                     ),
                                   ),
                               ],
@@ -1078,6 +1203,14 @@ class ArticleView extends ArticleViewModel {
                           style: TextStyle(
                             fontSize: 12,
                             color: Theme.of(context).colorScheme.primary,
+                            fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: const [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                           ),
                         ),
                         const SizedBox(height: AppConstants.KPADDING_8),
@@ -1177,6 +1310,13 @@ class ArticleView extends ArticleViewModel {
                                               fontSize: 14,
                                               fontWeight: FontWeight.w700,
                                               fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                             ),
                                           ),
                                         )),
@@ -1223,7 +1363,7 @@ class ArticleView extends ArticleViewModel {
                                         ),
                                         alignment: Alignment.bottomLeft,
                                         child: SizedBox(
-                                          height: 64,
+                                          height: 74,
                                           child: Scrollbar(
                                             controller: ScrollController(),
                                             thumbVisibility: true,
@@ -1254,6 +1394,13 @@ class ArticleView extends ArticleViewModel {
                                                               FontWeight.w700,
                                                           fontFamily:
                                                               'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                                         ),
                                                       ),
                                                       if (articleGallery
@@ -1275,6 +1422,13 @@ class ArticleView extends ArticleViewModel {
                                                                 FontWeight.w700,
                                                             fontFamily:
                                                                 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                                           ),
                                                         ),
                                                         TextSpan(
@@ -1290,6 +1444,13 @@ class ArticleView extends ArticleViewModel {
                                                                 FontWeight.w500,
                                                             fontFamily:
                                                                 'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                                           ),
                                                         )
                                                       ]
@@ -1398,6 +1559,14 @@ class ArticleView extends ArticleViewModel {
                                   fontSize: 12,
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w500,
+                                  fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: const [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                 ),
                                 children: [
                                   TextSpan(
@@ -1414,13 +1583,13 @@ class ArticleView extends ArticleViewModel {
                           Divider(
                             color: Theme.of(context).colorScheme.tertiaryContainer,
                           ),
-                          // if (article.permalink != null) ...[
+                          // if (article!.permalink != null) ...[
                           //   Padding(
                           //     padding: const EdgeInsets.symmetric(
                           //         horizontal: 10, vertical: 2),
                           //     child: InkWell(
                           //       onTap: () =>
-                          //           Share.shareUri(Uri.parse(article.permalink!)),
+                          //           Share.shareUri(Uri.parse(article!.permalink!)),
                           //       child: SizedBox(
                           //         height: 40,
                           //         child: Row(
@@ -1461,7 +1630,14 @@ class ArticleView extends ArticleViewModel {
                         HtmlWidget(
                           article.content!.content!.replaceAll('"', '"'),
                           textStyle: const TextStyle(
-                            fontFamily: 'CNN Sans Display W04 Medium',
+                            fontFamily: 'CNN Sans Display',
+                            fontFamilyFallback: [
+                              'HelveticaNeue',
+                              'Helvetica',
+                              'Arial',
+                              'Utkal',
+                              'sans-serif'
+                            ],
                             fontSize: 18,
                             fontWeight: FontWeight.w300,
                             color: Color(0XFF282828)
@@ -1601,6 +1777,14 @@ class ArticleView extends ArticleViewModel {
                                           fontSize: 12,
                                           color: Theme.of(context).colorScheme.primary,
                                           fontWeight: FontWeight.w500,
+                                          fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: const [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -1611,47 +1795,21 @@ class ArticleView extends ArticleViewModel {
                             }
                         
                             if (element.classes.contains('flourish-embed') && element.attributes.containsKey('data-src')) {
-                              final visualisationUrl = 'https://public.flourish.studio/${element.attributes['data-src']}/';
-                        
-                              return SizedBox(
-                                height: 495,
-                                width: double.infinity,
-                                child: InAppWebView(
-                                  initialUrlRequest: URLRequest(url: WebUri(visualisationUrl)),
-                                  initialSettings: InAppWebViewSettings(
-                                    javaScriptEnabled: true,
-                                    thirdPartyCookiesEnabled: true,
-                                    cacheEnabled: true,
-                                    transparentBackground: true,
-                                  ),
-                                  onWebViewCreated: (controller) async {
-                                    final cookieManager = CookieManager.instance();
-                        
-                                    await cookieManager.setCookie(
-                                      url: WebUri(visualisationUrl),
-                                      name: "OptanonAlertBoxClosed",
-                                      value: "2025-02-26T08:47:35.404Z",
-                                      domain: "public.flourish.studio",
-                                    );
-                        
-                                    await cookieManager.setCookie(
-                                      url: WebUri(visualisationUrl),
-                                      name: "OptanonAlertBoxClosed",
-                                      value: "2025-02-26T08:47:35.397Z",
-                                      domain: ".flourish.studio",
-                                    );
-                        
-                                    await cookieManager.setCookie(
-                                      url: WebUri(visualisationUrl),
-                                      name: "OptanonConsent",
-                                      value: "isGpcEnabled=0&datestamp=Wed+Feb+26+2025+05%3A47%3A35+GMT-0300+(Brasilia+Standard+Time)&version=202301.2.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false",
-                                      domain: ".flourish.studio",
-                                    );
-                        
-                        
-                                    controller.reload();
-                                  },
-                                ),
+                              final visualisationUrl =
+                                  'https://public.flourish.studio/${element.attributes['data-src']}/';
+
+                              final key = GlobalKey<_DynamicWebViewState>();
+
+                              return StatefulBuilder(
+                                builder: (context, setState) {
+                                  return DynamicWebView(
+                                    key: key,
+                                    visualisationUrl: visualisationUrl,
+                                    onHeightUpdate: (newHeight) {
+                                      setState(() {});
+                                    },
+                                  );
+                                },
                               );
                             }
                         
@@ -1774,7 +1932,16 @@ class ArticleView extends ArticleViewModel {
                                             title.trim(),
                                             style: const TextStyle(
                                               fontSize: 14,
-                                              fontWeight: FontWeight.w600,
+                                              height: 20 / 14,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: 'CNN Sans Display',
+                                              fontFamilyFallback: [
+                                                'HelveticaNeue',
+                                                'Helvetica',
+                                                'Arial',
+                                                'Utkal',
+                                                'sans-serif'
+                                              ],
                                             ),
                                             softWrap: true,
                                             overflow: TextOverflow.visible,
@@ -1799,6 +1966,14 @@ class ArticleView extends ArticleViewModel {
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
                                           color: Theme.of(context).primaryColor,
+                                          fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: const [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                         ),
                                       ),
                                       const SizedBox(width: 8),
@@ -1967,6 +2142,14 @@ class ArticleView extends ArticleViewModel {
                                       decoration: TextDecoration.underline,
                                       decorationColor:
                                           Theme.of(context).primaryColor,
+                                      fontFamily: 'CNN Sans Display',
+                                      fontFamilyFallback: const [
+                                        'HelveticaNeue',
+                                        'Helvetica',
+                                        'Arial',
+                                        'Utkal',
+                                        'sans-serif'
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -1991,6 +2174,14 @@ class ArticleView extends ArticleViewModel {
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w700,
+                                        fontFamily: 'CNN Sans Display',
+                                        fontFamilyFallback: [
+                                          'HelveticaNeue',
+                                          'Helvetica',
+                                          'Arial',
+                                          'Utkal',
+                                          'sans-serif'
+                                        ],
                                       ),
                                     ),
                                   );
@@ -2005,6 +2196,14 @@ class ArticleView extends ArticleViewModel {
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
+                                    fontFamily: 'CNN Sans Display',
+                                    fontFamilyFallback: [
+                                      'HelveticaNeue',
+                                      'Helvetica',
+                                      'Arial',
+                                      'Utkal',
+                                      'sans-serif'
+                                    ],
                                   ),
                                 ),
                               );
@@ -2156,6 +2355,13 @@ class ArticleView extends ArticleViewModel {
                                                         FontWeight.w700,
                                                     fontFamily:
                                                         'CNN Sans Display',
+                                                    fontFamilyFallback: [
+                                                      'HelveticaNeue',
+                                                      'Helvetica',
+                                                      'Arial',
+                                                      'Utkal',
+                                                      'sans-serif'
+                                                    ],
                                                   ),
                                                 ),
                                               )),
@@ -2254,6 +2460,13 @@ class ArticleView extends ArticleViewModel {
                                                                         .w700,
                                                                 fontFamily:
                                                                     'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                                               ),
                                                             ),
                                                             if (htmlImages[currentEmbedIndex]
@@ -2276,6 +2489,13 @@ class ArticleView extends ArticleViewModel {
                                                                           .w700,
                                                                   fontFamily:
                                                                       'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                                                 ),
                                                               ),
                                                               TextSpan(
@@ -2293,6 +2513,13 @@ class ArticleView extends ArticleViewModel {
                                                                           .w500,
                                                                   fontFamily:
                                                                       'CNN Sans Display',
+                                          fontFamilyFallback: [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                                                                 ),
                                                               )
                                                             ]
@@ -2380,6 +2607,14 @@ class ArticleView extends ArticleViewModel {
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: Theme.of(context).primaryColor,
+                            fontFamily: 'CNN Sans Display',
+                                          fontFamilyFallback: const [
+                                            'HelveticaNeue',
+                                            'Helvetica',
+                                            'Arial',
+                                            'Utkal',
+                                            'sans-serif'
+                                          ],
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -2418,15 +2653,12 @@ class ArticleView extends ArticleViewModel {
                                     : null,
                                 child: Container(
                                   constraints: const BoxConstraints(
-                                    minWidth: 100,
-                                    maxHeight: 40,
-                                    minHeight: 40,
+                                    maxHeight: 34,
+                                    minHeight: 34,
                                   ),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
+                                      color: const Color(0XFFD0D0D0)
                                     ),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
@@ -2436,15 +2668,26 @@ class ArticleView extends ArticleViewModel {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        tag.name ?? "",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                        child: Text(
+                                          tag.name ?? "",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: 'CNN Sans Display',
+                                            fontFamilyFallback: const [
+                                              'HelveticaNeue',
+                                              'Helvetica',
+                                              'Arial',
+                                              'Utkal',
+                                              'sans-serif'
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -2469,8 +2712,17 @@ class ArticleView extends ArticleViewModel {
                                     : 'Mais Lidas',
                                 style: TextStyle(
                                   fontSize: 18,
+                                  height: 32 / 18,
                                   fontWeight: FontWeight.w700,
                                   color: Theme.of(context).primaryColor,
+                                  fontFamily: 'CNN Sans Display',
+                                  fontFamilyFallback: const [
+                                    'HelveticaNeue',
+                                    'Helvetica',
+                                    'Arial',
+                                    'Utkal',
+                                    'sans-serif'
+                                  ],
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -2486,7 +2738,7 @@ class ArticleView extends ArticleViewModel {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 20),
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
@@ -2813,6 +3065,78 @@ class ArticleView extends ArticleViewModel {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class DynamicWebView extends StatefulWidget {
+  final String visualisationUrl;
+  final Function(double) onHeightUpdate;
+
+  const DynamicWebView({
+    super.key,
+    required this.visualisationUrl,
+    required this.onHeightUpdate,
+  });
+
+  @override
+  State<DynamicWebView> createState() => _DynamicWebViewState();
+}
+
+class _DynamicWebViewState extends State<DynamicWebView> {
+  late InAppWebViewController _webViewController;
+  double _webViewHeight = 495;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: _webViewHeight,
+      child: InAppWebView(
+        initialUrlRequest: URLRequest(url: WebUri(widget.visualisationUrl)),
+        initialSettings: InAppWebViewSettings(
+          javaScriptEnabled: true,
+          thirdPartyCookiesEnabled: true,
+          cacheEnabled: true,
+          transparentBackground: true,
+        ),
+        onWebViewCreated: (controller) async {
+          _webViewController = controller;
+          final cookieManager = CookieManager.instance();
+
+          await cookieManager.setCookie(
+            url: WebUri(widget.visualisationUrl),
+            name: "OptanonAlertBoxClosed",
+            value: "2025-02-26T08:47:35.404Z",
+            domain: "public.flourish.studio",
+          );
+
+          await cookieManager.setCookie(
+            url: WebUri(widget.visualisationUrl),
+            name: "OptanonConsent",
+            value:
+                "isGpcEnabled=0&datestamp=Wed+Feb+26+2025+05%3A47%3A35+GMT-0300+(Brasilia+Standard+Time)&version=202301.2.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false",
+            domain: ".flourish.studio",
+          );
+
+          _webViewController.reload();
+        },
+        onLoadStop: (controller, url) async {
+          final heightStr = await controller.evaluateJavascript(
+              source: "document.documentElement.scrollHeight.toString();");
+
+          if (heightStr != null) {
+            double newHeight = double.tryParse(heightStr) ?? 495;
+            if (newHeight != _webViewHeight) {
+              setState(() {
+                _webViewHeight = newHeight;
+              });
+
+              widget.onHeightUpdate(newHeight);
+            }
+          }
+        },
       ),
     );
   }

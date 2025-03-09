@@ -25,80 +25,86 @@ abstract class ArticleViewModel extends State<Article> {
   }
 
   void fetch() async {
-    final dio = Dio();
+    try {
+      final dio = Dio();
 
-    final articleId = widget.articleId;
+      final articleId = widget.articleId;
 
-    final articleResponse = await dio.get(
-      'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
-    );
+      final articleResponse = await dio.get(
+        'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
+      );
 
-    if (articleResponse.data is! Map<String, dynamic>) {
-      final alternativeResponses = await Future.wait([
-        dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=blogs')
-            .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
-        dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=colunas')
-            .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
-        dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=forum')
-            .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
+      if (articleResponse.data is! Map<String, dynamic>) {
+        final alternativeResponses = await Future.wait([
+          dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=blogs')
+              .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
+          dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=colunas')
+              .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
+          dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=forum')
+              .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
+        ]);
+
+        for (final response in alternativeResponses) {
+          if (response.data is Map<String, dynamic>) {
+            article = ArticleModel.fromJson(response.data);
+            break;
+          }
+        }      
+      } else {
+        article = ArticleModel.fromJson(articleResponse.data);
+      }
+
+      if (article.content == null) {
+        NavigatorManager(context).back();
+
+        return;
+      }
+
+      final responses = await Future.wait([
+        dio.get(
+          'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/most-read',
+          queryParameters: {
+            'category': article.category?.hierarchy?.first,
+            'per_page': 5,
+          },
+        ).catchError((e) {
+          return Response(requestOptions: RequestOptions(path: ''));
+        }),
+        dio
+            .get(
+                'https://www.cnnbrasil.com.br/wp-json/content/v1/gallery/${article.featuredMedia?.gallery?.id}')
+            .catchError((e) {
+          return Response(requestOptions: RequestOptions(path: ''));
+        }),
+        dio.get('https://www.cnnbrasil.com.br/wp-json/partners/v1/feed/${article.category?.hierarchy?.first}').catchError((e) {
+          return Response(requestOptions: RequestOptions(path: ''));
+        }),
       ]);
 
-      for (final response in alternativeResponses) {
-        if (response.data is Map<String, dynamic>) {
-          article = ArticleModel.fromJson(response.data);
-          break;
-        }
-      }      
-    } else {
-      article = ArticleModel.fromJson(articleResponse.data);
-    }
+      final mostReadResponse = responses[0];
+      final articleGalleryResponse = responses[1];
+      final articlePartnersResponse = responses[2];
 
-    if (article.content == null) {
+      articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
+
+      articlePartners = ArticlePartnersModel.fromJson(articlePartnersResponse.data);
+
+      if (articleGalleryResponse.data is Map<String, dynamic> &&
+          !articleGalleryResponse.data.containsKey('mensagem')) {
+        articleGallery =
+            ArticleGalleryModel.fromJson(articleGalleryResponse.data);
+      } else {
+        articleGallery = ArticleGalleryModel();
+      }
+
+      setState(() {
+        fetched = true;
+      });
+    } catch (e) {
       NavigatorManager(context).back();
 
       return;
     }
-
-    final responses = await Future.wait([
-      dio.get(
-        'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/most-read',
-        queryParameters: {
-          'category': article.category?.hierarchy?.first,
-          'per_page': 5,
-        },
-      ).catchError((e) {
-        return Response(requestOptions: RequestOptions(path: ''));
-      }),
-      dio
-          .get(
-              'https://www.cnnbrasil.com.br/wp-json/content/v1/gallery/${article.featuredMedia?.gallery?.id}')
-          .catchError((e) {
-        return Response(requestOptions: RequestOptions(path: ''));
-      }),
-      dio.get('https://www.cnnbrasil.com.br/wp-json/partners/v1/feed/${article.category?.hierarchy?.first}').catchError((e) {
-        return Response(requestOptions: RequestOptions(path: ''));
-      }),
-    ]);
-
-    final mostReadResponse = responses[0];
-    final articleGalleryResponse = responses[1];
-    final articlePartnersResponse = responses[2];
-
-    articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
-
-    articlePartners = ArticlePartnersModel.fromJson(articlePartnersResponse.data);
-
-    if (articleGalleryResponse.data is Map<String, dynamic> &&
-        !articleGalleryResponse.data.containsKey('mensagem')) {
-      articleGallery =
-          ArticleGalleryModel.fromJson(articleGalleryResponse.data);
-    } else {
-      articleGallery = ArticleGalleryModel();
-    }
-
-    setState(() {
-      fetched = true;
-    });
   }
 
   Future<List<StorieModel>> getWebStorie() async {

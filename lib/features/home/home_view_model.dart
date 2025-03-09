@@ -77,6 +77,21 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   }
 
   void navigateToInternalPage(String url) {
+    if (url.contains("esportes") && (url.endsWith("#ao-vivo?hidemenu=true") || url.endsWith("#ao-vivo"))) {
+      var newUrl = '${url.split("#ao-vivo")[0]}?hidemenu=true#ao-vivo';
+
+      NavigatorManager(context).to(
+        CustomWebView.route,
+        data: WebviewNavigatorModel(url: newUrl, title: 'Voltar'),
+        onFinished: () {
+          inAppWebViewController?.goBack();
+        },
+        analytics: NavigatorAnalytics.fromUrl(newUrl),
+      );
+
+      return;
+    }
+
     final articleId =
         url.replaceAll('/?', '?').split('?').first.split('/').last;
 
