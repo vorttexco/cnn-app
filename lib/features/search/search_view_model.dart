@@ -1,6 +1,7 @@
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/article/article.dart';
+import 'package:cnn_brasil_app/features/article/article_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +39,7 @@ abstract class SearchViewModel extends State<Search> {
     if (articleId.characters.length > 15) {
       NavigatorManager(context).to(
         Article.route,
-        data: articleId,
+        data: ArticleSettings(articleId: articleId, articleUrl: url),
         onFinished: () {
           controller.goBack();
         },

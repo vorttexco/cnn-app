@@ -11,6 +11,8 @@ import 'article.dart';
 
 abstract class ArticleViewModel extends State<Article> {
   late final ArticleModel article;
+  late final String articleType;
+  late final String articleUrl;
   late final ArticleMostReadModel articlesMostRead;
   late final ArticleGalleryModel articleGallery;
   late final ArticlePartnersModel articlePartners;
@@ -28,30 +30,47 @@ abstract class ArticleViewModel extends State<Article> {
     try {
       final dio = Dio();
 
-      final articleId = widget.articleId;
+      final articleId = widget.model.articleId;
 
-      final articleResponse = await dio.get(
-        'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
-      );
+      if (widget.model.articleUrl.contains("/blogs/")) {
+        final articleResponse = await dio.get(
+          'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=blogs',
+        );
 
-      if (articleResponse.data is! Map<String, dynamic>) {
-        final alternativeResponses = await Future.wait([
-          dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=blogs')
-              .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
-          dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=colunas')
-              .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
-          dio.get('https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=forum')
-              .catchError((_) => Response(requestOptions: RequestOptions(path: ''))),
-        ]);
+        if (articleResponse.data is Map<String, dynamic>) {
+          article = ArticleModel.fromJson(articleResponse.data);
+          articleType = "Blog";
+        }
 
-        for (final response in alternativeResponses) {
-          if (response.data is Map<String, dynamic>) {
-            article = ArticleModel.fromJson(response.data);
-            break;
-          }
-        }      
+      } else if (widget.model.articleUrl.contains("/colunas/")) {
+        final articleResponse = await dio.get(
+          'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=colunas',
+        );
+
+        if (articleResponse.data is Map<String, dynamic>) {
+          article = ArticleModel.fromJson(articleResponse.data);
+          articleType = "Coluna";
+        }
+
+      } else if (widget.model.articleUrl.contains("/forum")) {
+        final articleResponse = await dio.get(
+          'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=forum',
+        );
+
+        if (articleResponse.data is Map<String, dynamic>) {
+          article = ArticleModel.fromJson(articleResponse.data);
+          articleType = "forum";
+        }
+
       } else {
-        article = ArticleModel.fromJson(articleResponse.data);
+        final articleResponse = await dio.get(
+          'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
+        );
+
+        if (articleResponse.data is Map<String, dynamic>) {
+          article = ArticleModel.fromJson(articleResponse.data);
+          articleType = "default";
+        }
       }
 
       if (article.content == null) {
@@ -59,6 +78,8 @@ abstract class ArticleViewModel extends State<Article> {
 
         return;
       }
+
+      articleUrl = widget.model.articleUrl;
 
       final responses = await Future.wait([
         dio.get(

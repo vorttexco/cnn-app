@@ -391,6 +391,7 @@ class ArticleList {
   String? origin;
   String? position;
   String? bio;
+  String? blogPicture;
   String? picture;
   String? permalink;
   Social? social;
@@ -416,6 +417,7 @@ class ArticleList {
     position = json['position'];
     bio = json['bio'];
     picture = json['picture'];
+    blogPicture = json['blog_picture'];
     permalink = json['permalink'];
     social = json['social'] != null ? Social.fromJson(json['social']) : null;
     type = json['type'] != null ? Type.fromJson(json['type']) : null;
@@ -429,6 +431,7 @@ class ArticleList {
     data['origin'] = origin;
     data['position'] = position;
     data['bio'] = bio;
+    data['blog_picture'] = blogPicture;
     data['picture'] = picture;
     data['permalink'] = permalink;
     if (social != null) {
