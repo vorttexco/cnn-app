@@ -1206,6 +1206,7 @@ class ArticleView extends ArticleViewModel {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10), 
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (featuredTag != null) ...[
                         featuredTag!.picture!.url!.contains('.svg')
@@ -1249,7 +1250,7 @@ class ArticleView extends ArticleViewModel {
                         ),
                       ),
                       const SizedBox(height: AppConstants.KPADDING_16),
-                      if (article.author?.list != null)
+                      if (article.author?.list != null && articleType != "Blog" && articleType != "Coluna")
                         RichText(
                           text: TextSpan(
                             text: '',
