@@ -54,7 +54,7 @@ abstract class ArticleViewModel extends State<Article> {
 
       } else if (widget.model.articleUrl.contains("/forum")) {
         final articleResponse = await dio.get(
-          'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=forum',
+          'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=cnn-brasil-forum',
         );
 
         if (articleResponse.data is Map<String, dynamic>) {
@@ -105,10 +105,18 @@ abstract class ArticleViewModel extends State<Article> {
       final mostReadResponse = responses[0];
       final articleGalleryResponse = responses[1];
       final articlePartnersResponse = responses[2];
+      
+      if (mostReadResponse.data is Map<String, dynamic>) {
+        articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
+      } else {
+        articlesMostRead = ArticleMostReadModel(posts: []);
+      }
 
-      articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
-
-      articlePartners = ArticlePartnersModel.fromJson(articlePartnersResponse.data);
+      if (articlePartnersResponse.data is Map<String, dynamic>) {
+        articlePartners = ArticlePartnersModel.fromJson(articlePartnersResponse.data);
+      } else {
+        articlePartners = ArticlePartnersModel(posts: []);
+      }
 
       if (articleGalleryResponse.data is Map<String, dynamic> &&
           !articleGalleryResponse.data.containsKey('mensagem')) {

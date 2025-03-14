@@ -1067,6 +1067,7 @@ class ArticleView extends ArticleViewModel {
                                   children: [
                                     SizedBox(
                                       width: 124,
+                                      height: 168,
                                       child: Image.network(
                                         article.author!.list!.first.blogPicture ?? ""
                                       )
@@ -1125,7 +1126,7 @@ class ArticleView extends ArticleViewModel {
                                             article.author!.list!.first.bio?.replaceAll("&#039;", "'") ?? "",
                                             style: const TextStyle(
                                               fontSize: 14,
-                                              fontWeight: FontWeight.w700,
+                                              fontWeight: FontWeight.w500,
                                               color: Colors.white,
                                               fontFamily: 'CNN Sans Display',
                                               fontFamilyFallback: [
@@ -1192,7 +1193,7 @@ class ArticleView extends ArticleViewModel {
                                               )
                                             ],
                                           ),
-                                          const SizedBox(height: 6),
+                                          const SizedBox(height: 12),
                                         ],
                                       ),
                                     )
@@ -2858,7 +2859,7 @@ class ArticleView extends ArticleViewModel {
                             )
                         ],
                       ),
-                      if (articlesMostRead.posts.isNotEmpty) ...[
+                      if (articlesMostRead.posts.isNotEmpty && articleType != 'forum') ...[
                         const SizedBox(height: 24),
                         Divider(
                           color:
@@ -3134,7 +3135,7 @@ class ArticleView extends ArticleViewModel {
                         ]
                       ],
                       const SizedBox(height: 10),
-                      if (article.category?.slug != null) ...[
+                      if (article.category?.slug != null && articleType != 'forum') ...[
                         FutureBuilder(
                           future: getWebStorie(),
                           builder: (context, snapshot) {
