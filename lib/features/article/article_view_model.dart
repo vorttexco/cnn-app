@@ -41,7 +41,6 @@ abstract class ArticleViewModel extends State<Article> {
           article = ArticleModel.fromJson(articleResponse.data);
           articleType = "Blog";
         }
-
       } else if (widget.model.articleUrl.contains("/colunas/")) {
         final articleResponse = await dio.get(
           'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=colunas',
@@ -51,7 +50,6 @@ abstract class ArticleViewModel extends State<Article> {
           article = ArticleModel.fromJson(articleResponse.data);
           articleType = "Coluna";
         }
-
       } else if (widget.model.articleUrl.contains("/forum")) {
         final articleResponse = await dio.get(
           'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId?post_type=cnn-brasil-forum',
@@ -61,7 +59,6 @@ abstract class ArticleViewModel extends State<Article> {
           article = ArticleModel.fromJson(articleResponse.data);
           articleType = "forum";
         }
-
       } else {
         final articleResponse = await dio.get(
           'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
@@ -97,7 +94,10 @@ abstract class ArticleViewModel extends State<Article> {
             .catchError((e) {
           return Response(requestOptions: RequestOptions(path: ''));
         }),
-        dio.get('https://www.cnnbrasil.com.br/wp-json/partners/v1/feed/${article.category?.hierarchy?.first}').catchError((e) {
+        dio
+            .get(
+                'https://www.cnnbrasil.com.br/wp-json/partners/v1/feed/${article.category?.hierarchy?.first}')
+            .catchError((e) {
           return Response(requestOptions: RequestOptions(path: ''));
         }),
       ]);
@@ -105,23 +105,37 @@ abstract class ArticleViewModel extends State<Article> {
       final mostReadResponse = responses[0];
       final articleGalleryResponse = responses[1];
       final articlePartnersResponse = responses[2];
-      
+
       if (mostReadResponse.data is Map<String, dynamic>) {
-        articlesMostRead = ArticleMostReadModel.fromJson(mostReadResponse.data);
+        try {
+          articlesMostRead =
+              ArticleMostReadModel.fromJson(mostReadResponse.data);
+        } catch (e) {
+          articlesMostRead = ArticleMostReadModel(posts: []);
+        }
       } else {
         articlesMostRead = ArticleMostReadModel(posts: []);
       }
 
       if (articlePartnersResponse.data is Map<String, dynamic>) {
-        articlePartners = ArticlePartnersModel.fromJson(articlePartnersResponse.data);
+        try {
+          articlePartners =
+              ArticlePartnersModel.fromJson(articlePartnersResponse.data);
+        } catch (e) {
+          articlePartners = ArticlePartnersModel(posts: []);
+        }
       } else {
         articlePartners = ArticlePartnersModel(posts: []);
       }
 
       if (articleGalleryResponse.data is Map<String, dynamic> &&
           !articleGalleryResponse.data.containsKey('mensagem')) {
-        articleGallery =
-            ArticleGalleryModel.fromJson(articleGalleryResponse.data);
+        try {
+          articleGallery =
+              ArticleGalleryModel.fromJson(articleGalleryResponse.data);
+        } catch (e) {
+          articleGallery = ArticleGalleryModel();
+        }
       } else {
         articleGallery = ArticleGalleryModel();
       }
