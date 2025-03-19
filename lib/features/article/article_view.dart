@@ -1065,16 +1065,20 @@ class ArticleView extends ArticleViewModel {
                               ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 16.0),
+                                  horizontal: 16.0
+                                ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     SizedBox(
-                                        width: 124,
-                                        height: 168,
-                                        child: Image.network(article.author!
-                                                .list!.first.blogPicture ??
-                                            "")),
+                                      height: 168,
+                                      child: Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Image.network(
+                                          article.author!.list!.first.blogPicture ?? ""
+                                        ),
+                                      )
+                                    ),
                                     const SizedBox(width: 16),
                                     Expanded(
                                       child: Column(
@@ -1880,18 +1884,19 @@ class ArticleView extends ArticleViewModel {
                             ],
                             HtmlWidget(
                               article.content!.content!.replaceAll('"', '"'),
-                              textStyle: const TextStyle(
-                                  fontFamily: 'CNN Sans Display',
-                                  fontFamilyFallback: [
-                                    'HelveticaNeue',
-                                    'Helvetica',
-                                    'Arial',
-                                    'Utkal',
-                                    'sans-serif'
-                                  ],
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0XFF282828)),
+                              textStyle: TextStyle(
+                                fontFamily: 'CNN Sans Display',
+                                fontFamilyFallback: const [
+                                  'HelveticaNeue',
+                                  'Helvetica',
+                                  'Arial',
+                                  'Utkal',
+                                  'sans-serif'
+                                ],
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                               onTapUrl: (url) {
                                 if (url.endsWith('/')) {
                                   url = url.substring(0, url.length - 1);
@@ -3154,6 +3159,14 @@ class ArticleView extends ArticleViewModel {
                                               .length;
                                       index++) ...[
                                     const SizedBox(height: 1),
+                                    if (index > 0) Divider(
+                                      height: 1,
+                                      thickness: 1,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .tertiaryContainer,
+                                    ),                                    
+                                    const SizedBox(height: 1),
                                     InkWell(
                                       onTap: () {
                                         NavigatorManager(context).to(
@@ -3240,16 +3253,18 @@ class ArticleView extends ArticleViewModel {
                                       ),
                                     ),
                                     const SizedBox(height: 1),
-                                    Divider(
-                                      height: 1,
-                                      thickness: 1,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .tertiaryContainer,
-                                    ),
                                   ]
                                 ],
                               ),
+                              const SizedBox(height: 35),
+                              Divider(
+                                height: 1,
+                                thickness: 1,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .tertiaryContainer,
+                              ),
+                              const SizedBox(height: 35),
                             ],
                             if (articlePartners.posts.isNotEmpty) ...[
                               const SizedBox(height: 40),
@@ -3322,8 +3337,7 @@ class ArticleView extends ArticleViewModel {
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -3480,6 +3494,9 @@ class _DynamicWebViewState extends State<DynamicWebView> {
 
           if (heightStr != null) {
             double newHeight = double.tryParse(heightStr) ?? 495;
+
+            newHeight = newHeight - 891;
+
             if (newHeight != _webViewHeight) {
               setState(() {
                 _webViewHeight = newHeight;
