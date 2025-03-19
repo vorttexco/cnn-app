@@ -2533,17 +2533,20 @@ class ArticleView extends ArticleViewModel {
                                   var htmlContent = element.outerHtml;
 
                                   htmlContent = '''
-                              <html>
-                                <head>
-                                  <meta name="viewport" content="width=device-width, initial-scale=1">
-                                </head>
-                                $htmlContent
-                                <p><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
-                              </html>
-                            ''';
+                                    <html>
+                                      <head>
+                                        <meta name="viewport" content="width=device-width, initial-scale=1">
+                                      </head>
+                                      $htmlContent
+                                      <p><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+                                    </html>
+                                  ''';
 
-                                  return SizedBox(
-                                    height: 700,
+                                  return Container(
+                                    width: double.infinity,
+                                    constraints: const BoxConstraints(
+                                      maxHeight: 1500
+                                    ),
                                     child: InAppWebView(
                                       initialData: InAppWebViewInitialData(
                                           data: htmlContent),
@@ -3456,9 +3459,11 @@ class _DynamicWebViewState extends State<DynamicWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
-      height: _webViewHeight,
+      constraints: const BoxConstraints(
+        maxHeight: 2850
+      ),
       child: InAppWebView(
         initialUrlRequest: URLRequest(url: WebUri(widget.visualisationUrl)),
         initialSettings: InAppWebViewSettings(
