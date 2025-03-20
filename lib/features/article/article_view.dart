@@ -43,6 +43,8 @@ class ArticleView extends ArticleViewModel {
   bool isGalleryOpen = false;
   bool onLoadInstragramEnded = false;
 
+  final Map<String, double> customHeights = {};
+
   void _scrollToIndex(int index) {
     const itemWidth = 150.0;
     final offset = itemWidth * index;
@@ -1931,6 +1933,7 @@ class ArticleView extends ArticleViewModel {
 
                                 return false;
                               },
+                              rebuildTriggers: customHeights.keys.toList(),
                               customStylesBuilder: (element) => cssBuilder(
                                   element,
                                   Theme.of(context).colorScheme.primary,
@@ -2063,20 +2066,21 @@ class ArticleView extends ArticleViewModel {
                                     element.attributes
                                         .containsKey('data-src')) {
                                   final visualisationUrl =
-                                      'https://public.flourish.studio/${element.attributes['data-src']}/';
+                                      'https://flo.uri.sh/${element.attributes['data-src']}/embed';
 
                                   final key = GlobalKey<_DynamicWebViewState>();
 
-                                  return StatefulBuilder(
-                                    builder: (context, setState) {
-                                      return DynamicWebView(
-                                        key: key,
-                                        visualisationUrl: visualisationUrl,
-                                        onHeightUpdate: (newHeight) {
-                                          setState(() {});
-                                        },
-                                      );
+                                  final mapKey = element.id + element.className;
+
+                                  return DynamicWebView(
+                                    key: key,
+                                    visualisationUrl: visualisationUrl,
+                                    onHeightUpdate: (newHeight) {
+                                      setState(() {
+                                        customHeights[mapKey] = newHeight;
+                                      });
                                     },
+                                    webViewHeight: customHeights[mapKey],
                                   );
                                 }
 
@@ -3425,11 +3429,13 @@ class ArticleView extends ArticleViewModel {
 class DynamicWebView extends StatefulWidget {
   final String visualisationUrl;
   final Function(double) onHeightUpdate;
+  final double? webViewHeight;
 
   const DynamicWebView({
     super.key,
     required this.visualisationUrl,
     required this.onHeightUpdate,
+    this.webViewHeight,
   });
 
   @override
@@ -3438,7 +3444,8 @@ class DynamicWebView extends StatefulWidget {
 
 class _DynamicWebViewState extends State<DynamicWebView> {
   late InAppWebViewController _webViewController;
-  double _webViewHeight = 495;
+
+  double get _webViewHeight => widget.webViewHeight ?? 600;
 
   @override
   Widget build(BuildContext context) {
@@ -3479,12 +3486,8 @@ class _DynamicWebViewState extends State<DynamicWebView> {
               source: "document.documentElement.scrollHeight.toString();");
 
           if (heightStr != null) {
-            double newHeight = double.tryParse(heightStr) ?? 495;
+            double newHeight = double.tryParse(heightStr) ?? _webViewHeight;
             if (newHeight != _webViewHeight) {
-              setState(() {
-                _webViewHeight = newHeight;
-              });
-
               widget.onHeightUpdate(newHeight);
             }
           }
