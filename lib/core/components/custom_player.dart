@@ -1,8 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:cnn_brasil_app/core/extensions/string_extension.dart';
-import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class CustomPlayer extends StatefulWidget {
   final LiveOnModel? model;
@@ -19,33 +20,14 @@ class CustomPlayer extends StatefulWidget {
 }
 
 class _CustomPlayerState extends State<CustomPlayer> {
-  final collapsedControle = WebViewController();
-  final expandedController = WebViewController();
+  late InAppWebViewController collapsedControle;
+  late InAppWebViewController expandedController;
 
   bool isExpanded = false;
 
   @override
   void initState() {
     super.initState();
-    collapsedControle.setJavaScriptMode(JavaScriptMode.unrestricted);
-    collapsedControle.enableZoom(false);
-
-    collapsedControle.setNavigationDelegate(
-      NavigationDelegate(
-        onPageStarted: (String url) {},
-        onPageFinished: (x) async {},
-      ),
-    );
-
-    expandedController.setJavaScriptMode(JavaScriptMode.unrestricted);
-    expandedController.enableZoom(false);
-
-    expandedController.setNavigationDelegate(
-      NavigationDelegate(
-        onPageStarted: (String url) {},
-        onPageFinished: (x) async {},
-      ),
-    );
   }
 
   void expandeOrCollapseView() {
@@ -56,18 +38,6 @@ class _CustomPlayerState extends State<CustomPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.url.isNotEmpty) {
-      if (isExpanded) {
-        Uri.parse(widget.url).withThemeQuery(context).then((uri) {
-          expandedController.loadRequest(uri);
-        });
-      } else {
-        Uri.parse(widget.url).withThemeQuery(context).then((uri) {
-          collapsedControle.loadRequest(uri);
-        });
-      }
-    }
-
     return AnimatedContainer(
       height: isExpanded ? 425 : 105,
       decoration: const BoxDecoration(
@@ -84,19 +54,57 @@ class _CustomPlayerState extends State<CustomPlayer> {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          Visibility(
-            visible: !isExpanded,
-            child: SizedBox(
-              width: 125,
-              height: 70,
-              child: ClipRRect(
-                clipBehavior: Clip.hardEdge,
-                child: WebViewWidget(
-                  key: const Key('webView'),
-                  controller: collapsedControle,
+          Stack(
+            children: [
+              Visibility(
+                visible: !isExpanded,
+                child: SizedBox(
+                  width: 125,
+                  height: 70,
+                  child: ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                    child: InAppWebView(
+                      key: const Key('webView'),
+                      initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+                      initialOptions: InAppWebViewGroupOptions(
+                        crossPlatform: InAppWebViewOptions(
+                          javaScriptEnabled: true,
+                          mediaPlaybackRequiresUserGesture: false,
+                        ),
+                        ios: IOSInAppWebViewOptions(
+                          allowsInlineMediaPlayback: true,
+                        ),
+                      ),
+                      onWebViewCreated: (controller) {
+                        collapsedControle = controller;
+                      },
+                      onLoadStop: (controller, url) async {
+                        await controller.evaluateJavascript(
+                          source: """
+                          var video = document.querySelector('video');
+                          if (video) {
+                            video.style.width = '100%';
+                            video.style.height = '100%';
+                            video.play();
+                          }
+                          """
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
-            ),
+              Positioned.fill(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    setState(() {
+                      isExpanded = true;
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
           Expanded(
               child: Row(
@@ -174,9 +182,33 @@ class _CustomPlayerState extends State<CustomPlayer> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             clipBehavior: Clip.hardEdge,
-            child: WebViewWidget(
-              key: const Key('webView1'),
-              controller: expandedController,
+            child: InAppWebView(
+              key: const Key('webView'),
+              initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+              initialOptions: InAppWebViewGroupOptions(
+                crossPlatform: InAppWebViewOptions(
+                  javaScriptEnabled: true,
+                  mediaPlaybackRequiresUserGesture: false,
+                ),
+                ios: IOSInAppWebViewOptions(
+                  allowsInlineMediaPlayback: true,
+                ),
+              ),
+              onWebViewCreated: (controller) {
+                collapsedControle = controller;
+              },
+              onLoadStop: (controller, url) async {
+                await controller.evaluateJavascript(
+                  source: """
+                  var video = document.querySelector('video');
+                  if (video) {
+                    video.style.width = '100%';
+                    video.style.height = '100%';
+                    video.play();
+                  }
+                  """
+                );
+              },
             ),
           ),
         ),
@@ -302,3 +334,4 @@ class _CustomPlayerState extends State<CustomPlayer> {
     );
   }
 }
+

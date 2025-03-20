@@ -1072,11 +1072,13 @@ class ArticleView extends ArticleViewModel {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     SizedBox(
-                                        width: 124,
                                         height: 168,
-                                        child: Image.network(article.author!
-                                                .list!.first.blogPicture ??
-                                            "")),
+                                        child: Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: Image.network(article.author!
+                                                  .list!.first.blogPicture ??
+                                              ""),
+                                        )),
                                     const SizedBox(width: 16),
                                     Expanded(
                                       child: Column(
@@ -1882,18 +1884,19 @@ class ArticleView extends ArticleViewModel {
                             ],
                             HtmlWidget(
                               article.content!.content!.replaceAll('"', '"'),
-                              textStyle: const TextStyle(
-                                  fontFamily: 'CNN Sans Display',
-                                  fontFamilyFallback: [
-                                    'HelveticaNeue',
-                                    'Helvetica',
-                                    'Arial',
-                                    'Utkal',
-                                    'sans-serif'
-                                  ],
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0XFF282828)),
+                              textStyle: TextStyle(
+                                fontFamily: 'CNN Sans Display',
+                                fontFamilyFallback: const [
+                                  'HelveticaNeue',
+                                  'Helvetica',
+                                  'Arial',
+                                  'Utkal',
+                                  'sans-serif'
+                                ],
+                                fontSize: 18,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                               onTapUrl: (url) {
                                 if (url.endsWith('/')) {
                                   url = url.substring(0, url.length - 1);
@@ -2532,17 +2535,19 @@ class ArticleView extends ArticleViewModel {
                                   var htmlContent = element.outerHtml;
 
                                   htmlContent = '''
-                              <html>
-                                <head>
-                                  <meta name="viewport" content="width=device-width, initial-scale=1">
-                                </head>
-                                $htmlContent
-                                <p><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
-                              </html>
-                            ''';
+                                    <html>
+                                      <head>
+                                        <meta name="viewport" content="width=device-width, initial-scale=1">
+                                      </head>
+                                      $htmlContent
+                                      <p><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+                                    </html>
+                                  ''';
 
-                                  return SizedBox(
-                                    height: 700,
+                                  return Container(
+                                    width: double.infinity,
+                                    constraints:
+                                        const BoxConstraints(maxHeight: 1500),
                                     child: InAppWebView(
                                       initialData: InAppWebViewInitialData(
                                           data: htmlContent),
@@ -3158,6 +3163,15 @@ class ArticleView extends ArticleViewModel {
                                               .length;
                                       index++) ...[
                                     const SizedBox(height: 1),
+                                    if (index > 0)
+                                      Divider(
+                                        height: 1,
+                                        thickness: 1,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiaryContainer,
+                                      ),
+                                    const SizedBox(height: 1),
                                     InkWell(
                                       onTap: () {
                                         NavigatorManager(context).to(
@@ -3244,16 +3258,18 @@ class ArticleView extends ArticleViewModel {
                                       ),
                                     ),
                                     const SizedBox(height: 1),
-                                    Divider(
-                                      height: 1,
-                                      thickness: 1,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .tertiaryContainer,
-                                    ),
                                   ]
                                 ],
                               ),
+                              const SizedBox(height: 35),
+                              Divider(
+                                height: 1,
+                                thickness: 1,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .tertiaryContainer,
+                              ),
+                              const SizedBox(height: 35),
                             ],
                             if (articlePartners.posts.isNotEmpty) ...[
                               const SizedBox(height: 40),
@@ -3449,9 +3465,9 @@ class _DynamicWebViewState extends State<DynamicWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
-      height: _webViewHeight,
+      constraints: const BoxConstraints(maxHeight: 2850),
       child: InAppWebView(
         initialUrlRequest: URLRequest(url: WebUri(widget.visualisationUrl)),
         initialSettings: InAppWebViewSettings(
