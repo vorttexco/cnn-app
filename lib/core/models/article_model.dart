@@ -395,6 +395,7 @@ class ArticleList {
   String? picture;
   String? permalink;
   Social? social;
+  Pictures? pictures;
   Type? type;
 
   ArticleList(
@@ -407,6 +408,7 @@ class ArticleList {
       this.picture,
       this.permalink,
       this.social,
+      this.pictures,
       this.type});
 
   ArticleList.fromJson(Map<String, dynamic> json) {
@@ -420,6 +422,7 @@ class ArticleList {
     blogPicture = json['blog_picture'];
     permalink = json['permalink'];
     social = json['social'] != null ? Social.fromJson(json['social']) : null;
+    pictures = json['pictures'] != null ? Pictures.fromJson(json['pictures']) : null;
     type = json['type'] != null ? Type.fromJson(json['type']) : null;
   }
 
@@ -522,6 +525,29 @@ class Content {
     data['type'] = type;
     data['content'] = content;
     data['encoded'] = encoded;
+    return data;
+  }
+}
+
+class Pictures {
+  String? blog;
+  String? columns;
+
+  Pictures({
+    this.blog, 
+    this.columns
+  });
+
+  Pictures.fromJson(Map<String, dynamic> json) {
+    blog = json['blog'];
+    columns = json['columns'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['blog'] = blog;
+    data['columns'] = columns;
+
     return data;
   }
 }

@@ -1075,8 +1075,10 @@ class ArticleView extends ArticleViewModel {
                                         height: 168,
                                         child: Align(
                                           alignment: Alignment.bottomCenter,
-                                          child: Image.network(article.author!
-                                                  .list!.first.blogPicture ??
+                                          child: articleType == "Blog" ? Image.network(article.author!
+                                                  .list!.first.pictures!.blog ??
+                                              "") : Image.network(article.author!
+                                                  .list!.first.pictures!.columns ??
                                               ""),
                                         )),
                                     const SizedBox(width: 16),
