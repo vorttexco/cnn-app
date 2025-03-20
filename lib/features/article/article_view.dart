@@ -2069,21 +2069,66 @@ class ArticleView extends ArticleViewModel {
                                     element.attributes
                                         .containsKey('data-src')) {
                                   final visualisationUrl =
-                                      'https://flo.uri.sh/${element.attributes['data-src']}/embed';
+                                      'https://public.flourish.studio/${element.attributes['data-src']}/';
 
                                   final key = GlobalKey<_DynamicWebViewState>();
 
                                   final mapKey = element.id + element.className;
 
-                                  return DynamicWebView(
-                                    key: key,
-                                    visualisationUrl: visualisationUrl,
-                                    onHeightUpdate: (newHeight) {
-                                      setState(() {
-                                        customHeights[mapKey] = newHeight;
-                                      });
-                                    },
-                                    webViewHeight: customHeights[mapKey],
+                                  if (customHeights[mapKey] != null) {
+                                    late InAppWebViewController webViewCorrectFlourishController;
+
+                                    final visualisationUrlCorrect = 'https://flo.uri.sh/${element.attributes['data-src']}/embed';
+
+                                    return SizedBox(
+                                      width: double.infinity,
+                                      height: customHeights[mapKey],
+                                      child: InAppWebView(
+                                        initialUrlRequest: URLRequest(url: WebUri(visualisationUrlCorrect)),
+                                        initialSettings: InAppWebViewSettings(
+                                          javaScriptEnabled: true,
+                                          thirdPartyCookiesEnabled: true,
+                                          cacheEnabled: true,
+                                          transparentBackground: true,
+                                        ),
+                                        onWebViewCreated: (controller) async {
+                                          webViewCorrectFlourishController = controller;
+                                          final cookieManager = CookieManager.instance();
+                                      
+                                          await cookieManager.setCookie(
+                                            url: WebUri(visualisationUrlCorrect),
+                                            name: "OptanonAlertBoxClosed",
+                                            value: "2025-02-26T08:47:35.404Z",
+                                            domain: "public.flourish.studio",
+                                          );
+                                      
+                                          await cookieManager.setCookie(
+                                            url: WebUri(visualisationUrlCorrect),
+                                            name: "OptanonConsent",
+                                            value:
+                                                "isGpcEnabled=0&datestamp=Wed+Feb+26+2025+05%3A47%3A35+GMT-0300+(Brasilia+Standard+Time)&version=202301.2.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false",
+                                            domain: ".flourish.studio",
+                                          );
+                                      
+                                          webViewCorrectFlourishController.reload();
+                                        }
+                                      ),
+                                    );
+                                  }
+
+                                  return SizedBox(
+                                    width: double.infinity,
+                                    height: customHeights[mapKey] ?? 600,
+                                    child: DynamicWebView(
+                                      key: key,
+                                      visualisationUrl: visualisationUrl,
+                                      onHeightUpdate: (newHeight) {
+                                        setState(() {
+                                          customHeights[mapKey] = newHeight;
+                                        });
+                                      },
+                                      webViewHeight: customHeights[mapKey],
+                                    ),
                                   );
                                 }
 
@@ -2544,24 +2589,43 @@ class ArticleView extends ArticleViewModel {
                                     </html>
                                   ''';
 
-                                  return Container(
+                                  final key = GlobalKey<_DynamicTwitterWebViewState>();
+
+                                  final mapKey = element.id + element.className;
+
+                                  return SizedBox(
                                     width: double.infinity,
-                                    constraints:
-                                        const BoxConstraints(maxHeight: 1500),
-                                    child: InAppWebView(
-                                      initialData: InAppWebViewInitialData(
-                                          data: htmlContent),
-                                      initialOptions: InAppWebViewGroupOptions(
-                                        crossPlatform: InAppWebViewOptions(
-                                            javaScriptEnabled: true,
-                                            mediaPlaybackRequiresUserGesture:
-                                                false,
-                                            userAgent:
-                                                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-                                            supportZoom: true),
-                                      ),
+                                    height: customHeights[mapKey] ?? 10,
+                                    child: DynamicTwitterWebView(
+                                      key: key,
+                                      visualisationUrl: htmlContent,
+                                      onHeightUpdate: (newHeight) {
+                                        setState(() {
+                                          customHeights[mapKey] = newHeight;
+                                        });
+                                      },
+                                      webViewHeight: customHeights[mapKey],
                                     ),
                                   );
+
+                                  // return Container(
+                                  //   width: double.infinity,
+                                  //   constraints:
+                                  //       const BoxConstraints(maxHeight: 1500),
+                                  //   child: InAppWebView(
+                                  //     initialData: InAppWebViewInitialData(
+                                  //         data: htmlContent),
+                                  //     initialOptions: InAppWebViewGroupOptions(
+                                  //       crossPlatform: InAppWebViewOptions(
+                                  //           javaScriptEnabled: true,
+                                  //           mediaPlaybackRequiresUserGesture:
+                                  //               false,
+                                  //           userAgent:
+                                  //               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                                  //           supportZoom: true),
+                                  //     ),
+                                  //   ),
+                                  // );
                                 }
 
                                 if (element.classes
@@ -3463,52 +3527,107 @@ class _DynamicWebViewState extends State<DynamicWebView> {
 
   double get _webViewHeight => widget.webViewHeight ?? 600;
 
+  double newDynamicHeight = 600;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      constraints: const BoxConstraints(maxHeight: 2850),
-      child: InAppWebView(
-        initialUrlRequest: URLRequest(url: WebUri(widget.visualisationUrl)),
-        initialSettings: InAppWebViewSettings(
-          javaScriptEnabled: true,
-          thirdPartyCookiesEnabled: true,
-          cacheEnabled: true,
-          transparentBackground: true,
-        ),
-        onWebViewCreated: (controller) async {
-          _webViewController = controller;
-          final cookieManager = CookieManager.instance();
-
-          await cookieManager.setCookie(
-            url: WebUri(widget.visualisationUrl),
-            name: "OptanonAlertBoxClosed",
-            value: "2025-02-26T08:47:35.404Z",
-            domain: "public.flourish.studio",
-          );
-
-          await cookieManager.setCookie(
-            url: WebUri(widget.visualisationUrl),
-            name: "OptanonConsent",
-            value:
-                "isGpcEnabled=0&datestamp=Wed+Feb+26+2025+05%3A47%3A35+GMT-0300+(Brasilia+Standard+Time)&version=202301.2.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false",
-            domain: ".flourish.studio",
-          );
-
-          _webViewController.reload();
-        },
-        onLoadStop: (controller, url) async {
-          final heightStr = await controller.evaluateJavascript(
-              source: "document.documentElement.scrollHeight.toString();");
-
-          if (heightStr != null) {
-            double newHeight = double.tryParse(heightStr) ?? _webViewHeight;
-            if (newHeight != _webViewHeight) {
-              widget.onHeightUpdate(newHeight);
-            }
-          }
-        },
+    return InAppWebView(
+      initialUrlRequest: URLRequest(url: WebUri(widget.visualisationUrl)),
+      initialSettings: InAppWebViewSettings(
+        javaScriptEnabled: true,
+        thirdPartyCookiesEnabled: true,
+        cacheEnabled: true,
+        transparentBackground: true,
       ),
+      onWebViewCreated: (controller) async {
+        _webViewController = controller;
+        final cookieManager = CookieManager.instance();
+    
+        await cookieManager.setCookie(
+          url: WebUri(widget.visualisationUrl),
+          name: "OptanonAlertBoxClosed",
+          value: "2025-02-26T08:47:35.404Z",
+          domain: "public.flourish.studio",
+        );
+    
+        await cookieManager.setCookie(
+          url: WebUri(widget.visualisationUrl),
+          name: "OptanonConsent",
+          value:
+              "isGpcEnabled=0&datestamp=Wed+Feb+26+2025+05%3A47%3A35+GMT-0300+(Brasilia+Standard+Time)&version=202301.2.0&isIABGlobal=false&hosts=&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&AwaitingReconsent=false",
+          domain: ".flourish.studio",
+        );
+    
+        _webViewController.reload();
+      },
+      onLoadStop: (controller, url) async {
+        await Future.delayed(const Duration(milliseconds: 1000));
+
+        final heightStr = await controller.evaluateJavascript(
+            source: "document.documentElement.scrollHeight.toString();");
+    
+        if (heightStr != null) {
+          double newHeight = double.tryParse(heightStr) ?? _webViewHeight;
+
+          newHeight = newHeight - 891;
+
+          if (newHeight != _webViewHeight) {
+            widget.onHeightUpdate(newHeight);
+          }
+        }
+      },
+    );
+  }
+}
+
+class DynamicTwitterWebView extends StatefulWidget {
+  final String visualisationUrl;
+  final Function(double) onHeightUpdate;
+  final double? webViewHeight;
+
+  const DynamicTwitterWebView({
+    super.key,
+    required this.visualisationUrl,
+    required this.onHeightUpdate,
+    this.webViewHeight,
+  });
+
+  @override
+  State<DynamicTwitterWebView> createState() => _DynamicTwitterWebViewState();
+}
+
+class _DynamicTwitterWebViewState extends State<DynamicTwitterWebView> {
+  double get _webViewHeight => widget.webViewHeight ?? 100;
+
+  double newDynamicHeight = 100;
+
+  @override
+  Widget build(BuildContext context) {
+    return InAppWebView(
+      initialData: InAppWebViewInitialData(
+        data: widget.visualisationUrl
+      ),
+      initialOptions: InAppWebViewGroupOptions(
+        crossPlatform: InAppWebViewOptions(
+          javaScriptEnabled: true,
+          mediaPlaybackRequiresUserGesture: false,
+          userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+          supportZoom: true
+        ),
+      ),
+      onLoadStop: (controller, url) async {
+        await Future.delayed(const Duration(milliseconds: 1500));
+
+        final heightStr = await controller.evaluateJavascript(
+            source: "document.documentElement.scrollHeight.toString();");
+    
+        if (heightStr != null) {
+          double newHeight = double.tryParse(heightStr) ?? _webViewHeight;
+          if (newHeight != _webViewHeight) {
+            widget.onHeightUpdate(newHeight);
+          }
+        }
+      },
     );
   }
 }
