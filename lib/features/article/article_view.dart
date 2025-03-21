@@ -896,6 +896,97 @@ class ArticleView extends ArticleViewModel {
     );
   }
 
+  void _showTwitterFullScreen(BuildContext context, String twitterContent, double? pageHeight) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.transparent,
+      isDismissible: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
+      builder: (context) {
+        return Column(
+          children: [
+            IgnorePointer(
+              ignoring: false,
+              child: AppBarwebView(
+                onFinished: () {
+                  setState(() {});
+                },
+                title: 'Voltar',
+                onIconPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+                onShare: onShare,
+              ),
+            ),
+            StatefulBuilder(
+              builder: (context, setState) {
+                return Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xE6282828),
+                      ),
+                      height: pageHeight != null ? (pageHeight + 100) : 10,
+                      child: InAppWebView(
+                        initialUrlRequest: URLRequest(url: WebUri(twitterContent)),
+                        initialOptions: InAppWebViewGroupOptions(
+                          crossPlatform: InAppWebViewOptions(
+                            javaScriptEnabled: true,
+                            mediaPlaybackRequiresUserGesture: false,
+                            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                            supportZoom: true,
+                            useShouldOverrideUrlLoading: true
+                          ),
+                        ),
+                        shouldOverrideUrlLoading: (controller, navigationAction) async {
+                          Uri uri = Uri.parse(navigationAction.request.url.toString());
+                    
+                          if (uri.path.contains("/embed/Tweet.html")) {
+                            return NavigationActionPolicy.ALLOW;
+                          }
+                    
+                          _openInBrowser(uri.toString());
+                    
+                          return NavigationActionPolicy.CANCEL;
+                        },
+                        onLoadStop: (controller, url) async {
+                          await Future.delayed(const Duration(milliseconds: 500));
+  
+                          await controller.evaluateJavascript(source: """
+                            (function() {
+                              let metaExists = document.querySelector("meta[name='viewport']");
+                              
+                              if (!metaExists) {
+                                let meta = document.createElement('meta');
+                                meta.name = 'viewport';
+                                meta.content = 'width=device-width, initial-scale=1';
+                                
+                                let head = document.head || document.getElementsByTagName('head')[0];
+                                if (head) {
+                                  head.appendChild(meta);
+                                }
+                              }
+                            })();
+                          """);
+                        }
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> launchProfileInExternalBrowser(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -2595,18 +2686,38 @@ class ArticleView extends ArticleViewModel {
 
                                   final mapKey = element.id + element.className;
 
+                                  late String iframeUrl;
+
                                   return SizedBox(
                                     width: double.infinity,
                                     height: customHeights[mapKey] ?? 10,
-                                    child: DynamicTwitterWebView(
-                                      key: key,
-                                      visualisationUrl: htmlContent,
-                                      onHeightUpdate: (newHeight) {
-                                        setState(() {
-                                          customHeights[mapKey] = newHeight;
-                                        });
-                                      },
-                                      webViewHeight: customHeights[mapKey],
+                                    child: Stack(
+                                      children: [
+                                        DynamicTwitterWebView(
+                                          key: key,
+                                          visualisationUrl: htmlContent,
+                                          onHeightUpdate: (newHeight) {
+                                            setState(() {
+                                              customHeights[mapKey] = newHeight;
+                                            });
+                                          },
+                                          webViewHeight: customHeights[mapKey],
+                                          onIframeLinkUpdate: (iframeLink) {
+                                            setState(() {
+                                              iframeUrl = iframeLink;
+                                            });
+                                          },
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            _showTwitterFullScreen(context, iframeUrl, customHeights[mapKey]);
+                                          },
+                                          child: const SizedBox(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   );
 
@@ -3585,12 +3696,14 @@ class _DynamicWebViewState extends State<DynamicWebView> {
 class DynamicTwitterWebView extends StatefulWidget {
   final String visualisationUrl;
   final Function(double) onHeightUpdate;
+  final Function(String) onIframeLinkUpdate;
   final double? webViewHeight;
 
   const DynamicTwitterWebView({
     super.key,
     required this.visualisationUrl,
     required this.onHeightUpdate,
+    required this.onIframeLinkUpdate,
     this.webViewHeight,
   });
 
@@ -3628,6 +3741,17 @@ class _DynamicTwitterWebViewState extends State<DynamicTwitterWebView> {
           if (newHeight != _webViewHeight) {
             widget.onHeightUpdate(newHeight);
           }
+        }
+
+        final iframeSrc = await controller.evaluateJavascript(source: """
+          (function() {
+            let iframe = document.querySelector("iframe.twitter-tweet, iframe[src*='twitter.com']");
+            return iframe ? iframe.src : null;
+          })();
+        """);
+
+        if (iframeSrc != null && iframeSrc != "null") {
+          widget.onIframeLinkUpdate(iframeSrc);
         }
       },
     );
