@@ -1381,26 +1381,30 @@ class ArticleView extends ArticleViewModel {
                                 ],
                               ),
                             ),
+                            const SizedBox(height: AppConstants.KPADDING_16),
                             Divider(
                               color: Theme.of(context)
                                   .colorScheme
                                   .tertiaryContainer,
                             ),
-                            Text(
-                              article.excerpt?.replaceAll("&quot;", '"') ?? '',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Theme.of(context).colorScheme.primary,
-                                fontFamily: 'CNN Sans Display',
-                                fontFamilyFallback: const [
-                                  'HelveticaNeue',
-                                  'Helvetica',
-                                  'Arial',
-                                  'Utkal',
-                                  'sans-serif'
-                                ],
+                            if (article.excerpt != null && article.excerpt != "") ...[
+                              const SizedBox(height: AppConstants.KPADDING_16),
+                              Text(
+                                article.excerpt?.replaceAll("&quot;", '"') ?? '',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontFamily: 'CNN Sans Display',
+                                  fontFamilyFallback: const [
+                                    'HelveticaNeue',
+                                    'Helvetica',
+                                    'Arial',
+                                    'Utkal',
+                                    'sans-serif'
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                             const SizedBox(height: AppConstants.KPADDING_16),
                             if (article.author?.list != null &&
                                 articleType != "Blog" &&
@@ -1533,7 +1537,7 @@ class ArticleView extends ArticleViewModel {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: AppConstants.KPADDING_8),
+                            const SizedBox(height: AppConstants.KPADDING_16),
                             if (article.featuredMedia?.video != null) ...[
                               const SizedBox(height: AppConstants.KPADDING_8),
                               AspectRatio(
@@ -1568,7 +1572,7 @@ class ArticleView extends ArticleViewModel {
                                   },
                                 ),
                               ),
-                              const SizedBox(height: AppConstants.KPADDING_8),
+                              const SizedBox(height: AppConstants.KPADDING_16),
                             ],
                             if (articleGallery.images != null &&
                                 articleGallery.images!.isNotEmpty &&
@@ -1858,7 +1862,7 @@ class ArticleView extends ArticleViewModel {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: AppConstants.KPADDING_8),
+                              const SizedBox(height: AppConstants.KPADDING_16),
                             ],
                             if (article.featuredMedia?.image != null &&
                                 articleGallery.images == null &&
@@ -1893,39 +1897,43 @@ class ArticleView extends ArticleViewModel {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: AppConstants.KPADDING_8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 5),
-                                child: RichText(
-                                  text: TextSpan(
-                                    text: article.featuredMedia!.image!.caption,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'CNN Sans Display',
-                                      fontFamilyFallback: const [
-                                        'HelveticaNeue',
-                                        'Helvetica',
-                                        'Arial',
-                                        'Utkal',
-                                        'sans-serif'
+                              const SizedBox(height: AppConstants.KPADDING_16),
+                              if (article.featuredMedia!.image!.caption != null && article.featuredMedia!.image!.caption != "") ...[
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 5),
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: article.featuredMedia!.image!.caption,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color:
+                                            Theme.of(context).colorScheme.primary,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'CNN Sans Display',
+                                        fontFamilyFallback: const [
+                                          'HelveticaNeue',
+                                          'Helvetica',
+                                          'Arial',
+                                          'Utkal',
+                                          'sans-serif'
+                                        ],
+                                      ),
+                                      children: [
+                                        if (article.featuredMedia!.image!.credits != null && article.featuredMedia!.image!.credits != "") ...[
+                                          TextSpan(
+                                            text:
+                                                ' • ${article.featuredMedia!.image!.credits}',
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.normal),
+                                          )
+                                        ]                                      
                                       ],
                                     ),
-                                    children: [
-                                      TextSpan(
-                                        text:
-                                            ' • ${article.featuredMedia!.image!.credits}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.normal),
-                                      )
-                                    ],
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: AppConstants.KPADDING_8),
+                              ],
+                              const SizedBox(height: AppConstants.KPADDING_16),
                               Divider(
                                 color: Theme.of(context)
                                     .colorScheme
@@ -1974,6 +1982,7 @@ class ArticleView extends ArticleViewModel {
                               //     child: Divider(),
                               //   ),
                               // ]
+                              const SizedBox(height: AppConstants.KPADDING_16),
                             ],
                             HtmlWidget(
                               article.content!.content!.replaceAll('"', '"'),
@@ -3304,7 +3313,7 @@ class ArticleView extends ArticleViewModel {
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: 16),
                                         Text(
                                           articlesMostRead.posts.first.title ??
                                               '',
