@@ -9,12 +9,13 @@ abstract class SubmenuViewModel extends State<Submenu> {
       NavigatorManager(context).to(
         SectionViewDetail.route,
         data: menu,
+        currentScreen: Submenu.route
       );
       return;
     }
 
     NavigatorManager(context)
-        .to(Submenu.route, data: menu, rootNavigator: false);
+        .to(Submenu.route, data: menu, rootNavigator: false, currentScreen: Submenu.route);
   }
 
   onBack() {

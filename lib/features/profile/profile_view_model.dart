@@ -60,7 +60,7 @@ abstract class ProfileViewModel extends State<Profile>
   }
 
   openPage(String route) {
-    NavigatorManager(context).to(route);
+    NavigatorManager(context).to(route, currentScreen: Profile.route);
   }
 
   openLink(CnnMenuModel menu) async {
@@ -77,6 +77,7 @@ abstract class ProfileViewModel extends State<Profile>
         url: '${menu.url}?hidemenu=true',
         title: menu.title ?? AppLabel.appName,
       ),
+      currentScreen: Profile.route,
       analytics:
           menu.url != null ? NavigatorAnalytics.fromUrl(menu.url!) : null,
     );

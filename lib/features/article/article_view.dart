@@ -1455,6 +1455,9 @@ class ArticleView extends ArticleViewModel {
                                                           '${author.permalink!}?hidemenu=true',
                                                       title: 'Voltar'),
                                                   onFinished: () {},
+                                                  currentScreen: article.title ?? "",
+                                                  currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                                   analytics: NavigatorAnalytics
                                                       .fromUrl(
                                                     author.permalink!,
@@ -2017,6 +2020,9 @@ class ArticleView extends ArticleViewModel {
                                     data: ArticleSettings(
                                         articleId: articleId, articleUrl: url),
                                     onFinished: () {},
+                                    currentScreen: article.title ?? "",
+                                    currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                   );
 
                                   return true;
@@ -2030,6 +2036,9 @@ class ArticleView extends ArticleViewModel {
                                       onFinished: () {},
                                       analytics:
                                           NavigatorAnalytics.fromUrl(url),
+                                          currentScreen: article.title ?? "",
+                                          currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                     );
 
                                     return true;
@@ -2340,6 +2349,9 @@ class ArticleView extends ArticleViewModel {
                                                   articleId: articleId,
                                                   articleUrl: url),
                                               onFinished: () {},
+                                              currentScreen: article.title ?? "",
+                                              currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                             );
                                           } else {
                                             if (!url.contains(
@@ -2353,6 +2365,9 @@ class ArticleView extends ArticleViewModel {
                                                 analytics:
                                                     NavigatorAnalytics.fromUrl(
                                                         url),
+                                                        currentScreen: article.title ?? "",
+                                                        currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                               );
                                             }
                                           }
@@ -2582,6 +2597,9 @@ class ArticleView extends ArticleViewModel {
                                                 articleId: articleId,
                                                 articleUrl: url),
                                             onFinished: () {},
+                                            currentScreen: article.title ?? "",
+                                            currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                           );
                                         } else {
                                           if (!url.contains(
@@ -2595,6 +2613,9 @@ class ArticleView extends ArticleViewModel {
                                               analytics:
                                                   NavigatorAnalytics.fromUrl(
                                                       url),
+                                                      currentScreen: article.title ?? "",
+                                                      currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                             );
                                           }
                                         }
@@ -3166,7 +3187,8 @@ class ArticleView extends ArticleViewModel {
                                                 analytics:
                                                     NavigatorAnalytics.fromUrl(
                                                   tag.permalink!,
-                                                ));
+                                                ), currentScreen: article.title ?? "", currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,);
                                           }
                                         : null,
                                     child: Container(
@@ -3274,6 +3296,9 @@ class ArticleView extends ArticleViewModel {
                                                 .posts.first.slug!,
                                             articleUrl: ""),
                                         onFinished: () {},
+                                        currentScreen: article.title ?? "",
+                                        currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                       );
                                     },
                                     child: Column(
@@ -3367,6 +3392,9 @@ class ArticleView extends ArticleViewModel {
                                                   .posts[index + 1].slug!,
                                               articleUrl: ""),
                                           onFinished: () {},
+                                          currentScreen: article.title ?? "",
+                                          currentScreenClass: articleUrl,
+                                                  currentScreenId: article.id,
                                         );
                                       },
                                       child: Row(

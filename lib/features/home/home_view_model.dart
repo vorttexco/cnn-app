@@ -88,6 +88,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
           inAppWebViewController?.goBack();
         },
         analytics: NavigatorAnalytics.fromUrl(newUrl),
+        currentScreen: Home.route
       );
 
       return;
@@ -101,6 +102,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
         Article.route,
         data: ArticleSettings(articleId: articleId, articleUrl: url),
         onFinished: () => inAppWebViewController?.goBack(),
+        currentScreen: Home.route
       );
     } else {
       NavigatorManager(context).to(
@@ -110,6 +112,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
           inAppWebViewController?.goBack();
         },
         analytics: NavigatorAnalytics.fromUrl(url),
+        currentScreen: Home.route
       );
     }
   }

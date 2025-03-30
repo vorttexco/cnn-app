@@ -27,7 +27,7 @@ class ProfileView extends ProfileViewModel {
           ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             onTap: () {
-              NavigatorManager(context).to(NotificationsSettings.route);
+              NavigatorManager(context).to(NotificationsSettings.route, currentScreen: Profile.route);
             },
             title: const CustomText(
               'Notificações',

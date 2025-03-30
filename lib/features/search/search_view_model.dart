@@ -43,6 +43,7 @@ abstract class SearchViewModel extends State<Search> {
         onFinished: () {
           controller.goBack();
         },
+        currentScreen: Search.route
       );
     } else {
       if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
@@ -51,6 +52,7 @@ abstract class SearchViewModel extends State<Search> {
           data: WebviewNavigatorModel(url: url, title: 'Voltar'),
           onFinished: () {},
           analytics: NavigatorAnalytics.fromUrl(url),
+          currentScreen: Search.route
         );
       }
     }

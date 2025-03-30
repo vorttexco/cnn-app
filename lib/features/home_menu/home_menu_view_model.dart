@@ -31,11 +31,11 @@ abstract class HomeMenuViewModel extends State<HomeMenu> {
 
   openMenu(CnnMenuModel menu) {
     if (menu.child!.isEmpty) {
-      NavigatorManager(context).to(SectionViewDetail.route, data: menu);
+      NavigatorManager(context).to(SectionViewDetail.route, data: menu, currentScreen: HomeMenu.route);
       return;
     }
 
     NavigatorManager(context)
-        .to(Submenu.route, data: menu, rootNavigator: false);
+        .to(Submenu.route, data: menu, rootNavigator: false, currentScreen: HomeMenu.route);
   }
 }

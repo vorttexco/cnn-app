@@ -22,6 +22,7 @@ abstract class BlogsViewModel extends State<Blogs> {
         controller.goBack();
       },
       analytics: NavigatorAnalytics.fromUrl(url),
+      currentScreen: Blogs.route
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:cnn_brasil_app/core/models/article_model.dart';
 import 'package:cnn_brasil_app/core/models/article_most_read_model.dart';
 import 'package:cnn_brasil_app/core/models/article_partners_model.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/index.dart';
@@ -24,6 +25,13 @@ abstract class ArticleViewModel extends State<Article> {
     super.initState();
 
     fetch();
+  }
+
+  @override
+  void dispose() async {
+    await logScreenFirebase();
+
+    super.dispose();
   }
 
   void fetch() async {
@@ -140,6 +148,22 @@ abstract class ArticleViewModel extends State<Article> {
         articleGallery = ArticleGalleryModel();
       }
 
+      var firebasePreviousScreen = await StorageManager().getString("firebase_previous_screen");
+      var firebasePreviousClass = await StorageManager().getString("firebase_previous_class");
+      var firebasePreviousId = await StorageManager().getString("firebase_previous_id");
+
+      await StorageManager().saveAnalyticsData(
+        articleTitle: article.title ?? '',
+        articleUrl: articleUrl,
+        articleId: article.id ?? '',
+        firebasePreviousScreen: firebasePreviousScreen,
+        firebasePreviousClass: firebasePreviousClass,
+        firebasePreviousId: firebasePreviousId,
+        pageAuthor: article.author?.list?.first.name ?? '',
+        pagePublicationDate: article.publishDate ?? '',
+        pageCategory: article.category?.name ?? '',
+      );
+
       setState(() {
         fetched = true;
       });
@@ -180,4 +204,39 @@ abstract class ArticleViewModel extends State<Article> {
     // final url = currentUrl.replaceAll('?hidemenu=true', '');
     // Share.share(url, subject: 'CNN Brasil');
   }
+
+  logScreenFirebase() async {
+     try {
+      Map<String, String> analyticsData = await StorageManager().getAnalyticsData(articleId: article.id ?? '');
+
+      int? savedTime = int.tryParse(analyticsData["engagement_time_msec"] ?? '');
+
+      int? differenceMs;
+
+      if (savedTime != null) {
+        differenceMs = DateTime.now().millisecondsSinceEpoch - savedTime;
+
+        differenceMs = (differenceMs ~/ 1000) * 1000;
+      }
+
+      FirebaseAnalytics.instance.logScreenView(
+        screenClass: articleUrl,
+        screenName: article.title,
+        parameters: {
+          'firebase_screen': analyticsData["firebase_screen"] ?? '',
+          'firebase_screen_class': analyticsData["firebase_screen_class"] ?? '',
+          'firebase_screen_id': analyticsData["firebase_screen_id"] ?? '',
+          'firebase_previous_screen': analyticsData["firebase_previous_screen"] ?? '',
+          'firebase_previous_class': analyticsData["firebase_previous_class"] ?? '',
+          'firebase_previous_id': analyticsData["firebase_previous_id"] ?? '',
+          'engagement_time_msec': differenceMs ?? '',
+          'page_author_1': analyticsData["page_author_1"] ?? '',
+          'page_publication_date': analyticsData["page_publication_date"] ?? '',
+          'page_category': analyticsData["page_category"] ?? '',
+        },
+      );
+    } on Exception {
+      //Could not call firebase
+    }
+  }  
 }
