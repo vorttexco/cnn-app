@@ -2,6 +2,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://nexus.hands.com.br/repository/maven-repository/" }
     }
 }
 
