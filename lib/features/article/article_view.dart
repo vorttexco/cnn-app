@@ -17,6 +17,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:html/dom.dart' as dom;
 
 import 'article_view_model.dart';
 
@@ -818,15 +819,18 @@ class ArticleView extends ArticleViewModel {
                       children: [
                         Stack(
                           children: [
-                            Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.black,
-                              ),
-                              child: Image.network(
-                                imageUrl,
-                                height: 241,
-                                width: MediaQuery.of(context).size.width,
-                                fit: BoxFit.contain,
+                            GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.black,
+                                ),
+                                child: Image.network(
+                                  imageUrl,
+                                  height: 241,
+                                  width: MediaQuery.of(context).size.width,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
                             Positioned(
@@ -1383,6 +1387,7 @@ class ArticleView extends ArticleViewModel {
                             ),
                             const SizedBox(height: AppConstants.KPADDING_16),
                             Divider(
+                              height: 1,
                               color: Theme.of(context)
                                   .colorScheme
                                   .tertiaryContainer,
@@ -1527,11 +1532,11 @@ class ArticleView extends ArticleViewModel {
                             const SizedBox(height: AppConstants.KPADDING_16),
                             Text(
                               "${formatDateTime(article.publishDate!)}${article.modifiedDate != null && article.modifiedDate!.isNotEmpty && formatDateTime(article.modifiedDate!) != formatDateTime(article.publishDate!) ? " | Atualizado ${formatDateTime(article.modifiedDate!)}" : ""}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Color(0XFF8C8C8C),
                                 fontFamily: 'CNN Sans Display',
-                                fontFamilyFallback: const [
+                                fontFamilyFallback: [
                                   'HelveticaNeue',
                                   'Helvetica',
                                   'Arial',
@@ -1870,18 +1875,18 @@ class ArticleView extends ArticleViewModel {
                             if (article.featuredMedia?.image != null &&
                                 articleGallery.images == null &&
                                 article.featuredMedia?.video == null) ...[
-                              Stack(
-                                children: [
-                                  Image.network(
-                                      article.featuredMedia!.image!.url!),
-                                  Positioned(
-                                    top: 16,
-                                    right: 16,
-                                    child: GestureDetector(
-                                      onTap: () => _showModal(
+                              GestureDetector(
+                                onTap: () => _showModal(
                                           context,
                                           article.featuredMedia!.image!.url!,
                                           null),
+                                child: Stack(
+                                  children: [
+                                    Image.network(
+                                        article.featuredMedia!.image!.url!),
+                                    Positioned(
+                                      top: 16,
+                                      right: 16,
                                       child: Container(
                                         width: 24,
                                         height: 24,
@@ -1897,8 +1902,8 @@ class ArticleView extends ArticleViewModel {
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                               const SizedBox(height: AppConstants.KPADDING_16),
                               if (article.featuredMedia!.image!.caption != null && article.featuredMedia!.image!.caption != "") ...[
@@ -2115,33 +2120,37 @@ class ArticleView extends ArticleViewModel {
 
                                   return Column(
                                     children: [
-                                      Stack(
-                                        children: [
-                                          Image.network(src!),
-                                          Positioned(
-                                            top: 16,
-                                            right: 16,
-                                            child: GestureDetector(
-                                              onTap: () => _showModal(
+                                      GestureDetector(
+                                        onTap: () => _showModal(
                                                   context, src, figcaptionText),
-                                              child: Container(
-                                                width: 24,
-                                                height: 24,
-                                                decoration: BoxDecoration(
-                                                  color: Theme.of(context)
-                                                      .primaryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                ),
-                                                child: SvgPicture.network(
-                                                  'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
-                                                  placeholderBuilder: (context) =>
-                                                      const CircularProgressIndicator(),
+                                        child: Stack(
+                                          children: [
+                                            Image.network(src!),
+                                            Positioned(
+                                              top: 16,
+                                              right: 16,
+                                              child: GestureDetector(
+                                                onTap: () => _showModal(
+                                                    context, src, figcaptionText),
+                                                child: Container(
+                                                  width: 24,
+                                                  height: 24,
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(2),
+                                                  ),
+                                                  child: SvgPicture.network(
+                                                    'https://www.cnnbrasil.com.br/wp-content/plugins/shortcode-gallery/assets/img/ico-full.svg',
+                                                    placeholderBuilder: (context) =>
+                                                        const CircularProgressIndicator(),
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                       const SizedBox(
                                           height: AppConstants.KPADDING_8),
@@ -2793,11 +2802,11 @@ class ArticleView extends ArticleViewModel {
                                         descriptionElement != null) {
                                       var src = imgElement.attributes['src'];
 
-                                      descriptionElement
-                                          .querySelectorAll('span')
-                                          .forEach((span) {
-                                        span.remove();
-                                      });
+                                      // descriptionElement
+                                      //     .querySelectorAll('span')
+                                      //     .forEach((span) {
+                                      //   span.remove();
+                                      // });
 
                                       var caption = descriptionElement.text
                                           .replaceAll("•", "")
@@ -3131,6 +3140,86 @@ class ArticleView extends ArticleViewModel {
                                       ],
                                     );
                                   });
+                                }
+
+                                if (element.localName == 'ul' && (element.className ?? '').isEmpty) {
+                                  var nextElement = element.nextElementSibling;
+                                  bool isNextH2 = nextElement?.localName == 'h2';
+
+                                  return Padding(
+                                    padding: EdgeInsets.only(top: 12.0, bottom: isNextH2 ? 24.0 : 12.0, left: 12.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: element.children.map((li) {
+                                        if (li.localName == 'li') {
+                                          bool isLast = element.children.last == li;
+
+                                          return Padding(
+                                            padding: isLast ? EdgeInsets.zero : const EdgeInsets.only(bottom: 16.0),
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  width: 10,
+                                                  height: 10,
+                                                  margin: const EdgeInsets.only(right: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context).primaryColor,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      style: TextStyle(
+                                                        fontFamily: 'CNN Sans Display',
+                                                        fontFamilyFallback: const [
+                                                          'HelveticaNeue',
+                                                          'Helvetica',
+                                                          'Arial',
+                                                          'Utkal',
+                                                          'sans-serif'
+                                                        ],
+                                                        fontSize: 18,
+                                                        fontWeight: FontWeight.w400,
+                                                        color: Theme.of(context).colorScheme.primary,
+                                                        height: 22/18,
+                                                      ),
+                                                      children: li.nodes.map((node) {
+                                                        if (node is dom.Element && node.localName == 'strong') {
+                                                          return TextSpan(
+                                                            text: node.text,
+                                                            style: TextStyle(
+                                                              fontFamily: 'CNN Sans Display',
+                                                              fontFamilyFallback: const [
+                                                                'HelveticaNeue',
+                                                                'Helvetica',
+                                                                'Arial',
+                                                                'Utkal',
+                                                                'sans-serif'
+                                                              ],
+                                                              fontSize: 18,
+                                                              fontWeight: FontWeight.w700,
+                                                              color: Theme.of(context).colorScheme.primary,
+                                                              height: 22/18,
+                                                            ),
+                                                          );
+                                                        } else {
+                                                          return TextSpan(text: node.text);
+                                                        }
+                                                      }).toList(),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+
+                                        return const SizedBox.shrink();
+                                      }).toList(),
+                                    ),
+                                  );
                                 }
 
                                 return null;

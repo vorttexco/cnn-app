@@ -67,6 +67,24 @@ abstract class ArticleViewModel extends State<Article> {
           article = ArticleModel.fromJson(articleResponse.data);
           articleType = "forum";
         }
+      } else if(widget.model.articleUrl.contains("/viagemegastronomia")) {
+        final articleResponse = await dio.get(
+          'https://www.cnnbrasil.com.br/viagemegastronomia/wp-json/content/v1/posts/$articleId',
+        );
+
+        if (articleResponse.data is Map<String, dynamic>) {
+          article = ArticleModel.fromJson(articleResponse.data);
+          articleType = "default";
+        }
+      } else if(widget.model.articleUrl.contains("/esportes/apostas/")) {
+        final articleResponse = await dio.get(
+          'https://www.cnnbrasil.com.br/esportes/apostas/wp-json/content/v1/posts/$articleId',
+        );
+
+        if (articleResponse.data is Map<String, dynamic>) {
+          article = ArticleModel.fromJson(articleResponse.data);
+          articleType = "default";
+        }
       } else {
         final articleResponse = await dio.get(
           'https://www.cnnbrasil.com.br/wp-json/content/v1/posts/$articleId',
