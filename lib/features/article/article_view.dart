@@ -991,6 +991,87 @@ class ArticleView extends ArticleViewModel {
     );
   }
 
+  void _showInstagramFullScreen(BuildContext context, String intagramUrlContent, double? pageHeight) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.transparent,
+      isDismissible: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
+      builder: (context) {
+        return Column(
+          children: [
+            IgnorePointer(
+              ignoring: false,
+              child: AppBarwebView(
+                onFinished: () {
+                  setState(() {});
+                },
+                title: 'Voltar',
+                onIconPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+                onShare: onShare,
+              ),
+            ),
+            StatefulBuilder(
+              builder: (context, setState) {
+                return Expanded(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xE6282828),
+                      ),
+                      height: pageHeight != null ? (pageHeight + 50) : 10,
+                      child: InAppWebView(
+                        initialUrlRequest: URLRequest(
+                          url: WebUri(intagramUrlContent)
+                        ),
+                        initialOptions: InAppWebViewGroupOptions(
+                          crossPlatform: InAppWebViewOptions(
+                            javaScriptEnabled: true,
+                            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                            useShouldOverrideUrlLoading: true
+                          ),
+                        ),
+                        shouldOverrideUrlLoading: (controller, navigationAction) async {
+                          final url = navigationAction.request.url.toString();
+
+                          if (url == intagramUrlContent) {
+                            return NavigationActionPolicy.ALLOW;
+                          }
+
+                          _openInBrowser(url);
+                          
+                          return NavigationActionPolicy.CANCEL;
+                        },
+                        onLoadStop: (controller, url) async {
+                          await controller.evaluateJavascript(source: """
+                              (function() {
+                                  const meta = document.createElement("meta");
+                                  meta.name = "viewport";
+                                  meta.content = "width=device-width, initial-scale=1";
+                                  document.head.appendChild(meta);
+                              })();
+                          """);
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> launchProfileInExternalBrowser(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -1533,7 +1614,7 @@ class ArticleView extends ArticleViewModel {
                             Text(
                               "${formatDateTime(article.publishDate!)}${article.modifiedDate != null && article.modifiedDate!.isNotEmpty && formatDateTime(article.modifiedDate!) != formatDateTime(article.publishDate!) ? " | Atualizado ${formatDateTime(article.modifiedDate!)}" : ""}",
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 13,
                                 color: Color(0XFF8C8C8C),
                                 fontFamily: 'CNN Sans Display',
                                 fontFamilyFallback: [
@@ -2003,7 +2084,7 @@ class ArticleView extends ArticleViewModel {
                                   'Utkal',
                                   'sans-serif'
                                 ],
-                                fontSize: 18,
+                                fontSize: 19,
                                 fontWeight: FontWeight.w400,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
@@ -2270,53 +2351,35 @@ class ArticleView extends ArticleViewModel {
                                         "https://www.instagram.com/p/${match.group(1)}/embed/captioned/?cr=1&v=14&wp=54";
                                   }
 
-                                  return Container(
+                                  final key = GlobalKey<_DynamicInstagramWebViewState>();
+
+                                  final mapKey = element.id + element.className;
+
+                                  return SizedBox(
                                     width: double.infinity,
-                                    padding: const EdgeInsets.all(0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(3),
-                                      border: Border.all(
-                                          color: const Color(0xFFDBDBDB)),
-                                      boxShadow: const [],
-                                    ),
-                                    child: SizedBox(
-                                      height: 975,
-                                      child: InAppWebView(
-                                        initialUrlRequest: URLRequest(
-                                            url: WebUri(finalInstagramUrl),
-                                            headers: {
-                                              'User-Agent':
-                                                  'Mozilla/5.0 (Linux; Android 10; Pixel 4 XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36',
-                                            }),
-                                        initialSettings: InAppWebViewSettings(
-                                          useWideViewPort: true,
-                                          supportZoom: false,
-                                          mediaPlaybackRequiresUserGesture:
-                                              false,
-                                          javaScriptEnabled: true,
+                                    height: customHeights[mapKey] ?? 100,
+                                    child: Stack(
+                                      children: [
+                                        DynamicInstagramWebView(
+                                          key: key,
+                                          visualisationUrl: finalInstagramUrl,
+                                          onHeightUpdate: (newHeight) {
+                                            setState(() {
+                                              customHeights[mapKey] = newHeight;
+                                            });
+                                          },
+                                          webViewHeight: customHeights[mapKey],
                                         ),
-                                        onLoadStop: (controller, url) {
-                                          setState(() {
-                                            onLoadInstragramEnded = true;
-                                          });
-                                        },
-                                        shouldOverrideUrlLoading: (controller,
-                                            navigationAction) async {
-                                          final uri =
-                                              navigationAction.request.url!;
-
-                                          if (uri.toString().startsWith(
-                                                  'https://www.instagram.com') &&
-                                              onLoadInstragramEnded) {
-                                            launchUrl(uri);
-                                            return NavigationActionPolicy
-                                                .CANCEL;
-                                          }
-
-                                          return NavigationActionPolicy.ALLOW;
-                                        },
-                                      ),
+                                        InkWell(
+                                          onTap: () {
+                                            _showInstagramFullScreen(context, finalInstagramUrl, customHeights[mapKey]);
+                                          },
+                                          child: const SizedBox(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   );
                                 }
@@ -2400,8 +2463,8 @@ class ArticleView extends ArticleViewModel {
                                               child: Text(
                                                 title.trim(),
                                                 style: const TextStyle(
-                                                  fontSize: 14,
-                                                  height: 20 / 14,
+                                                  fontSize: 15,
+                                                  height: 20 / 15,
                                                   fontWeight: FontWeight.w700,
                                                   fontFamily:
                                                       'CNN Sans Display',
@@ -2434,7 +2497,7 @@ class ArticleView extends ArticleViewModel {
                                           Text(
                                             element.text,
                                             style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 19,
                                               fontWeight: FontWeight.w700,
                                               color: Theme.of(context)
                                                   .primaryColor,
@@ -2759,25 +2822,6 @@ class ArticleView extends ArticleViewModel {
                                       ],
                                     ),
                                   );
-
-                                  // return Container(
-                                  //   width: double.infinity,
-                                  //   constraints:
-                                  //       const BoxConstraints(maxHeight: 1500),
-                                  //   child: InAppWebView(
-                                  //     initialData: InAppWebViewInitialData(
-                                  //         data: htmlContent),
-                                  //     initialOptions: InAppWebViewGroupOptions(
-                                  //       crossPlatform: InAppWebViewOptions(
-                                  //           javaScriptEnabled: true,
-                                  //           mediaPlaybackRequiresUserGesture:
-                                  //               false,
-                                  //           userAgent:
-                                  //               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-                                  //           supportZoom: true),
-                                  //     ),
-                                  //   ),
-                                  // );
                                 }
 
                                 if (element.classes
@@ -3180,7 +3224,7 @@ class ArticleView extends ArticleViewModel {
                                                           'Utkal',
                                                           'sans-serif'
                                                         ],
-                                                        fontSize: 18,
+                                                        fontSize: 19,
                                                         fontWeight: FontWeight.w400,
                                                         color: Theme.of(context).colorScheme.primary,
                                                         height: 22/18,
@@ -3198,7 +3242,7 @@ class ArticleView extends ArticleViewModel {
                                                                 'Utkal',
                                                                 'sans-serif'
                                                               ],
-                                                              fontSize: 18,
+                                                              fontSize: 19,
                                                               fontWeight: FontWeight.w700,
                                                               color: Theme.of(context).colorScheme.primary,
                                                               height: 22/18,
@@ -3231,7 +3275,7 @@ class ArticleView extends ArticleViewModel {
                               Text(
                                 'Tópicos',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 19,
                                   fontWeight: FontWeight.w700,
                                   color: Theme.of(context).primaryColor,
                                   fontFamily: 'CNN Sans Display',
@@ -3344,7 +3388,7 @@ class ArticleView extends ArticleViewModel {
                                         ? 'Mais Lidas de ${article.category!.hierarchy!.first[0].toUpperCase()}${article.category!.hierarchy!.first.substring(1)}'
                                         : 'Mais Lidas',
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 19,
                                       height: 32 / 18,
                                       fontWeight: FontWeight.w700,
                                       color: Theme.of(context).primaryColor,
@@ -3579,7 +3623,7 @@ class ArticleView extends ArticleViewModel {
                               Text(
                                 'Conteúdo de parceiros',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 19,
                                   fontWeight: FontWeight.w700,
                                   color: Theme.of(context).primaryColor,
                                 ),
@@ -3653,7 +3697,7 @@ class ArticleView extends ArticleViewModel {
                                             Text(
                                               'Webstories ${article.category!.hierarchy!.first[0].toUpperCase()}${article.category!.hierarchy!.first.substring(1)}',
                                               style: TextStyle(
-                                                fontSize: 18,
+                                                fontSize: 19,
                                                 fontWeight: FontWeight.w700,
                                                 color: Theme.of(context)
                                                     .primaryColor,
@@ -3880,6 +3924,76 @@ class _DynamicTwitterWebViewState extends State<DynamicTwitterWebView> {
           widget.onIframeLinkUpdate(iframeSrc);
         }
       },
+    );
+  }
+}
+
+class DynamicInstagramWebView extends StatefulWidget {
+  final String visualisationUrl;
+  final Function(double) onHeightUpdate;
+  final double? webViewHeight;
+
+  const DynamicInstagramWebView({
+    super.key,
+    required this.visualisationUrl,
+    required this.onHeightUpdate,
+    this.webViewHeight,
+  });
+
+  @override
+  State<DynamicInstagramWebView> createState() => _DynamicInstagramWebViewState();
+}
+
+class _DynamicInstagramWebViewState extends State<DynamicInstagramWebView> {
+  double get _webViewHeight => widget.webViewHeight ?? 100;
+
+  double newDynamicHeight = 100;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(3),
+        border: Border.all(
+            color: const Color(0xFFDBDBDB)),
+        boxShadow: const [],
+      ),
+      child: InAppWebView(
+        initialUrlRequest: URLRequest(
+          url: WebUri(widget.visualisationUrl)
+        ),
+        initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(
+            javaScriptEnabled: true,
+            mediaPlaybackRequiresUserGesture: false,
+            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            supportZoom: true
+          ),
+        ),
+        onLoadStop: (controller, url) async {
+          await controller.evaluateJavascript(source: """
+              (function() {
+                  const meta = document.createElement("meta");
+                  meta.name = "viewport";
+                  meta.content = "width=device-width, initial-scale=1";
+                  document.head.appendChild(meta);
+              })();
+          """);
+      
+          final heightStr = await controller.evaluateJavascript(
+              source: "document.documentElement.scrollHeight.toString();");
+      
+          if (heightStr != null) {
+            double newHeight = double.tryParse(heightStr) ?? _webViewHeight;
+            if (newHeight != _webViewHeight) {
+              widget.onHeightUpdate(newHeight);
+            }
+          }
+        },
+      ),
     );
   }
 }
