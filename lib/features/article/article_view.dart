@@ -901,6 +901,12 @@ class ArticleView extends ArticleViewModel {
   }
 
   void _showTwitterFullScreen(BuildContext context, String twitterContent, double? pageHeight) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    if (pageHeight != null && pageHeight < screenHeight) {
+      pageHeight = screenHeight;
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -1785,39 +1791,67 @@ class ArticleView extends ArticleViewModel {
                                               ),
                                             ),
                                             alignment: Alignment.bottomLeft,
-                                            child: SizedBox(
-                                              height: 74,
-                                              child: Scrollbar(
-                                                controller: ScrollController(),
-                                                thumbVisibility: true,
-                                                trackVisibility: true,
-                                                thickness: 6,
-                                                radius:
-                                                    const Radius.circular(8),
-                                                scrollbarOrientation:
-                                                    ScrollbarOrientation.right,
-                                                child: SingleChildScrollView(
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 16, top: 2),
-                                                    child: RichText(
-                                                      text: TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text: articleGallery
+                                            child: RawScrollbar(
+                                              thickness: 6,
+                                              thumbColor: Theme.of(context)
+                                                      .primaryColor,
+                                              thumbVisibility: true,
+                                              radius: const Radius.circular(8),
+                                              trackColor: Colors.white,
+                                              trackVisibility: true,
+                                              trackRadius: const Radius.circular(8), 
+                                              child: SingleChildScrollView(
+                                                scrollDirection:
+                                                    Axis.vertical,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 16, top: 2),
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: articleGallery
+                                                                  .images![
+                                                                      currentIndex]
+                                                                  .caption
+                                                                  ?.stripHtml() ??
+                                                              '',
+                                                          style:
+                                                              const TextStyle(
+                                                            color:
+                                                                Colors.white,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w700,
+                                                            fontFamily:
+                                                                'CNN Sans Display',
+                                                            fontFamilyFallback: [
+                                                              'HelveticaNeue',
+                                                              'Helvetica',
+                                                              'Arial',
+                                                              'Utkal',
+                                                              'sans-serif'
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        if (articleGallery
                                                                     .images![
                                                                         currentIndex]
-                                                                    .caption
-                                                                    ?.stripHtml() ??
-                                                                '',
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontSize: 14,
+                                                                    .credits !=
+                                                                null &&
+                                                            articleGallery
+                                                                .images![
+                                                                    currentIndex]
+                                                                .credits!
+                                                                .isNotEmpty) ...[
+                                                          const TextSpan(
+                                                            text: ' • ',
+                                                            style: TextStyle(
+                                                              color: Colors
+                                                                  .white,
+                                                              fontSize: 16,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w700,
@@ -1832,63 +1866,32 @@ class ArticleView extends ArticleViewModel {
                                                               ],
                                                             ),
                                                           ),
-                                                          if (articleGallery
-                                                                      .images![
-                                                                          currentIndex]
-                                                                      .credits !=
-                                                                  null &&
-                                                              articleGallery
-                                                                  .images![
-                                                                      currentIndex]
-                                                                  .credits!
-                                                                  .isNotEmpty) ...[
-                                                            const TextSpan(
-                                                              text: ' • ',
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontFamily:
-                                                                    'CNN Sans Display',
-                                                                fontFamilyFallback: [
-                                                                  'HelveticaNeue',
-                                                                  'Helvetica',
-                                                                  'Arial',
-                                                                  'Utkal',
-                                                                  'sans-serif'
-                                                                ],
-                                                              ),
+                                                          TextSpan(
+                                                            text: articleGallery
+                                                                .images![
+                                                                    currentIndex]
+                                                                .credits!,
+                                                            style:
+                                                                const TextStyle(
+                                                              color: Colors
+                                                                  .white,
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontFamily:
+                                                                  'CNN Sans Display',
+                                                              fontFamilyFallback: [
+                                                                'HelveticaNeue',
+                                                                'Helvetica',
+                                                                'Arial',
+                                                                'Utkal',
+                                                                'sans-serif'
+                                                              ],
                                                             ),
-                                                            TextSpan(
-                                                              text: articleGallery
-                                                                  .images![
-                                                                      currentIndex]
-                                                                  .credits!,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontFamily:
-                                                                    'CNN Sans Display',
-                                                                fontFamilyFallback: [
-                                                                  'HelveticaNeue',
-                                                                  'Helvetica',
-                                                                  'Arial',
-                                                                  'Utkal',
-                                                                  'sans-serif'
-                                                                ],
-                                                              ),
-                                                            )
-                                                          ]
-                                                        ],
-                                                      ),
+                                                          )
+                                                        ]
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
