@@ -225,76 +225,88 @@ class ArticleView extends ArticleViewModel {
                             ),
                           ),
                           SizedBox(
-                            height: 74,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 16, left: 24, right: 24),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: articleGallery
-                                                  .images![currentIndex].caption
-                                                  ?.stripHtml() ??
-                                              '',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w700,
-                                            fontFamily: 'CNN Sans Display',
-                                            fontFamilyFallback: [
-                                              'HelveticaNeue',
-                                              'Helvetica',
-                                              'Arial',
-                                              'Utkal',
-                                              'sans-serif'
+                            height: 104,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: RawScrollbar(
+                                thickness: 6,
+                                thumbColor: Theme.of(context)
+                                        .primaryColor,
+                                thumbVisibility: true,
+                                radius: const Radius.circular(8),
+                                trackColor: Colors.white,
+                                trackVisibility: true,
+                                trackRadius: const Radius.circular(8), 
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 24, right: 24),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: articleGallery
+                                                      .images![currentIndex].caption
+                                                      ?.stripHtml() ??
+                                                  '',
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                fontFamily: 'CNN Sans Display',
+                                                fontFamilyFallback: [
+                                                  'HelveticaNeue',
+                                                  'Helvetica',
+                                                  'Arial',
+                                                  'Utkal',
+                                                  'sans-serif'
+                                                ],
+                                              ),
+                                            ),
+                                            if (articleGallery.images![currentIndex]
+                                                        .credits !=
+                                                    null &&
+                                                articleGallery.images![currentIndex]
+                                                    .credits!.isNotEmpty) ...[
+                                              const TextSpan(
+                                                text: ' • ',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontFamily: 'CNN Sans Display',
+                                                  fontFamilyFallback: [
+                                                    'HelveticaNeue',
+                                                    'Helvetica',
+                                                    'Arial',
+                                                    'Utkal',
+                                                    'sans-serif'
+                                                  ],
+                                                ),
+                                              ),
+                                              TextSpan(
+                                                text: articleGallery
+                                                    .images![currentIndex].credits!,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily: 'CNN Sans Display',
+                                                  fontFamilyFallback: [
+                                                    'HelveticaNeue',
+                                                    'Helvetica',
+                                                    'Arial',
+                                                    'Utkal',
+                                                    'sans-serif'
+                                                  ],
+                                                ),
+                                              ),
                                             ],
-                                          ),
+                                          ],
                                         ),
-                                        if (articleGallery.images![currentIndex]
-                                                    .credits !=
-                                                null &&
-                                            articleGallery.images![currentIndex]
-                                                .credits!.isNotEmpty) ...[
-                                          const TextSpan(
-                                            text: ' • ',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700,
-                                              fontFamily: 'CNN Sans Display',
-                                              fontFamilyFallback: [
-                                                'HelveticaNeue',
-                                                'Helvetica',
-                                                'Arial',
-                                                'Utkal',
-                                                'sans-serif'
-                                              ],
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: articleGallery
-                                                .images![currentIndex].credits!,
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: 'CNN Sans Display',
-                                              fontFamilyFallback: [
-                                                'HelveticaNeue',
-                                                'Helvetica',
-                                                'Arial',
-                                                'Utkal',
-                                                'sans-serif'
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -574,78 +586,91 @@ class ArticleView extends ArticleViewModel {
                             ),
                           ),
                           SizedBox(
-                            height: 74,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 16,
-                                  left: 24,
-                                  right: 24,
-                                ),
-                                child: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: htmlImages[currentEmbedIndex]
-                                                .caption
-                                                ?.stripHtml() ??
-                                            '',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                          fontFamily: 'CNN Sans Display',
-                                          fontFamilyFallback: [
-                                            'HelveticaNeue',
-                                            'Helvetica',
-                                            'Arial',
-                                            'Utkal',
-                                            'sans-serif'
+                            height: 104,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: RawScrollbar(
+                                thickness: 6,
+                                thumbColor: Theme.of(context)
+                                        .primaryColor,
+                                thumbVisibility: true,
+                                radius: const Radius.circular(8),
+                                trackColor: Colors.white,
+                                trackVisibility: true,
+                                trackRadius: const Radius.circular(8), 
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 16,
+                                      left: 24,
+                                      right: 24,
+                                    ),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: htmlImages[currentEmbedIndex]
+                                                    .caption
+                                                    ?.stripHtml() ??
+                                                '',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: 'CNN Sans Display',
+                                              fontFamilyFallback: [
+                                                'HelveticaNeue',
+                                                'Helvetica',
+                                                'Arial',
+                                                'Utkal',
+                                                'sans-serif'
+                                              ],
+                                            ),
+                                          ),
+                                          if (htmlImages[currentEmbedIndex]
+                                                      .credits !=
+                                                  null &&
+                                              htmlImages[currentEmbedIndex]
+                                                  .credits!
+                                                  .isNotEmpty) ...[
+                                            const TextSpan(
+                                              text: ' • ',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700,
+                                                fontFamily: 'CNN Sans Display',
+                                                fontFamilyFallback: [
+                                                  'HelveticaNeue',
+                                                  'Helvetica',
+                                                  'Arial',
+                                                  'Utkal',
+                                                  'sans-serif'
+                                                ],
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: htmlImages[currentEmbedIndex]
+                                                  .credits!,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: 'CNN Sans Display',
+                                                fontFamilyFallback: [
+                                                  'HelveticaNeue',
+                                                  'Helvetica',
+                                                  'Arial',
+                                                  'Utkal',
+                                                  'sans-serif'
+                                                ],
+                                              ),
+                                            ),
                                           ],
-                                        ),
+                                        ],
                                       ),
-                                      if (htmlImages[currentEmbedIndex]
-                                                  .credits !=
-                                              null &&
-                                          htmlImages[currentEmbedIndex]
-                                              .credits!
-                                              .isNotEmpty) ...[
-                                        const TextSpan(
-                                          text: ' • ',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700,
-                                            fontFamily: 'CNN Sans Display',
-                                            fontFamilyFallback: [
-                                              'HelveticaNeue',
-                                              'Helvetica',
-                                              'Arial',
-                                              'Utkal',
-                                              'sans-serif'
-                                            ],
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: htmlImages[currentEmbedIndex]
-                                              .credits!,
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: 'CNN Sans Display',
-                                            fontFamilyFallback: [
-                                              'HelveticaNeue',
-                                              'Helvetica',
-                                              'Arial',
-                                              'Utkal',
-                                              'sans-serif'
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1791,67 +1816,40 @@ class ArticleView extends ArticleViewModel {
                                               ),
                                             ),
                                             alignment: Alignment.bottomLeft,
-                                            child: RawScrollbar(
-                                              thickness: 6,
-                                              thumbColor: Theme.of(context)
-                                                      .primaryColor,
-                                              thumbVisibility: true,
-                                              radius: const Radius.circular(8),
-                                              trackColor: Colors.white,
-                                              trackVisibility: true,
-                                              trackRadius: const Radius.circular(8), 
-                                              child: SingleChildScrollView(
-                                                scrollDirection:
-                                                    Axis.vertical,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 16, top: 2),
-                                                  child: RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text: articleGallery
-                                                                  .images![
-                                                                      currentIndex]
-                                                                  .caption
-                                                                  ?.stripHtml() ??
-                                                              '',
-                                                          style:
-                                                              const TextStyle(
-                                                            color:
-                                                                Colors.white,
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w700,
-                                                            fontFamily:
-                                                                'CNN Sans Display',
-                                                            fontFamilyFallback: [
-                                                              'HelveticaNeue',
-                                                              'Helvetica',
-                                                              'Arial',
-                                                              'Utkal',
-                                                              'sans-serif'
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        if (articleGallery
+                                            child: SizedBox(
+                                              height: 74,
+                                              child: RawScrollbar(
+                                                thickness: 6,
+                                                minThumbLength: 30,
+                                                thumbColor: Theme.of(context)
+                                                        .primaryColor,
+                                                thumbVisibility: true,
+                                                radius: const Radius.circular(8),
+                                                trackColor: Colors.white,
+                                                trackVisibility: true,
+                                                trackRadius: const Radius.circular(8), 
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.vertical,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 16, top: 2),
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: articleGallery
                                                                     .images![
                                                                         currentIndex]
-                                                                    .credits !=
-                                                                null &&
-                                                            articleGallery
-                                                                .images![
-                                                                    currentIndex]
-                                                                .credits!
-                                                                .isNotEmpty) ...[
-                                                          const TextSpan(
-                                                            text: ' • ',
-                                                            style: TextStyle(
-                                                              color: Colors
-                                                                  .white,
-                                                              fontSize: 16,
+                                                                    .caption
+                                                                    ?.stripHtml() ??
+                                                                '',
+                                                            style:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 14,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w700,
@@ -1866,32 +1864,63 @@ class ArticleView extends ArticleViewModel {
                                                               ],
                                                             ),
                                                           ),
-                                                          TextSpan(
-                                                            text: articleGallery
-                                                                .images![
-                                                                    currentIndex]
-                                                                .credits!,
-                                                            style:
-                                                                const TextStyle(
-                                                              color: Colors
-                                                                  .white,
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontFamily:
-                                                                  'CNN Sans Display',
-                                                              fontFamilyFallback: [
-                                                                'HelveticaNeue',
-                                                                'Helvetica',
-                                                                'Arial',
-                                                                'Utkal',
-                                                                'sans-serif'
-                                                              ],
+                                                          if (articleGallery
+                                                                      .images![
+                                                                          currentIndex]
+                                                                      .credits !=
+                                                                  null &&
+                                                              articleGallery
+                                                                  .images![
+                                                                      currentIndex]
+                                                                  .credits!
+                                                                  .isNotEmpty) ...[
+                                                            const TextSpan(
+                                                              text: ' • ',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontFamily:
+                                                                    'CNN Sans Display',
+                                                                fontFamilyFallback: [
+                                                                  'HelveticaNeue',
+                                                                  'Helvetica',
+                                                                  'Arial',
+                                                                  'Utkal',
+                                                                  'sans-serif'
+                                                                ],
+                                                              ),
                                                             ),
-                                                          )
-                                                        ]
-                                                      ],
+                                                            TextSpan(
+                                                              text: articleGallery
+                                                                  .images![
+                                                                      currentIndex]
+                                                                  .credits!,
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontFamily:
+                                                                    'CNN Sans Display',
+                                                                fontFamilyFallback: [
+                                                                  'HelveticaNeue',
+                                                                  'Helvetica',
+                                                                  'Arial',
+                                                                  'Utkal',
+                                                                  'sans-serif'
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ]
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -3008,19 +3037,16 @@ class ArticleView extends ArticleViewModel {
                                                   alignment:
                                                       Alignment.bottomLeft,
                                                   child: SizedBox(
-                                                    height: 64,
-                                                    child: Scrollbar(
-                                                      controller:
-                                                          ScrollController(),
-                                                      thumbVisibility: true,
-                                                      trackVisibility: true,
+                                                    height: 54,
+                                                    child: RawScrollbar(
                                                       thickness: 6,
-                                                      radius:
-                                                          const Radius.circular(
-                                                              8),
-                                                      scrollbarOrientation:
-                                                          ScrollbarOrientation
-                                                              .right,
+                                                      thumbColor: Theme.of(context)
+                                                              .primaryColor,
+                                                      thumbVisibility: true,
+                                                      radius: const Radius.circular(8),
+                                                      trackColor: Colors.white,
+                                                      trackVisibility: true,
+                                                      trackRadius: const Radius.circular(8), 
                                                       child:
                                                           SingleChildScrollView(
                                                         scrollDirection:
