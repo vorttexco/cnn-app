@@ -6,6 +6,7 @@ import 'package:cnn_brasil_app/core/models/article_partners_model.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../core/index.dart';
 import 'article.dart';
@@ -218,9 +219,9 @@ abstract class ArticleViewModel extends State<Article> {
     NavigatorManager(context).back();
   }
 
-  onShare() {
-    // final url = currentUrl.replaceAll('?hidemenu=true', '');
-    // Share.share(url, subject: 'CNN Brasil');
+  void onShare() {
+    final url = articleUrl.replaceAll('?hidemenu=true', '');
+    Share.share(url, subject: 'CNN Brasil');
   }
 
   logScreenFirebase() async {
