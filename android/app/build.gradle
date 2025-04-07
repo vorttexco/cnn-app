@@ -76,6 +76,10 @@ android {
     }
 }
 
+dependencies {
+    implementation "br.com.hands.mdm.libs.android:mdm-notification:3.6.1"
+}
+
 flutter {
     source '../..'
 }

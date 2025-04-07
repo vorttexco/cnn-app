@@ -40,6 +40,9 @@ class LiveRepository implements Repository<LiveStreamModel> {
     final response = await client.get(
       BaseRequest(path: ApiLiveStream.onlive),
     );
+
+    if (response.data == null) return null;
+
     return LiveOnModel.fromJson(response.data);
   }
 

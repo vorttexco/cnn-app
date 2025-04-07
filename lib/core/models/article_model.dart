@@ -106,7 +106,8 @@ class FeaturedMedia {
 
   FeaturedMedia.fromJson(Map<String, dynamic> json) {
     image = json['image'] != null ? ArticleImage.fromJson(json['image']) : null;
-    gallery = json['gallery'] != null ? GalleryData.fromJson(json['gallery']) : null;
+    gallery =
+        json['gallery'] != null ? GalleryData.fromJson(json['gallery']) : null;
     video = json['video'] != null ? VideoData.fromJson(json['video']) : null;
   }
 
@@ -120,7 +121,7 @@ class FeaturedMedia {
     }
     if (video != null) {
       data['video'] = video!.toJson();
-    }    
+    }
     return data;
   }
 }
@@ -130,11 +131,7 @@ class VideoData {
   String? type;
   String? permalink;
 
-  VideoData({
-    this.id,
-    this.type,
-    this.permalink
-  });
+  VideoData({this.id, this.type, this.permalink});
 
   VideoData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -154,9 +151,7 @@ class VideoData {
 class GalleryData {
   String? id;
 
-  GalleryData({
-    this.id
-  });
+  GalleryData({this.id});
 
   GalleryData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -362,12 +357,14 @@ class Category {
 
 class Author {
   String? region;
+  String? rendered;
   List<ArticleList>? list;
 
   Author({this.region, this.list});
 
   Author.fromJson(Map<String, dynamic> json) {
     region = json['region'];
+    rendered = json['rendered'];
     if (json['list'] != null) {
       list = <ArticleList>[];
       json['list'].forEach((v) {
@@ -379,6 +376,7 @@ class Author {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['region'] = region;
+    data['rendered'] = rendered;
     if (list != null) {
       data['list'] = list!.map((v) => v.toJson()).toList();
     }
@@ -393,8 +391,11 @@ class ArticleList {
   String? origin;
   String? position;
   String? bio;
+  String? blogPicture;
   String? picture;
+  String? permalink;
   Social? social;
+  Pictures? pictures;
   Type? type;
 
   ArticleList(
@@ -405,7 +406,9 @@ class ArticleList {
       this.position,
       this.bio,
       this.picture,
+      this.permalink,
       this.social,
+      this.pictures,
       this.type});
 
   ArticleList.fromJson(Map<String, dynamic> json) {
@@ -416,7 +419,10 @@ class ArticleList {
     position = json['position'];
     bio = json['bio'];
     picture = json['picture'];
+    blogPicture = json['blog_picture'];
+    permalink = json['permalink'];
     social = json['social'] != null ? Social.fromJson(json['social']) : null;
+    pictures = json['pictures'] != null ? Pictures.fromJson(json['pictures']) : null;
     type = json['type'] != null ? Type.fromJson(json['type']) : null;
   }
 
@@ -428,7 +434,9 @@ class ArticleList {
     data['origin'] = origin;
     data['position'] = position;
     data['bio'] = bio;
+    data['blog_picture'] = blogPicture;
     data['picture'] = picture;
+    data['permalink'] = permalink;
     if (social != null) {
       data['social'] = social!.toJson();
     }
@@ -517,6 +525,29 @@ class Content {
     data['type'] = type;
     data['content'] = content;
     data['encoded'] = encoded;
+    return data;
+  }
+}
+
+class Pictures {
+  String? blog;
+  String? columns;
+
+  Pictures({
+    this.blog, 
+    this.columns
+  });
+
+  Pictures.fromJson(Map<String, dynamic> json) {
+    blog = json['blog'];
+    columns = json['columns'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['blog'] = blog;
+    data['columns'] = columns;
+
     return data;
   }
 }

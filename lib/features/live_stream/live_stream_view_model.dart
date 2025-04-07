@@ -1,9 +1,12 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:cnn_brasil_app/core/extensions/uri_extension.dart';
 import 'package:cnn_brasil_app/core/firebase_analytics_manager.dart';
 import 'package:cnn_brasil_app/core/models/wrapper_live_strem_model.dart';
 import 'package:cnn_brasil_app/core/repositories/live_repository.dart';
 import 'package:cnn_brasil_app/features/live_stream/models/menu_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/index.dart';
@@ -325,12 +328,39 @@ abstract class LiveStreamViewModel extends State<LiveStream> {
       controller.loadRequest(uri);
     });
 
+    late InAppWebViewController webViewController;
+
     NavigatorManager(context).modalVideo(
       Center(
         child: SizedBox(
           height: 220,
-          child: WebViewWidget(
-            controller: controller,
+          child: InAppWebView(
+            key: const Key('webView'),
+            initialUrlRequest: URLRequest(url: WebUri(url)),
+            initialOptions: InAppWebViewGroupOptions(
+              crossPlatform: InAppWebViewOptions(
+                javaScriptEnabled: true,
+                mediaPlaybackRequiresUserGesture: false,
+              ),
+              ios: IOSInAppWebViewOptions(
+                allowsInlineMediaPlayback: true,
+              ),
+            ),
+            onWebViewCreated: (controller) {
+              webViewController = controller;
+            },
+            onLoadStop: (controller, url) async {
+              await controller.evaluateJavascript(
+                source: """
+                var video = document.querySelector('video');
+                if (video) {
+                  video.style.width = '100%';
+                  video.style.height = '100%';
+                  video.play();
+                }
+                """
+              );
+            },
           ),
         ),
       ),

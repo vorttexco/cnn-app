@@ -157,12 +157,6 @@ class _CustomInAppWebViewComponentState
                 final rawActual = url.rawValue.split('?').first;
                 final rawOriginal = widget.initialUrl.split('?').first;
 
-                print('----- AAAA -----');
-                print(clicked);
-                print(rawActual);
-                print(rawOriginal);
-                print('----- AAAA -----');
-
                 if (clicked && rawActual != rawOriginal) {
                   widget.openExternalUrl?.call(url.toString());
                   clicked = false;

@@ -37,35 +37,6 @@ class NavigatorAnalytics {
   });
 
   factory NavigatorAnalytics.fromRoute(String route, BuildContext context) {
-    String getbyRouteName(String name) {
-      switch (route) {
-        case TabNavigator.route:
-          return '';
-        case Home.route:
-          return 'Home Screen';
-        case LiveStream.route:
-          return 'Live Stream';
-        case Blogs.route:
-          return 'Blogs';
-        case Stories.route:
-          return 'Stories';
-        case Search.route:
-          return 'Search Screen';
-        case Themes.route:
-          return 'Temas do App';
-        case NotificationsSettings.route:
-          return 'Configurações de Notificações';
-        case SectionViewDetail.route:
-          return 'Detalhes de Seções';
-        case Submenu.route:
-          return 'SubMenu';
-        case CustomWebView.route:
-          return 'WebView Customizado';
-        default:
-          return 'Erro de Rota';
-      }
-    }
-
     String screenName = getbyRouteName(route);
     String? previousScreen, previousScreenId;
 
@@ -91,5 +62,34 @@ class NavigatorAnalytics {
       firebaseScreenClass: url,
       firebasePreviousId: segments.isNotEmpty ? segments.last : null,
     );
+  }
+}
+
+String getbyRouteName(String name) {
+  switch (name) {
+    case TabNavigator.route:
+      return '';
+    case Home.route:
+      return 'Home Screen';
+    case LiveStream.route:
+      return 'Live Stream';
+    case Blogs.route:
+      return 'Blogs';
+    case Stories.route:
+      return 'Stories';
+    case Search.route:
+      return 'Search Screen';
+    case Themes.route:
+      return 'Temas do App';
+    case NotificationsSettings.route:
+      return 'Configurações de Notificações';
+    case SectionViewDetail.route:
+      return 'Detalhes de Seções';
+    case Submenu.route:
+      return 'SubMenu';
+    case CustomWebView.route:
+      return 'WebView Customizado';
+    default:
+      return 'Erro de Rota';
   }
 }

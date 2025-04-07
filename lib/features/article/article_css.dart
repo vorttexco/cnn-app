@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 
 Map<String, String> cssBuilder(
-    dom.Element element, Color primary, Color focus) {
-  // Create an empty map to store the styles
+    dom.Element element, Color primary, Color focus, Color divider) {
   final Map<String, String> styles = {};
 
   if (element.localName == 'a') {
     styles.addAll({
       'color': focus.toHex(),
-      'font-weight': '500',
+      'font-weight': '700',
       'text-decoration': 'underline',
       'text-decoration-color': focus.toHex(),
       'background-color': 'transparent',
@@ -25,6 +24,7 @@ Map<String, String> cssBuilder(
       'margin': '0',
     });
   }
+
   if (element.classes.contains('read-too__link')) {
     styles.addAll({
       'display': 'flex',
@@ -34,29 +34,27 @@ Map<String, String> cssBuilder(
           ''
     });
   }
+
   if (element.classes.contains('read-too__img')) {
     styles.addAll({
-      'width': '90px',
+      'width': '100px',
       'height': '80px',
-      'min-width': '90px',
+      'min-width': '100px',
       'min-height': '80px',
-      'max-width': '90px',
+      'max-width': '100px',
       'max-height': '80px',
       'margin': '0 10px 0 0',
       'object-fit': 'cover',
       'display': 'inline-block',
     });
   }
-  // if (element.classes.contains('read-too__picture')) {
-  //   styles.addAll({
 
-  //   });
-  // }
   if (element.classes.contains('read-too__list-item')) {
     styles.addAll({
       'margin': '0 0 15px 0',
     });
   }
+
   if (element.classes.contains('read-too__post-title')) {
     styles.addAll({
       'font-size': '14px',
@@ -65,6 +63,7 @@ Map<String, String> cssBuilder(
       'margin': '0',
     });
   }
+
   if (element.classes.contains('read-too__title')) {
     styles.addAll({
       'color': focus.toHex(),
@@ -74,12 +73,13 @@ Map<String, String> cssBuilder(
       'font-weight': '700'
     });
   }
+
   if (element.classes.contains('read-too')) {
     styles.addAll({
       'margin': '24px 0',
       'padding': '24px 0',
-      'border-top': '1px solid ${primary.toHex()}',
-      'border-bottom': '1px solid ${primary.toHex()}',
+      'border-top': '1px solid ${divider.toHex()}',
+      'border-bottom': '1px solid ${divider.toHex()}',
     });
   }
 

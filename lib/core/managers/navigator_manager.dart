@@ -34,17 +34,36 @@ class NavigatorManager {
     }
   }
 
+  void logArticleScreenFirebase(String currentRoute, ) {}
+
   void to(
     String route, {
     dynamic data,
     Function? onFinished,
+    required String currentScreen,
+    String? currentScreenClass,
+    String? currentScreenId,
     fullscreen = false,
     bool rootNavigator = true,
     NavigatorAnalytics? analytics,
-  }) {
-    logScreenFirebase(
-      analytics ?? NavigatorAnalytics.fromRoute(route, context),
-    );
+  }) async {
+    if (route != "/Article/") {
+      logScreenFirebase(
+        analytics ?? NavigatorAnalytics.fromRoute(route, context),
+      );
+    }
+
+    if (route == "/Article/" && currentScreenClass == null && currentScreenId == null) {
+      var routeName = getbyRouteName(currentScreen);
+
+      await StorageManager().setString("firebase_previous_screen", routeName);
+      await StorageManager().setString("firebase_previous_class", currentScreen);
+      await StorageManager().setString("firebase_previous_id", currentScreen);
+    } else if (route == "/Article/" && currentScreenClass != null && currentScreenId != null) {
+      await StorageManager().setString("firebase_previous_screen", currentScreen);
+      await StorageManager().setString("firebase_previous_class", currentScreenClass);
+      await StorageManager().setString("firebase_previous_id", currentScreenId);
+    }
 
     OneSignal.Session.addOutcome('screen-view:$route');
 
