@@ -3,6 +3,7 @@
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/article/article.dart';
+import 'package:cnn_brasil_app/features/article/article_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -77,14 +78,31 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   }
 
   void navigateToInternalPage(String url) {
+    if (url.contains("esportes") && (url.endsWith("#ao-vivo?hidemenu=true") || url.endsWith("#ao-vivo"))) {
+      var newUrl = '${url.split("#ao-vivo")[0]}?hidemenu=true#ao-vivo';
+
+      NavigatorManager(context).to(
+        CustomWebView.route,
+        data: WebviewNavigatorModel(url: newUrl, title: 'Voltar'),
+        onFinished: () {
+          inAppWebViewController?.goBack();
+        },
+        analytics: NavigatorAnalytics.fromUrl(newUrl),
+        currentScreen: Home.route
+      );
+
+      return;
+    }
+
     final articleId =
         url.replaceAll('/?', '?').split('?').first.split('/').last;
 
     if (articleId.characters.length > 15) {
       NavigatorManager(context).to(
         Article.route,
-        data: articleId,
+        data: ArticleSettings(articleId: articleId, articleUrl: url),
         onFinished: () => inAppWebViewController?.goBack(),
+        currentScreen: Home.route
       );
     } else {
       NavigatorManager(context).to(
@@ -94,6 +112,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
           inAppWebViewController?.goBack();
         },
         analytics: NavigatorAnalytics.fromUrl(url),
+        currentScreen: Home.route
       );
     }
   }
@@ -155,6 +174,7 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
         title: 'Seções',
         onIconPressed: () {
           Navigator.of(context).pop(true);
+          inAppWebViewController?.reload();
         },
         avatar: AppManager.user != null
             ? Image.network(AppManager.user?.picture ?? '')

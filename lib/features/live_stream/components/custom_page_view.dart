@@ -26,6 +26,7 @@ class CustomPageView extends StatelessWidget {
 
   final WebViewController? webViewController;
 
+
   const CustomPageView({
     super.key,
     required this.menu0,
@@ -53,10 +54,10 @@ class CustomPageView extends StatelessWidget {
       child: Column(
         children: [
           Visibility(
-            visible: showPlayer,
+            visible: showPlayer && liveOnModel != null,
             child: CustomVideoPlayer(
               model: liveOnModel,
-              webViewController: webViewController,
+              url: '${ApiHome.home}/youtube/video/?youtube_id=${liveOnModel?.live?.video?.id}&youtube_adformat=aovivo&hidemenu=true&youtube_mode=teatro'
             ),
           ),
           ListVideoCell(

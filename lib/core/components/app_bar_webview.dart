@@ -37,6 +37,7 @@ class AppBarwebView extends StatelessWidget {
         left: AppConstants.KPADDING_16,
         right: AppConstants.KPADDING_16,
         top: AppConstants.KPADDING_16 * 2.5,
+        bottom: 0
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,

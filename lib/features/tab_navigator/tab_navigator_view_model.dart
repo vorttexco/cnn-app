@@ -73,6 +73,7 @@ abstract class TabNavigatorViewModel extends State<TabNavigator> {
         CustomWebView.route,
         data: WebviewNavigatorModel(title: 'Voltar', url: url),
         analytics: NavigatorAnalytics.fromUrl(url),
+        currentScreen: TabNavigator.route
       );
     } on Exception catch (e) {
       Logger.log(e.toString());

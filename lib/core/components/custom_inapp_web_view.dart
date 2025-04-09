@@ -94,73 +94,90 @@ class _CustomInAppWebViewComponentState
         Visibility(
           visible: _visible,
           maintainState: true,
-          child: InAppWebView(
-            initialUrlRequest: URLRequest(url: WebUri(widget.initialUrl)),
-            onWebViewCreated: (controller) {
-              setState(() {
-                _controller = controller;
-                // _urlFuture = _controller!.getUrl();
-              });
-              widget.onCreated(controller);
-            },
-            initialSettings: settings,
-            onLoadStop: (controller, url) async {
-              await controller.evaluateJavascript(source: '''
-              document.addEventListener('click', function(event) {
-                window.flutter_inappwebview.callHandler('elementClicked', 'clicked',);
-              });
-            ''');
-            },
-            onLoadStart: (controller, url) async {
-              setState(() {
-                _visible = url?.rawValue != "about:blank";
-                // _urlFuture = _controller?.getUrl();
-              });
-
-              if (url != null &&
-                  url.authority != '' &&
-                  !url.authority.contains('cnnbrasil.com.br')) {
-                if (clicked) {
-                  clicked = false;
-                }
-                progress = 10;
-                InAppBrowser.openWithSystemBrowser(url: WebUri(url.toString()));
-                Future.delayed(const Duration(seconds: 1)).then(
-                  (value) {
-                    controller.goBack();
-                  },
-                );
-
-                widget.openWithSystemBrowser?.call(url.toString());
-
-                return;
-              }
-
-              if (url == null) return;
-
-              final rawActual = url.rawValue.split('?').first;
-              final rawOriginal = widget.initialUrl.split('?').first;
-
-              if (clicked && rawActual != rawOriginal) {
-                widget.openExternalUrl?.call(url.toString());
-                clicked = false;
-                return;
-              }
-            },
-            onReceivedHttpError: (controller, request, errorResponse) {},
-            onLoadResource: (controller, url) {
-              controller.addJavaScriptHandler(
-                  handlerName: 'elementClicked',
-                  callback: (args) {
-                    clicked = true;
+          child: IgnorePointer(
+            ignoring: _controller == null,
+            child: InAppWebView(
+              initialUrlRequest: URLRequest(url: WebUri(widget.initialUrl)),
+              onWebViewCreated: (controller) {
+                controller.evaluateJavascript(source: '''
+                  document.addEventListener('click', function(event) {
+                    window.flutter_inappwebview.callHandler('elementClicked', 'clicked',);
                   });
-            },
-            onProgressChanged: (controller, progress) {
-              Logger.log('progress $progress');
-              setState(() {
-                this.progress = progress / 100;
-              });
-            },
+                ''');
+
+                controller.addJavaScriptHandler(
+                    handlerName: 'elementClicked',
+                    callback: (args) {
+                      clicked = true;
+                    });
+
+                setState(() {
+                  _controller = controller;
+                  // _urlFuture = _controller!.getUrl();
+                });
+
+                widget.onCreated(controller);
+              },
+              initialSettings: settings,
+              onLoadStop: (controller, url) async {
+                //   await controller.evaluateJavascript(source: '''
+                //   document.addEventListener('click', function(event) {
+                //     window.flutter_inappwebview.callHandler('elementClicked', 'clicked',);
+                //   });
+                // ''');
+              },
+              onLoadStart: (controller, url) async {
+                setState(() {
+                  _visible = url?.rawValue != "about:blank";
+                  // _urlFuture = _controller?.getUrl();
+                });
+
+                if (url != null &&
+                    url.authority != '' &&
+                    !url.authority.contains('cnnbrasil.com.br')) {
+                  if (clicked) {
+                    clicked = false;
+                  }
+                  progress = 10;
+                  InAppBrowser.openWithSystemBrowser(
+                      url: WebUri(url.toString()));
+                  Future.delayed(const Duration(seconds: 1)).then(
+                    (value) {
+                      controller.goBack();
+                    },
+                  );
+
+                  widget.openWithSystemBrowser?.call(url.toString());
+
+                  return;
+                }
+
+                if (url == null) return;
+
+                final rawActual = url.rawValue.split('?').first;
+                final rawOriginal = widget.initialUrl.split('?').first;
+
+                if (clicked && rawActual != rawOriginal) {
+                  widget.openExternalUrl?.call(url.toString());
+                  clicked = false;
+                  return;
+                }
+              },
+              onReceivedHttpError: (controller, request, errorResponse) {},
+              onLoadResource: (controller, url) {
+                // controller.addJavaScriptHandler(
+                //     handlerName: 'elementClicked',
+                //     callback: (args) {
+                //       clicked = true;
+                //     });
+              },
+              onProgressChanged: (controller, progress) {
+                Logger.log('progress $progress');
+                setState(() {
+                  this.progress = progress / 100;
+                });
+              },
+            ),
           ),
         ),
         progress < 0.7

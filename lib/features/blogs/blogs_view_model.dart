@@ -22,6 +22,7 @@ abstract class BlogsViewModel extends State<Blogs> {
         controller.goBack();
       },
       analytics: NavigatorAnalytics.fromUrl(url),
+      currentScreen: Blogs.route
     );
   }
 
@@ -40,6 +41,7 @@ abstract class BlogsViewModel extends State<Blogs> {
         title: 'Seções',
         onIconPressed: () {
           Navigator.of(context).pop(true);
+          controller.reload();
         },
         avatar: AppManager.user != null
             ? Image.network(AppManager.user?.picture ?? '')

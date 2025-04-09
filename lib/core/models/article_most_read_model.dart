@@ -5,25 +5,26 @@ class ArticleMostReadModel {
 
   factory ArticleMostReadModel.fromJson(Map<String, dynamic> json) {
     return ArticleMostReadModel(
-      posts: (json['posts'] as List).map((post) => Post.fromJson(post)).toList(),
+      posts:
+          (json['posts'] as List).map((post) => Post.fromJson(post)).toList(),
     );
   }
 }
 
 class Post {
-  final int id;
-  final String status;
-  final String publishDate;
-  final String modifiedDate;
-  final String title;
-  final String excerpt;
-  final String slug;
-  final String permalink;
-  final FeaturedMedia featuredMedia;
+  final int? id;
+  final String? status;
+  final String? publishDate;
+  final String? modifiedDate;
+  final String? title;
+  final String? excerpt;
+  final String? slug;
+  final String? permalink;
+  final FeaturedMedia? featuredMedia;
   final List<Tag> tags;
-  final Category category;
-  final Author author;
-  final PostType postType;
+  final Category? category;
+  final Author? author;
+  final PostType? postType;
 
   Post({
     required this.id,
@@ -44,18 +45,25 @@ class Post {
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       id: json['id'],
-      status: json['status'],
+      status: json['status'] ?? '',
       publishDate: json['publish_date'],
       modifiedDate: json['modified_date'],
       title: json['title'],
       excerpt: json['excerpt'],
       slug: json['slug'],
       permalink: json['permalink'],
-      featuredMedia: FeaturedMedia.fromJson(json['featured_media']),
-      tags: (json['tags'] as List).map((tag) => Tag.fromJson(tag)).toList(),
-      category: Category.fromJson(json['category']),
-      author: Author.fromJson(json['author']),
-      postType: PostType.fromJson(json['post_type']),
+      featuredMedia: json['featured_media'] != null
+          ? FeaturedMedia.fromJson(json['featured_media'])
+          : null,
+      tags: json['tags'] == null
+          ? []
+          : (json['tags'] as List).map((tag) => Tag.fromJson(tag)).toList(),
+      category:
+          json['category'] == null ? null : Category.fromJson(json['category']),
+      author: json['author'] == null ? null : Author.fromJson(json['author']),
+      postType: json['post_type'] == null
+          ? null
+          : PostType.fromJson(json['post_type']),
     );
   }
 }
@@ -63,9 +71,7 @@ class Post {
 class FeaturedMedia {
   final ImageData image;
 
-  FeaturedMedia({
-    required this.image
-  });
+  FeaturedMedia({required this.image});
 
   factory FeaturedMedia.fromJson(Map<String, dynamic> json) {
     return FeaturedMedia(
@@ -106,7 +112,11 @@ class Tag {
   final String slug;
   final String permalink;
 
-  Tag({required this.id, required this.name, required this.slug, required this.permalink});
+  Tag(
+      {required this.id,
+      required this.name,
+      required this.slug,
+      required this.permalink});
 
   factory Tag.fromJson(Map<String, dynamic> json) {
     return Tag(
@@ -143,7 +153,9 @@ class Author {
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
       region: json['region'],
-      list: (json['list'] as List).map((author) => AuthorDetail.fromJson(author)).toList(),
+      list: (json['list'] as List)
+          .map((author) => AuthorDetail.fromJson(author))
+          .toList(),
     );
   }
 }

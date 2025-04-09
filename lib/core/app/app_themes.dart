@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const Color _primaryColor = Color(0xffCC0000);
+const Color _primaryColor = Color(0xffC00000);
 const String _fontFamily = 'CNN Sans Display W04 Medium';
 
 ThemeData lightTheme = ThemeData(
@@ -30,7 +30,7 @@ ThemeData lightTheme = ThemeData(
     }),
     fillColor: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return _primaryColor; // #CC0000 red when checked
+        return _primaryColor; // #C00000 red when checked
       }
       return Colors.transparent; // Transparent when unchecked
     }),

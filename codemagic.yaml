@@ -1,0 +1,19 @@
+workflows:
+  android-to-release-apk:
+    name: Android Build Project to Release .apk
+    max_build_duration: 120
+    environment:
+      groups:
+        - General
+        - Prod
+      flutter: 3.24.5
+      java: 17
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          cd . && flutter packages pub get
+      - name: Build APK with Flutter
+        script: |
+          cd . && flutter build apk --release
+    artifacts:
+      - build/**/outputs/**/*.apk

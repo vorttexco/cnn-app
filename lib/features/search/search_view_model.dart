@@ -1,5 +1,7 @@
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
+import 'package:cnn_brasil_app/features/article/article.dart';
+import 'package:cnn_brasil_app/features/article/article_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
@@ -31,13 +33,28 @@ abstract class SearchViewModel extends State<Search> {
   }
 
   void navigateToInternalPage(String url) {
-    if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
+    final articleId =
+        url.replaceAll('/?', '?').split('?').first.split('/').last;
+
+    if (articleId.characters.length > 15) {
       NavigatorManager(context).to(
-        CustomWebView.route,
-        data: WebviewNavigatorModel(url: url, title: 'Voltar'),
-        onFinished: () {},
-        analytics: NavigatorAnalytics.fromUrl(url),
+        Article.route,
+        data: ArticleSettings(articleId: articleId, articleUrl: url),
+        onFinished: () {
+          controller.goBack();
+        },
+        currentScreen: Search.route
       );
+    } else {
+      if (!url.contains('${ApiHome.home}/?s=') && url.contains(ApiHome.home)) {
+        NavigatorManager(context).to(
+          CustomWebView.route,
+          data: WebviewNavigatorModel(url: url, title: 'Voltar'),
+          onFinished: () {},
+          analytics: NavigatorAnalytics.fromUrl(url),
+          currentScreen: Search.route
+        );
+      }
     }
   }
 
