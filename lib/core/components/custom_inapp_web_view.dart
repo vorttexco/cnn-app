@@ -1,5 +1,8 @@
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
+import 'package:cnn_brasil_app/features/article/article.dart';
+import 'package:cnn_brasil_app/features/article/article_settings.dart';
+import 'package:cnn_brasil_app/features/custom_webview/custom_webview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -31,7 +34,7 @@ class _CustomInAppWebViewComponentState
   bool isLoading = false;
   double progress = 0;
   Brightness? _brightness;
-  bool _visible = true;
+  bool _visible = false;
 
   // Future? _urlFuture;
 
@@ -120,17 +123,21 @@ class _CustomInAppWebViewComponentState
               },
               initialSettings: settings,
               onLoadStop: (controller, url) async {
-                //   await controller.evaluateJavascript(source: '''
-                //   document.addEventListener('click', function(event) {
-                //     window.flutter_inappwebview.callHandler('elementClicked', 'clicked',);
-                //   });
-                // ''');
+                await controller.evaluateJavascript(source: '''
+                  document.addEventListener('click', function(event) {
+                    window.flutter_inappwebview.callHandler('elementClicked', 'clicked',);
+                  });
+                ''');
+
+                setState(() {
+                  _visible = true;
+                });
               },
               onLoadStart: (controller, url) async {
-                setState(() {
-                  _visible = url?.rawValue != "about:blank";
-                  // _urlFuture = _controller?.getUrl();
-                });
+                // setState(() {
+                //   _visible = url?.rawValue != "about:blank";
+                //   // _urlFuture = _controller?.getUrl();
+                // });
 
                 if (url != null &&
                     url.authority != '' &&
@@ -180,7 +187,7 @@ class _CustomInAppWebViewComponentState
             ),
           ),
         ),
-        progress < 0.7
+        progress < 1
             ? Container(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 child: Center(
