@@ -530,23 +530,23 @@ class Content {
 }
 
 class Pictures {
-  String? blog;
-  String? columns;
+  String? blogs;
+  String? colunas;
 
   Pictures({
-    this.blog, 
-    this.columns
+    this.blogs, 
+    this.colunas
   });
 
   Pictures.fromJson(Map<String, dynamic> json) {
-    blog = json['blog'];
-    columns = json['columns'];
+    blogs = json['blogs'];
+    colunas = json['colunas'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['blog'] = blog;
-    data['columns'] = columns;
+    data['blogs'] = blogs;
+    data['colunas'] = colunas;
 
     return data;
   }
