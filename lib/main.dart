@@ -7,6 +7,7 @@ import 'package:cnn_brasil_app/core/providers/theme_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,7 @@ import 'flavors/production.dart' as ProdConfig;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  MobileAds.instance.initialize();
   OneSignal.initialize(AppConstants.ONESIGNAL_KEY);
   OneSignal.Notifications.requestPermission(true);
 

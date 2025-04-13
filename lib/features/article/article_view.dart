@@ -1,4 +1,6 @@
 // ignore_for_file: deprecated_member_use
+import 'dart:io';
+
 import 'package:cnn_brasil_app/core/components/app_bar_webview.dart';
 import 'package:cnn_brasil_app/core/extensions/string_extension.dart';
 import 'package:cnn_brasil_app/core/index.dart';
@@ -6,6 +8,7 @@ import 'package:cnn_brasil_app/core/models/article_gallery_model.dart';
 import 'package:cnn_brasil_app/core/models/article_model.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/article/article.dart';
+import 'package:cnn_brasil_app/features/article/article_ads_view.dart';
 import 'package:cnn_brasil_app/features/article/article_css.dart';
 import 'package:cnn_brasil_app/features/article/article_settings.dart';
 import 'package:cnn_brasil_app/features/index.dart';
@@ -1213,45 +1216,7 @@ class ArticleView extends ArticleViewModel {
               onIconPressed: onBack,
               onShare: onShare,
             ),
-            // Container(
-            //   constraints: const BoxConstraints(maxHeight: 150),
-            //   alignment: Alignment.center,
-            //   child: InAppWebView(
-            //     initialUrlRequest: URLRequest(
-            //       url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=stick")
-            //     ),
-            //     onLoadStop: (controller, url) {
-            //       Color bgColor = Theme.of(context).scaffoldBackgroundColor;
-
-            //       String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
-
-            //       controller.evaluateJavascript(source: """
-            //         (function() {
-            //           let observer = new MutationObserver((mutations, obs) => {
-            //             let adArea = document.querySelector(".ad__area.ad__area--only");
-            //             if (adArea) {
-            //               adArea.style.background = "$bgColorCss";
-            //               obs.disconnect();
-            //             }
-            //           });
-
-            //           observer.observe(document.body, { childList: true, subtree: true });
-            //         })();
-            //       """);
-            //     },
-            //     shouldOverrideUrlLoading: (controller, navigationAction) async {
-            //       Uri uri = Uri.parse(navigationAction.request.url.toString());
-
-            //       if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
-            //         _openInBrowser(uri.toString());
-
-            //         return NavigationActionPolicy.CANCEL;
-            //       }
-
-            //       return NavigationActionPolicy.ALLOW;
-            //     },
-            //   ),
-            // ),
+            const ArticleAdsView(),        
             const SizedBox(height: AppConstants.KPADDING_8),
             Expanded(
               child: SingleChildScrollView(
@@ -1474,9 +1439,9 @@ class ArticleView extends ArticleViewModel {
                               featuredTag!.picture!.url!.contains('.svg')
                                   ? SvgPicture.network(
                                       featuredTag!.picture!.url!)
-                                  : Image.network(featuredTag!.picture!.url!)
+                                  : Image.network(featuredTag!.picture!.url!),
+                                  const SizedBox(height: AppConstants.KPADDING_24),
                             ],
-                            const SizedBox(height: AppConstants.KPADDING_24),
                             Text(
                               article.title
                                       ?.replaceAll("&quot;", '"')
@@ -2174,48 +2139,9 @@ class ArticleView extends ArticleViewModel {
                                       .colorScheme
                                       .tertiaryContainer),
                               customWidgetBuilder: (element) {
-                                // if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
-                                //   String? divId = element.id;
-
-                                //   return Container(
-                                //     constraints: const BoxConstraints(maxHeight: 350),
-                                //     alignment: Alignment.center,
-                                //     child: InAppWebView(
-                                //       initialUrlRequest: URLRequest(
-                                //         url: WebUri("https://www.cnnbrasil.com.br/ads-only-page/?ad_id=$divId")
-                                //       ),
-                                //       onLoadStop: (controller, url) {
-                                //         Color bgColor = Theme.of(context).scaffoldBackgroundColor;
-
-                                //         String bgColorCss = "rgb(${bgColor.red}, ${bgColor.green}, ${bgColor.blue})";
-
-                                //         controller.evaluateJavascript(source: """
-                                //           (function() {
-                                //             let observer = new MutationObserver((mutations, obs) => {
-                                //               let adArea = document.querySelector(".ad__area.ad__area--only");
-                                //               if (adArea) {
-                                //                 adArea.style.background = "$bgColorCss";
-                                //                 obs.disconnect();
-                                //               }
-                                //             });
-
-                                //             observer.observe(document.body, { childList: true, subtree: true });
-                                //           })();
-                                //         """);
-                                //       },
-                                //       shouldOverrideUrlLoading: (controller, navigationAction) async {
-                                //         Uri uri = Uri.parse(navigationAction.request.url.toString());
-
-                                //         if (uri.host.contains("adclick") || uri.host.contains("googleads.g.doubleclick.net")) {
-                                //           _openInBrowser(uri.toString());
-                                //           return NavigationActionPolicy.CANCEL;
-                                //         }
-
-                                //         return NavigationActionPolicy.ALLOW;
-                                //       },
-                                //     ),
-                                //   );
-                                // }
+                                if (element.localName == 'div' && element.classes.contains('custom__ad__element')) {
+                                  return const ArticleAdsView();
+                                }
 
                                 if (element.localName == 'figure' &&
                                     element.classes
