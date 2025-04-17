@@ -1445,7 +1445,8 @@ class ArticleView extends ArticleViewModel {
                             Text(
                               article.title
                                       ?.replaceAll("&quot;", '"')
-                                      .replaceAll("&#039;", "'") ??
+                                      .replaceAll("&#039;", "'")
+                                      .replaceAll("&amp;", "&") ??
                                   '',
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
