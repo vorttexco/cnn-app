@@ -4,6 +4,9 @@ import 'package:cnn_brasil_app/core/app/app_themes.dart';
 import 'package:cnn_brasil_app/core/components/custom_error.dart';
 import 'package:cnn_brasil_app/core/index.dart';
 import 'package:cnn_brasil_app/core/providers/theme_provider.dart';
+import 'package:cnn_brasil_app/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,12 +17,23 @@ import 'package:provider/provider.dart';
 import 'flavors/development.dart' as DevConfig;
 import 'flavors/production.dart' as ProdConfig;
 
+FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+void setupFCM() {
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {});
+
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   MobileAds.instance.initialize();
   OneSignal.initialize(AppConstants.ONESIGNAL_KEY);
   OneSignal.Notifications.requestPermission(true);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 

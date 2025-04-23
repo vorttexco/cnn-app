@@ -53,6 +53,7 @@ dependencies:
   flutter_inappwebview: ^6.1.5
   flutter_widget_from_html: ^0.15.3
   google_mobile_ads: ^5.3.1
+  firebase_messaging: ^15.2.5
 
 dependency_overrides:
   webview_flutter_android: 3.16.1
