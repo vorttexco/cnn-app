@@ -77,7 +77,7 @@ android {
 }
 
 dependencies {
-    implementation "br.com.hands.mdm.libs.android:mdm-notification:3.6.1"
+    implementation "br.com.hands.mdm.libs.android:mdm-notification:3.11.0"
 }
 
 flutter {
