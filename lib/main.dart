@@ -3,6 +3,7 @@
 import 'package:cnn_brasil_app/core/app/app_themes.dart';
 import 'package:cnn_brasil_app/core/components/custom_error.dart';
 import 'package:cnn_brasil_app/core/index.dart';
+import 'package:cnn_brasil_app/core/mdm_notification_service.dart';
 import 'package:cnn_brasil_app/core/providers/theme_provider.dart';
 import 'package:cnn_brasil_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,19 +26,27 @@ void setupFCM() {
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {});
 }
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await MDMNotificationService.handleRemoteMessage(message);
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   MobileAds.instance.initialize();
+
   OneSignal.initialize(AppConstants.ONESIGNAL_KEY);
+
   OneSignal.Notifications.requestPermission(true);
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  // Definir o ErrorWidget.builder personalizado
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Scaffold(
       body: Center(

@@ -1,9 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:cnn_brasil_app/core/extensions/weburi_extension.dart';
+import 'package:cnn_brasil_app/core/mdm_notification_service.dart';
 import 'package:cnn_brasil_app/core/models/navigator_analytics.dart';
 import 'package:cnn_brasil_app/features/article/article.dart';
 import 'package:cnn_brasil_app/features/article/article_settings.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -30,6 +32,14 @@ abstract class HomeViewModel extends State<Home> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      MDMNotificationService.handleRemoteMessage(message);
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      MDMNotificationService.handleRemoteMessage(message);
+    });
 
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(

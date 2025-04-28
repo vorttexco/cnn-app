@@ -10,6 +10,8 @@ import br.com.hands.mdm.libs.android.core.MDMCore
 import br.com.hands.mdm.libs.android.core.OnStartListener
 
 class MainActivity: FlutterActivity() {
+    private val CHANNEL = "mdm_notification_channel"
+
    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -26,5 +28,21 @@ class MainActivity: FlutterActivity() {
 
   override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
       super.configureFlutterEngine(flutterEngine)
+
+      MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "isMDMNotification" -> {
+                    val data = call.arguments as Map<String, String>
+                    val isMDM = MDMNotification.isMDMNotification(data)
+                    result.success(isMDM)
+                }
+                "processMDMNotification" -> {
+                    val data = call.arguments as Map<String, String>
+                    MDMNotification.processNotification(data, applicationContext)
+                    result.success(null)
+                }
+                else -> result.notImplemented()
+            }
+        }
   }
 }
