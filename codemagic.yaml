@@ -1,19 +1,18 @@
 workflows:
-  android-to-release-apk:
-    name: Android Build Project to Release .apk
-    max_build_duration: 120
+  flutter-prod:
+    name: Flutter Production Build
     environment:
-      groups:
-        - General
-        - Prod
-      flutter: 3.24.5
-      java: 17
+      flutter: latest
     scripts:
-      - name: Get Flutter packages
+      - name: Build IPA
         script: |
-          cd . && flutter packages pub get
-      - name: Build APK with Flutter
-        script: |
-          cd . && flutter build apk --release
+          flutter build ipa \
+            --release \
+            --flavor production \
+            --dart-define=envFlavor=production \
+            --export-options-plist=ios/export_options.plist \
+            --split-debug-info=debug_symbols \
+            --obfuscate
     artifacts:
-      - build/**/outputs/**/*.apk
+      - build/ios/ipa/*.ipa
+      - debug_symbols/**/*.dSYM  # Inclui os dSYMs gerados
