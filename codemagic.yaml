@@ -2,7 +2,7 @@ workflows:
   flutter-prod:
     name: Flutter Production Build
     environment:
-      flutter: latest
+      flutter: 2.24.5
     scripts:
       - name: Build IPA
         script: |
