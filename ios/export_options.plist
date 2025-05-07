@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>method</key>
-    <string>app-store</string>  <!-- Ou "development" para debug -->
+    <string>development</string>  <!-- Ou "development" para debug -->
     <key>uploadSymbols</key>
     <true/>  <!-- Habilita o upload de símbolos -->
 </dict>
