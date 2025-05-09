@@ -13,7 +13,7 @@ workflows:
       - name: Get flutter packages
         script: flutter packages pub get
       - name: Flutter build ipa
-        script: flutter build ipa --debug
+        script: flutter build ipa --flavor development
 
     artifacts:
       - build/ios/ipa/*.ipa
