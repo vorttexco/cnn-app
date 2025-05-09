@@ -1,29 +1,20 @@
 workflows:
-  flutter-prod:
-    name: Flutter Production Build (2.24.5)
+  ios-debug:
+    name: IPA Build in Debug Mode
     environment:
+      flutter: 3.24.5
+      xcode: 16.3
+      cocoapods: default
       # Variáveis de ambiente (opcional, se já definidas na interface)
       vars:
         APP_NAME: "CNN"
-    scripts:
-      # ---- Instalação do Flutter 2.24.5 ----
-      - name: Install Flutter 2.24.5
-        script: |
-          git clone https://github.com/flutter/flutter.git --branch 2.24.5 --depth 1
-          export PATH="$PATH:$(pwd)/flutter/bin"
-          flutter doctor -v
 
-      # ---- Build do IPA com dSYM ----
-      - name: Build IPA
-        script: |
-          flutter pub get
-          flutter build ipa \
-            --release \
-            --flavor production \
-            --dart-define=envFlavor=production \
-            --export-options-plist=ios/export_options.plist \
-            --split-debug-info=debug_symbols
+    scripts:
+      - name: Get flutter packages
+        script: flutter packages pub get
+      - name: Flutter build ipa
+        script: flutter build ipa --debug
 
     artifacts:
       - build/ios/ipa/*.ipa
-      - debug_symbols/**/*.dSYM  # Símbolos de debug
+      - debug_symbols/**/*.dSYM
