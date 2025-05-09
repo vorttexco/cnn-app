@@ -8,6 +8,11 @@ workflows:
       # Variáveis de ambiente (opcional, se já definidas na interface)
       vars:
         APP_NAME: "CNN"
+      ios_signing:
+        provisioning_profiles:
+          - com.cnn-brasil
+        certificates:
+          - dev-cert-cnn
 
     scripts:
       - name: Get flutter packages
