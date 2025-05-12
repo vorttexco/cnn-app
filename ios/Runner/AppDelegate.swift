@@ -1,6 +1,5 @@
 import UIKit
 import Flutter
-import Firebase
 import MDMCore
 import MDMNotification
 
@@ -12,7 +11,18 @@ import MDMNotification
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    let controller = window?.rootViewController as! FlutterViewController
+    MDMCore.setDebugMode(true)
+
+    let appId = "jmDLWQt0JAVA1iqY6J8MXRAoDY6wWQW1Wph1G3xV/AgrmkEaAiix3FLEk80xUI89BOh9FxFLqvyzR2ITK5zpN8kBhl5eHOTTFbGr+FaZwFEt0TFYMXbfXQnUwWQubpdwFAyQUA4Xjwz0J/4IP2R7si9cm+IporvUVRSyK2brIsBCBCsiOrJPw/FBcv69wmDBe2OxD9sN/VdjUL8eEk8EpIxg8obeF5Hqy5/0qEKCIhlN/TF9HTT1ugAvUUIYTn4YzcmcsrKQML0SaEv90OjH0CxSD6KI46LUM87ijd5ZLYadlzwzeeZ6lB4N4HPHbsQSa2exZ6Jrp0tZsWuWFS6J4Q=="
+
+    MDMCore.start(withAppId: appId, kitModules: [
+      MDMNotification.self()
+    ])
+
+    guard let controller = window?.rootViewController as? FlutterViewController else {
+      fatalError("Root view controller is not a FlutterViewController")
+    }
+
     let methodChannel = FlutterMethodChannel(
       name: CHANNEL,
       binaryMessenger: controller.binaryMessenger
@@ -33,6 +43,12 @@ import MDMNotification
         case "processMDMNotification":
           await MDMNotification.processNotification(args)
           result(nil)
+        case "getManagedConfig":
+          if let managedConfig = UserDefaults.standard.dictionary(forKey: "com.apple.configuration.managed") {
+            result(managedConfig)
+          } else {
+            result([:])
+          }
         default:
           result(FlutterMethodNotImplemented)
         }
@@ -40,16 +56,6 @@ import MDMNotification
     }
 
     GeneratedPluginRegistrant.register(with: self)
-    if FirebaseApp.app() == nil {
-      FirebaseApp.configure()
-    }
-    MDMCore.setDebugMode(true)
-
-    let appId = "jmDLWQt0JAVA1iqY6J8MXRAoDY6wWQW1Wph1G3xV/AgrmkEaAiix3FLEk80xUI89BOh9FxFLqvyzR2ITK5zpN8kBhl5eHOTTFbGr+FaZwFEt0TFYMXbfXQnUwWQubpdwFAyQUA4Xjwz0J/4IP2R7si9cm+IporvUVRSyK2brIsBCBCsiOrJPw/FBcv69wmDBe2OxD9sN/VdjUL8eEk8EpIxg8obeF5Hqy5/0qEKCIhlN/TF9HTT1ugAvUUIYTn4YzcmcsrKQML0SaEv90OjH0CxSD6KI46LUM87ijd5ZLYadlzwzeeZ6lB4N4HPHbsQSa2exZ6Jrp0tZsWuWFS6J4Q=="
-
-    MDMCore.start(withAppId: appId, kitModules: [
-      MDMNotification.self()
-    ])
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
