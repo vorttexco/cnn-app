@@ -32,12 +32,9 @@ target 'Runner' do
   use_modular_headers!
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  pod 'MDMCore'
-  pod 'MDMNotification'
-end
 
-target 'RunnerTests' do
-    inherit! :search_paths
+  pod 'MDMCore', '3.9.14'
+  pod 'MDMNotification', '3.9.14'
 end
 
 post_install do |installer|

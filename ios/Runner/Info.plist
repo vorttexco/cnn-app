@@ -95,5 +95,12 @@
 		</array>
 		<key>FirebaseAppDelegateProxyEnabled</key>
 		<false/>
+		<key>NSGroupIdentifier</key>
+		<string>group.com.cnn-brasil</string>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbritaryLoads</key>
+			<true/>
+		</dict>
 	</dict>
 </plist>
