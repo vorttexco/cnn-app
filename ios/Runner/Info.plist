@@ -96,7 +96,7 @@
 		<key>FirebaseAppDelegateProxyEnabled</key>
 		<false/>
 		<key>NSGroupIdentifier</key>
-		<string>group.com.cnn-brasil</string>
+		<string>group.com.cnn-brasil.mdm</string>
 		<key>NSAppTransportSecurity</key>
 		<dict>
 			<key>NSAllowsArbritaryLoads</key>
