@@ -102,5 +102,7 @@
 			<key>NSAllowsArbritaryLoads</key>
 			<true/>
 		</dict>
+		<key>NSUserTrackingUsageDescription</key>
+		<string>O aplicativo $(EXECUTABLE_NAME) usará essa permissão para enviar anúncios personalizados.</string>
 	</dict>
 </plist>

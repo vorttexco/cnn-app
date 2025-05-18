@@ -1,5 +1,6 @@
 // ignore_for_file: library_prefixes
 
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cnn_brasil_app/core/app/app_themes.dart';
 import 'package:cnn_brasil_app/core/components/custom_error.dart';
 import 'package:cnn_brasil_app/core/index.dart';
@@ -30,6 +31,16 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await MDMNotificationService.handleRemoteMessage(message);
 }
 
+Future<void> initTracking() async {
+  final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+
+  if (status == TrackingStatus.notDetermined) {
+    await AppTrackingTransparency.requestTrackingAuthorization();
+  }
+
+  await AppTrackingTransparency.getAdvertisingIdentifier();
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -46,6 +57,8 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  await initTracking();
 
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Scaffold(
