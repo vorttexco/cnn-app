@@ -1,6 +1,5 @@
 // ignore_for_file: library_prefixes
 
-import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cnn_brasil_app/core/app/app_themes.dart';
 import 'package:cnn_brasil_app/core/components/custom_error.dart';
 import 'package:cnn_brasil_app/core/index.dart';
@@ -15,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'flavors/development.dart' as DevConfig;
 import 'flavors/production.dart' as ProdConfig;
@@ -31,14 +31,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await MDMNotificationService.handleRemoteMessage(message);
 }
 
-Future<void> initTracking() async {
-  final status = await AppTrackingTransparency.trackingAuthorizationStatus;
-
-  if (status == TrackingStatus.notDetermined) {
-    await AppTrackingTransparency.requestTrackingAuthorization();
-  }
-
-  await AppTrackingTransparency.getAdvertisingIdentifier();
+Future<void> requestTrackingAndConsent() async {
+  await Permission.appTrackingTransparency.request();
 }
 
 Future<void> main() async {
@@ -54,11 +48,11 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  await requestTrackingAndConsent();
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-  await initTracking();
 
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Scaffold(
