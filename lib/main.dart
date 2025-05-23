@@ -34,27 +34,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await MDMNotificationService.handleRemoteMessage(message);
 }
 
-Future<void> requestTrackingAndConsent() async {
-  if (Platform.isIOS) {
-    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
-    if (status == TrackingStatus.notDetermined) {
-      final result =
-          await AppTrackingTransparency.requestTrackingAuthorization();
-      if (kDebugMode) {
-        print("Tracking status: $result");
-      }
-    }
-
-    final idfa = await AppTrackingTransparency.getAdvertisingIdentifier();
-
-    if (kDebugMode) {
-      print("IDFA: $idfa");
-    }
-  }
-
-  await Permission.appTrackingTransparency.request();
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -67,8 +46,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  await requestTrackingAndConsent();
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -122,8 +99,45 @@ Future<void> main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  requestTrackingAndConsent() async {
+    if (Platform.isIOS) {
+      final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+
+      if (status == TrackingStatus.notDetermined) {
+        final result =
+            await AppTrackingTransparency.requestTrackingAuthorization();
+
+        if (kDebugMode) print("Tracking status: $result");
+
+        if (result == TrackingStatus.authorized) {
+          final idfa = await AppTrackingTransparency.getAdvertisingIdentifier();
+          if (kDebugMode) print("IDFA: $idfa");
+        }
+      } else if (status == TrackingStatus.authorized) {
+        final idfa = await AppTrackingTransparency.getAdvertisingIdentifier();
+        if (kDebugMode) print("IDFA: $idfa");
+      } else {
+        if (kDebugMode) print("Tracking não autorizado: $status");
+      }
+    } else {
+      await Permission.appTrackingTransparency.request();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    requestTrackingAndConsent();
+  }
 
   @override
   Widget build(BuildContext context) {
