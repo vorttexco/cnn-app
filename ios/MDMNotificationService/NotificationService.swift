@@ -5,7 +5,7 @@
 //  Created by Juan Franceschi on 29/05/25.
 //
 
-import UserNotifications
+// import UserNotifications
 import MDMNotification
 
 class NotificationService: MDMNotificationService {

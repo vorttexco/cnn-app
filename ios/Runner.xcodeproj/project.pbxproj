@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -71,7 +71,7 @@
 		};
 		A04012DD2DD69E9A00E0E264 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
@@ -79,7 +79,7 @@
 				BCE65DEE2DE8CF1E00B4F906 /* MDMNotificationService.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -134,14 +134,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BCE65DEF2DE8CF1E00B4F906 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		BCE65DEF2DE8CF1E00B4F906 /* Exceptions for "MDMNotificationService" folder in "MDMNotificationService" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = BCE65DE62DE8CF1E00B4F906 /* MDMNotificationService */;
 		};
-		BCE65E242DE8D0ED00B4F906 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		BCE65E242DE8D0ED00B4F906 /* Exceptions for "MDMNotificationContent" folder in "MDMNotificationContent" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -151,11 +151,63 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A04012D62DD69E9A00E0E264 /* MDMNotificationService */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MDMNotificationService; sourceTree = "<group>"; };
-		A04F7F042DD6A21800461885 /* MDMNotificationService */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MDMNotificationService; sourceTree = "<group>"; };
-		BCE65DD42DE8CC2700B4F906 /* MDMNotificationService */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MDMNotificationService; sourceTree = "<group>"; };
-		BCE65DE82DE8CF1E00B4F906 /* MDMNotificationService */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BCE65DEF2DE8CF1E00B4F906 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MDMNotificationService; sourceTree = "<group>"; };
-		BCE65E142DE8D0ED00B4F906 /* MDMNotificationContent */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BCE65E242DE8D0ED00B4F906 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MDMNotificationContent; sourceTree = "<group>"; };
+		A04012D62DD69E9A00E0E264 /* MDMNotificationService */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = MDMNotificationService;
+			sourceTree = "<group>";
+		};
+		A04F7F042DD6A21800461885 /* MDMNotificationService */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = MDMNotificationService;
+			sourceTree = "<group>";
+		};
+		BCE65DD42DE8CC2700B4F906 /* MDMNotificationService */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = MDMNotificationService;
+			sourceTree = "<group>";
+		};
+		BCE65DE82DE8CF1E00B4F906 /* MDMNotificationService */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BCE65DEF2DE8CF1E00B4F906 /* Exceptions for "MDMNotificationService" folder in "MDMNotificationService" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = MDMNotificationService;
+			sourceTree = "<group>";
+		};
+		BCE65E142DE8D0ED00B4F906 /* MDMNotificationContent */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BCE65E242DE8D0ED00B4F906 /* Exceptions for "MDMNotificationContent" folder in "MDMNotificationContent" target */,
+			);
+			explicitFileTypes = {
+			};
+			explicitFolders = (
+			);
+			path = MDMNotificationContent;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -603,13 +655,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -624,13 +672,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
