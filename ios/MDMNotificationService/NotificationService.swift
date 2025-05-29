@@ -2,33 +2,39 @@
 //  NotificationService.swift
 //  MDMNotificationService
 //
-//  Created by Luis on 15/05/25.
+//  Created by Juan Franceschi on 29/05/25.
 //
 
 import UserNotifications
+import MDMNotification
 
-class NotificationService: UNNotificationServiceExtension {
+class NotificationService: MDMNotificationService {
 
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
 
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
-        bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
-        
-        if let bestAttemptContent = bestAttemptContent {
-            // Modify the notification content here...
-            bestAttemptContent.title = "\(bestAttemptContent.title) [modified]"
-            
-            contentHandler(bestAttemptContent)
+        self.bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
+
+        if let bestAttemptContent = self.bestAttemptContent {
+            if MDMNotification.isMDMNotification(bestAttemptContent.userInfo) {
+                super.didReceive(request, withContentHandler: contentHandler)
+            } else {
+                // Your code here
+                contentHandler(bestAttemptContent)
+            }
         }
     }
     
     override func serviceExtensionTimeWillExpire() {
-        // Called just before the extension will be terminated by the system.
-        // Use this as an opportunity to deliver your "best attempt" at modified content, otherwise the original push payload will be used.
-        if let contentHandler = contentHandler, let bestAttemptContent =  bestAttemptContent {
-            contentHandler(bestAttemptContent)
+        if let contentHandler = self.contentHandler, let bestAttemptContent = self.bestAttemptContent {
+            if MDMNotification.isMDMNotification(bestAttemptContent.userInfo) {
+                super.serviceExtensionTimeWillExpire()
+            } else {
+                // Your code here
+                contentHandler(bestAttemptContent)
+            }
         }
     }
 
